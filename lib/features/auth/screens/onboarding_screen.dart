@@ -1,0 +1,156 @@
+import 'package:chatapp_firebase/core/widgets/common_button.dart';
+import 'package:chatapp_firebase/core/constants/app_assets.dart';
+import 'package:chatapp_firebase/core/constants/app_colors.dart';
+import 'package:chatapp_firebase/core/constants/app_strings.dart';
+import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
+import 'package:chatapp_firebase/core/routes/app_routes.dart';
+import 'package:chatapp_firebase/features/auth/widgets/auth_options_row.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../widgets/or_divider.dart';
+
+class OnboardingScreen extends StatelessWidget {
+  const OnboardingScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 0,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: .center,
+                children: [
+                  SvgPicture.asset(
+                    AppAssets.cLogo,
+                    height: 20,
+                    width: 16,
+                    fit: BoxFit.scaleDown,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.white,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    AppStrings.chatboxText,
+                    style: AppTextStyles.body(
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.white,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 25),
+
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: AppStrings.connectFriendsText,
+                      style: AppTextStyles.heading(
+                        color: AppColors.white,
+                        fontSize: 68,
+                        fontWeight: FontWeight.w400,
+                        height: 1.25,
+                      ),
+                    ),
+                    TextSpan(
+                      text: AppStrings.easilyText,
+                      style: AppTextStyles.heading(
+                        color: AppColors.white,
+                        fontSize: 68,
+                        fontWeight: FontWeight.w600,
+                        height: 1.25,
+                      ),
+                    ),
+                    TextSpan(
+                      text: AppStrings.andIconText,
+                      style: AppTextStyles.heading(
+                        fontFamily: '',
+                        color: AppColors.white,
+                        fontSize: 68,
+                        fontWeight: FontWeight.w600,
+                        height: 1.25,
+                      ),
+                    ),
+                    TextSpan(
+                      text: AppStrings.quicklyText,
+                      style: AppTextStyles.heading(
+                        color: AppColors.white,
+                        fontSize: 68,
+                        fontWeight: FontWeight.w600,
+                        height: 1.25,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 15),
+
+              Text(
+                AppStrings.authHomeScreenSubHeading,
+                style: AppTextStyles.body(
+                  color: AppColors.lightGray,
+                  fontWeight: FontWeight(450),
+                  fontSize: 16,
+                ),
+              ),
+
+              const SizedBox(height: 50),
+
+              const AuthOptionsRow(),
+
+              const SizedBox(height: 25),
+
+              const OrDivider(),
+
+              const SizedBox(height: 25),
+
+              CommonButton(
+                label: AppStrings.signUpWithEmailText,
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.signUpScreen);
+                },
+              ),
+
+              const SizedBox(height: 15),
+
+              Row(
+                mainAxisAlignment: .center,
+                children: [
+                  Text(
+                    AppStrings.existingAccountTxt,
+                    style: AppTextStyles.body(fontWeight: FontWeight(450)),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, AppRoutes.loginScreen);
+                    },
+                    child: Text(
+                      AppStrings.logInText,
+                      style: AppTextStyles.body(color: AppColors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
