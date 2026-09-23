@@ -1,15 +1,16 @@
+import 'dart:io';
+
 import 'package:chatapp_firebase/core/widgets/common_button.dart';
 import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/routes/app_routes.dart';
-import 'package:chatapp_firebase/features/auth/widgets/auth_options_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../widgets/or_divider.dart';
+import '../../widgets/or_divider.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -112,7 +113,58 @@ class OnboardingScreen extends StatelessWidget {
 
               const SizedBox(height: 50),
 
-              const AuthOptionsRow(),
+              Row(
+                mainAxisAlignment: .center,
+                spacing: 20,
+                children: [
+                  Container(
+                    height: 48,
+                    width: 48,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.borderGrey, width: 1),
+                    ),
+                    child: SvgPicture.asset(
+                      AppAssets.facebookIcon,
+                      height: 24,
+                      width: 24,
+                      fit: BoxFit.scaleDown,
+                    ),
+                  ),
+                  Container(
+                    height: 48,
+                    width: 48,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.borderGrey, width: 1),
+                    ),
+                    child: SvgPicture.asset(
+                      AppAssets.googleIcon,
+                      height: 24,
+                      width: 24,
+                      fit: BoxFit.scaleDown,
+                    ),
+                  ),
+                  if (Platform.isIOS)
+                    Container(
+                      height: 48,
+                      width: 48,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.borderGrey,
+                          width: 1,
+                        ),
+                      ),
+                      child: SvgPicture.asset(
+                        AppAssets.appleIcon,
+                        height: 24,
+                        width: 24,
+                        fit: BoxFit.scaleDown,
+                      ),
+                    ),
+                ],
+              ),
 
               const SizedBox(height: 25),
 

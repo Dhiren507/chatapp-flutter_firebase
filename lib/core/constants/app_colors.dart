@@ -17,10 +17,13 @@ class AppColors {
 
   static const Color lightGreen = Color(0xFF2BEF83);
   static const Color green = Color(0xFF24786D);
+  static const Color activeGreen = Color(0xFF0FE16D);
   static const Color lightBlack = Color(0xFF001815);
   static const Color lightGray = Color(0xFFB9C1BE);
 
   static const Color borderGrey = Color(0xFFA8B0AF);
   static const Color dividerColor = Color(0xFFCDD1D0);
   static const Color dividerText = Color(0xFFD6E4E0);
+  static const Color mutedGrey = Color(0xFFE6E6E6);
+  static const colorMutedGreyDark = Color(0xFF989E9C);
 }

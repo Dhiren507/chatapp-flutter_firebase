@@ -10,8 +10,6 @@ class CommonBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       color: AppColors.textPrimary,
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(),
       icon: SvgPicture.asset(
         AppAssets.backArrow,
         height: 16,

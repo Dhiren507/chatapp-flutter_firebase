@@ -4,9 +4,11 @@ import 'package:chatapp_firebase/core/widgets/common_button.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
-import 'package:chatapp_firebase/core/widgets/common_input_field.dart';
+import 'package:chatapp_firebase/features/auth_module/signup/bloc/signup_bloc.dart';
+import 'package:chatapp_firebase/features/auth_module/widgets/common_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -67,6 +69,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
               Form(
                 key: _formKey,
+                autovalidateMode: .onUserInteractionIfError,
                 child: Column(
                   children: [
                     CommonInputField(
@@ -78,6 +81,16 @@ class _SignupScreenState extends State<SignupScreen> {
                           RegExp(r'[a-zA-Z\s]'),
                         ),
                       ],
+                      onChanged: (value) {
+                        context.read<SignupBloc>().add(
+                          SignupInputFieldChanged(
+                            name: value,
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            confirmPass: _confirmPassController.text,
+                          ),
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 15),
@@ -86,6 +99,16 @@ class _SignupScreenState extends State<SignupScreen> {
                       labelText: AppStrings.yourEmailLabelText,
                       controller: _emailController,
                       validator: Validators.validateEmail,
+                      onChanged: (value) {
+                        context.read<SignupBloc>().add(
+                          SignupInputFieldChanged(
+                            name: _nameController.text,
+                            email: value,
+                            password: _passwordController.text,
+                            confirmPass: _confirmPassController.text,
+                          ),
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 15),
@@ -94,6 +117,16 @@ class _SignupScreenState extends State<SignupScreen> {
                       labelText: AppStrings.passwordText,
                       controller: _passwordController,
                       validator: Validators.validatePassword,
+                      onChanged: (value) {
+                        context.read<SignupBloc>().add(
+                          SignupInputFieldChanged(
+                            name: _nameController.text,
+                            email: _emailController.text,
+                            password: value,
+                            confirmPass: _confirmPassController.text,
+                          ),
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 15),
@@ -105,6 +138,16 @@ class _SignupScreenState extends State<SignupScreen> {
                         value,
                         _passwordController.text.trim(),
                       ),
+                      onChanged: (value) {
+                        context.read<SignupBloc>().add(
+                          SignupInputFieldChanged(
+                            name: _emailController.text,
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            confirmPass: value,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -112,13 +155,19 @@ class _SignupScreenState extends State<SignupScreen> {
 
               SizedBox(height: MediaQuery.of(context).size.height * 0.15),
 
-              CommonButton(
-                label: AppStrings.createAnAccountText,
-                onPressed: () {
-                  _formKey.currentState?.validate();
+              BlocBuilder<SignupBloc, SignupState>(
+                builder: (context, state) {
+                  return CommonButton(
+                    label: AppStrings.createAnAccountText,
+                    onPressed: state is ButtonEnabled
+                        ? () {
+                            _formKey.currentState?.validate();
+                          }
+                        : null,
+                    backgroundColor: AppColors.green,
+                    textColor: state is ButtonEnabled ? AppColors.white : AppColors.textSecondary,
+                  );
                 },
-                backgroundColor: AppColors.green,
-                textColor: AppColors.white,
               ),
             ],
           ),

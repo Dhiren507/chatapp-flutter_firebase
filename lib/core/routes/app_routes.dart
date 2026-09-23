@@ -1,12 +1,10 @@
 class AppRoutes {
-
   // auth pages routes
   static const String splashScreen = '/';
-  static const String authHomeScreen = '/authMain';
+  static const String onboardingScreen = '/onboarding';
   static const String loginScreen = '/login';
   static const String signUpScreen = '/signup';
 
   // chat screen
-  static const String mainScreen = '/homeScreen';
-
+  static const String mainScreen = '/mainScreen';
 }

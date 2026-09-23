@@ -1,4 +1,5 @@
 import 'package:chatapp_firebase/core/constants/app_assets.dart';
+import 'package:chatapp_firebase/core/routes/app_routes.dart';
 
 class AppStrings {
   static const chatboxText = 'Chatbox';
@@ -31,4 +32,49 @@ class AppStrings {
   static const String yourEmailText = 'Your email';
 
   static const String createAnAccountText = 'Create an account';
+
+  static const String tabBarLabelOne = 'Message';
+  static const String tabBarLabelTwo = 'Calls';
+  static const String tabBarLabelThree = 'Contacts';
+  static const String tabBarLabelFour = 'Settings';
+
+
+  static const List<Map<String, dynamic>> settingsOptions = [
+    {
+      'leadingIcon': AppAssets.keyIcon,
+      'optionText': 'Account',
+      'subtitle' : 'Privacy, security, change number',
+      'navigateTo': ''
+    },
+    {
+    'leadingIcon':AppAssets.messageIcon,
+    'optionText': 'Chat',
+    'subtitle' : 'Privacy, security, change number',
+      'navigateTo': ''
+    },
+    {
+      'leadingIcon':AppAssets.notificationIcon,
+      'optionText': 'Chat',
+      'subtitle' : 'Privacy, security, change number',
+      'navigateTo': ''
+    },
+    {
+      'leadingIcon': AppAssets.helpIcon,
+      'optionText': 'Help ',
+      'subtitle' : 'Privacy, security, change number',
+      'navigateTo': '',
+    },
+    {
+      'leadingIcon':AppAssets.dataIcon,
+      'optionText': 'Storage and data',
+      'subtitle' : 'Privacy, security, change number',
+      'navigateTo': '',
+    },
+    {
+      'leadingIcon':AppAssets.userGroupIcon,
+      'optionText': 'Invite a friend',
+      'subtitle' : '',
+      'navigateTo': '',
+    },
+  ];
 }
