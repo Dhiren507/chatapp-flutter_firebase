@@ -1,11 +1,9 @@
 import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
-import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
+import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
+import 'package:chatapp_firebase/features/contacts_module/widgets/contact_list_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-
-import '../../../core/widgets/common_app_bar_icon.dart';
 
 class ContactListScreen extends StatelessWidget {
   const ContactListScreen({super.key});
@@ -25,7 +23,7 @@ class ContactListScreen extends StatelessWidget {
         centerTitle: true,
         leading: Padding(
           padding: const EdgeInsets.only(left: 24),
-          child: CommonImageContainer(
+          child: CommonSvgContainer(
             iconPath: AppAssets.searchIcon,
             iconSize: 22,
             containerSize: 44,
@@ -33,7 +31,7 @@ class ContactListScreen extends StatelessWidget {
           ),
         ),
         actions: [
-          CommonImageContainer(
+          CommonSvgContainer(
             iconPath: AppAssets.addContactIcon,
             iconSize: 22,
             containerSize: 44,
@@ -86,32 +84,7 @@ class ContactListScreen extends StatelessWidget {
                     child: ListView.separated(
                       padding: EdgeInsets.symmetric(horizontal: 24),
                       itemBuilder: (context, index) {
-                        return Row(
-                          children: [
-                            CommonAvatar(
-                              imgPath: AppAssets.appleIcon,
-                              size: 55,
-                              borderColor: Colors.transparent,
-                            ),
-
-                            const SizedBox(width: 15),
-
-                            Column(
-                              crossAxisAlignment: .start,
-                              children: [
-                                Text(
-                                  'John Abraham',
-                                  style: AppTextStyles.heading(fontSize: 18),
-                                  overflow: .ellipsis,
-                                ),
-                                Text(
-                                  'Life is going good af...',
-                                  style: AppTextStyles.body(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
+                        return ContactListTile();
                       },
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: 20),

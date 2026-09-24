@@ -4,17 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class CommonBackButton extends StatelessWidget {
-  const CommonBackButton({super.key});
+  Color? arrowColor;
+
+  CommonBackButton({super.key, this.arrowColor = AppColors.black});
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
       color: AppColors.textPrimary,
+      padding: EdgeInsets.zero,
+      constraints: BoxConstraints(),
       icon: SvgPicture.asset(
         AppAssets.backArrow,
         height: 16,
         width: 20,
         fit: BoxFit.scaleDown,
+        colorFilter: ColorFilter.mode(arrowColor!, BlendMode.srcIn),
       ),
       onPressed: () {
         Navigator.pop(context);

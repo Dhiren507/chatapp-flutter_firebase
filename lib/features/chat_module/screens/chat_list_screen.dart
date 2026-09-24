@@ -1,10 +1,11 @@
 import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
+import 'package:chatapp_firebase/core/routes/app_routes.dart';
 import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
+import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
+import 'package:chatapp_firebase/features/chat_module/widgets/chat_list_tile.dart';
 import 'package:flutter/material.dart';
-
-import '../../../core/widgets/common_app_bar_icon.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
@@ -24,7 +25,7 @@ class ChatListScreen extends StatelessWidget {
         centerTitle: true,
         leading: Padding(
           padding: const EdgeInsets.only(left: 24),
-          child: CommonImageContainer(
+          child: CommonSvgContainer(
             iconPath: AppAssets.searchIcon,
             iconSize: 22,
             containerSize: 44,
@@ -35,8 +36,9 @@ class ChatListScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
+          // Status Horizontal List
           Padding(
-            padding: const EdgeInsets.only(left: 25, top: 25),
+            padding: const EdgeInsets.only(left: 25, top: 25, bottom: 20),
             child: SizedBox(
               height: 92,
               child: ListView.separated(
@@ -58,7 +60,7 @@ class ChatListScreen extends StatelessWidget {
                             Positioned(
                               bottom: -1,
                               right: 0,
-                              child: CommonImageContainer(
+                              child: CommonSvgContainer(
                                 containerSize: 16,
                                 backgroundColor: AppColors.white,
                                 iconPath: AppAssets.plusIcon,
@@ -102,8 +104,6 @@ class ChatListScreen extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 20),
-
           Expanded(
             child: Container(
               width: double.maxFinite,
@@ -132,71 +132,14 @@ class ChatListScreen extends StatelessWidget {
                     child: ListView.separated(
                       padding: EdgeInsets.symmetric(horizontal: 24),
                       itemBuilder: (context, index) {
-                        return Row(
-                          children: [
-                            Stack(
-                              clipBehavior: .none,
-                              children: [
-                                CommonAvatar(
-                                  imgPath: AppAssets.appleIcon,
-                                  size: 55,
-                                  borderColor: Colors.transparent,
-                                ),
-                                Positioned(
-                                  bottom: -0,
-                                  right: 5,
-                                  child: Container(
-                                    height: 10,
-                                    width: 10,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.activeGreen,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(width: 15),
-
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: .start,
-                                children: [
-                                  Text(
-                                    'Alex Linderson no way home how are you doing this lol',
-                                    style: AppTextStyles.heading(fontSize: 20),
-                                    overflow: .ellipsis,
-                                  ),
-                                  Text(
-                                    'Hellow how are you doing this no way home how are you freaking doing this lol',
-                                    style: AppTextStyles.body(fontSize: 12),
-                                    overflow: .ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            Column(
-                              crossAxisAlignment: .end,
-                              children: [
-                                Text('2 min ago', style: AppTextStyles.body()),
-                                Container(
-                                  height: 22,
-                                  width: 22,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.bgError,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Text(
-                                    '3',
-                                    style: AppTextStyles.body(fontSize: 12, color: AppColors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.chatDetailScreen,
+                            );
+                          },
+                          child: ChatListTile(),
                         );
                       },
                       separatorBuilder: (context, index) =>
@@ -212,7 +155,9 @@ class ChatListScreen extends StatelessWidget {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushNamed(context, AppRoutes.crateGroupScreen);
+        },
         backgroundColor: AppColors.green,
         child: const Icon(Icons.add, color: AppColors.white),
       ),

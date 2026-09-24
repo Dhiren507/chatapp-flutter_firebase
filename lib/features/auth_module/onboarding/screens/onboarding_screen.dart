@@ -170,7 +170,7 @@ class OnboardingScreen extends StatelessWidget {
 
               const OrDivider(),
 
-              const SizedBox(height: 25),
+              const SizedBox(height: 35),
 
               CommonButton(
                 label: AppStrings.signUpWithEmailText,
@@ -179,7 +179,7 @@ class OnboardingScreen extends StatelessWidget {
                 },
               ),
 
-              const SizedBox(height: 15),
+              const SizedBox(height: 50),
 
               Row(
                 mainAxisAlignment: .center,
@@ -199,6 +199,8 @@ class OnboardingScreen extends StatelessWidget {
                   ),
                 ],
               ),
+
+              const SizedBox(height: 20),
             ],
           ),
         ),

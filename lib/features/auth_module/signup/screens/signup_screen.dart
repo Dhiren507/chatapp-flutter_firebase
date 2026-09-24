@@ -165,7 +165,9 @@ class _SignupScreenState extends State<SignupScreen> {
                           }
                         : null,
                     backgroundColor: AppColors.green,
-                    textColor: state is ButtonEnabled ? AppColors.white : AppColors.textSecondary,
+                    textColor: state is ButtonEnabled
+                        ? AppColors.white
+                        : AppColors.textSecondary,
                   );
                 },
               ),

@@ -13,22 +13,29 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Chat App',
-      initialRoute: AppRoutes.mainScreen,
-      onGenerateRoute: RouteGenerator.generateRoute,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        dividerTheme: DividerThemeData(
-          color: AppColors.dividerColor,
-          thickness: 1
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: MaterialApp(
+        title: 'Chat App',
+        initialRoute: AppRoutes.mainScreen,
+        onGenerateRoute: RouteGenerator.generateRoute,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          useMaterial3: true,
+          dividerTheme: DividerThemeData(
+            color: AppColors.dividerColor,
+            thickness: 1
+          ),
+          appBarTheme: AppBarTheme(
+            surfaceTintColor: Colors.transparent,
+          ),
+          splashColor: Colors.transparent,
+          splashFactory:NoSplash.splashFactory,
+          highlightColor: Colors.transparent
         ),
-        appBarTheme: AppBarTheme(
-          surfaceTintColor: Colors.transparent,
-        ),
-        splashColor: Colors.transparent,
-        splashFactory:NoSplash.splashFactory
       ),
     );
   }

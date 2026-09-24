@@ -7,4 +7,8 @@ class AppRoutes {
 
   // chat screen
   static const String mainScreen = '/mainScreen';
+  static const String profileScreen = '/profile';
+  static const String chatDetailScreen = '/chatDetail';
+  static const String searchScreen = 'search';
+  static const String crateGroupScreen = '/createGroup';
 }

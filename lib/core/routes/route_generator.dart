@@ -1,6 +1,10 @@
 import 'package:chatapp_firebase/features/auth_module/login/bloc/login_bloc.dart';
 import 'package:chatapp_firebase/features/auth_module/onboarding/screens/onboarding_screen.dart';
 import 'package:chatapp_firebase/features/auth_module/splash/screens/splash_screen.dart';
+import 'package:chatapp_firebase/features/chat_module/screens/chat_detail_screen.dart';
+import 'package:chatapp_firebase/features/group_module/create_group/screens/create_group_screen.dart';
+import 'package:chatapp_firebase/features/profile_module/user_profile_screen.dart';
+import 'package:chatapp_firebase/features/search/screens/search_screen.dart';
 import 'package:chatapp_firebase/features/tab_bar/cubit/tab_bar_index_cubit.dart';
 import 'package:chatapp_firebase/features/tab_bar/screens/tab_bar_base_screen.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +47,18 @@ class RouteGenerator {
             child: const TabBarBaseScreen(),
           ),
         );
+
+      case AppRoutes.profileScreen:
+        return MaterialPageRoute(builder: (context) => UserProfileScreen());
+
+      case AppRoutes.chatDetailScreen:
+        return MaterialPageRoute(builder: (context) => ChatDetailScreen());
+
+      case AppRoutes.searchScreen:
+        return MaterialPageRoute(builder: (context) => SearchScreen());
+
+      case AppRoutes.crateGroupScreen:
+        return MaterialPageRoute(builder: (context) => CreateGroupScreen());
 
       default:
         return MaterialPageRoute(

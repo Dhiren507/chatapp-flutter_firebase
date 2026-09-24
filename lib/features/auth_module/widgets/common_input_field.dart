@@ -22,7 +22,7 @@ class CommonInputField extends StatelessWidget {
     this.inputFormatters,
     this.validator,
     this.isPasswordField,
-    this.onChanged
+    this.onChanged,
   });
 
   @override

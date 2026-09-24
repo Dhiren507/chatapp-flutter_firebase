@@ -178,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     textColor: state is ButtonEnabled
                         ? AppColors.white
                         : AppColors.textSecondary,
-                    );
+                  );
                 },
               ),
 

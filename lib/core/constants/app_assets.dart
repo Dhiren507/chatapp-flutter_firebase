@@ -32,4 +32,19 @@ class AppAssets {
   static const String helpIcon = '$_imagesPath/Help.svg';
   static const String dataIcon = '$_imagesPath/Data.svg';
   static const String userGroupIcon = '$_imagesPath/user-group.svg';
+
+  static const String horizontalMoreIcon = '$_imagesPath/horizontal-more.svg';
+  static const String removeIcon = '$_imagesPath/remove.svg';
+
+  static const String messageSendIcon = '$_imagesPath/send-airplane.svg';
+  static const String attachmentIcon = '$_imagesPath/add-attachment.svg';
+  static const String filesIcon = '$_imagesPath/files.svg';
+  static const String cameraOpenIcon = '$_imagesPath/camera-photo.svg';
+  static const String recordAudioIcon = '$_imagesPath/microphone.svg';
+
+  static const String documentIcon = '$_imagesPath/doc.svg';
+  static const String locationMarkIcon = '$_imagesPath/location-mark.svg';
+  static const String networkIcon = '$_imagesPath/Chart.svg';
+  static const String mediaImageIcon = '$_imagesPath/media.svg';
+
 }

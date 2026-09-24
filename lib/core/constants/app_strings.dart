@@ -1,5 +1,4 @@
 import 'package:chatapp_firebase/core/constants/app_assets.dart';
-import 'package:chatapp_firebase/core/routes/app_routes.dart';
 
 class AppStrings {
   static const chatboxText = 'Chatbox';
@@ -49,25 +48,25 @@ class AppStrings {
     {
     'leadingIcon':AppAssets.messageIcon,
     'optionText': 'Chat',
-    'subtitle' : 'Privacy, security, change number',
+    'subtitle' : 'Chat history,theme,wallpapers',
       'navigateTo': ''
     },
     {
       'leadingIcon':AppAssets.notificationIcon,
-      'optionText': 'Chat',
-      'subtitle' : 'Privacy, security, change number',
+      'optionText': 'Notifications',
+      'subtitle' : 'Messages, group and others',
       'navigateTo': ''
     },
     {
       'leadingIcon': AppAssets.helpIcon,
       'optionText': 'Help ',
-      'subtitle' : 'Privacy, security, change number',
+      'subtitle' : 'Help center,contact us, privacy policy',
       'navigateTo': '',
     },
     {
       'leadingIcon':AppAssets.dataIcon,
       'optionText': 'Storage and data',
-      'subtitle' : 'Privacy, security, change number',
+      'subtitle' : 'Network usage, storage usage',
       'navigateTo': '',
     },
     {
