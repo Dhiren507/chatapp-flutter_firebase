@@ -41,12 +41,7 @@ class _TabBarBaseScreenState extends State<TabBarBaseScreen>
   Widget build(BuildContext context) {
     final activeIndex = context.watch<TabBarIndexCubit>().state;
 
-    if (_tabController.index != activeIndex) {
-      _tabController.animateTo(activeIndex);
-    }
-
     return Scaffold(
-      backgroundColor: AppColors.black,
       bottomNavigationBar: SafeArea(
         child: Container(
           color: AppColors.white,

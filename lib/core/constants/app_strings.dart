@@ -76,4 +76,48 @@ class AppStrings {
       'navigateTo': '',
     },
   ];
+
+  // ── Chat List Screen ──────────────────────────────────────────────────────
+  static const String chatListScreenTitle = 'Home';
+  static const String myStatusText = 'My status';
+
+  // ── Chat Detail Screen ────────────────────────────────────────────────────
+  static const String chatMessageHintText = 'Type your message here...';
+  static const String shareContentTitle = 'Share Content';
+  static const String attachmentCameraText = 'Camera';
+  static const String attachmentDocumentText = 'Document';
+  static const String attachmentDocumentSubtitle = 'Share your files';
+  static const String attachmentPollText = 'Create a poll';
+  static const String attachmentPollSubtitle = 'Create a poll for any query';
+  static const String attachmentMediaText = 'Media';
+  static const String attachmentMediaSubtitle = 'Share photos and videos';
+  static const String attachmentContactText = 'Contact';
+  static const String attachmentContactSubtitle = 'Share your Contacts';
+  static const String attachmentLocationText = 'Location';
+  static const String attachmentLocationSubtitle = 'Share your location';
+
+  // ── Call List Screen ──────────────────────────────────────────────────────
+  static const String callsScreenTitle = 'Calls';
+  static const String callsRecentSectionTitle = 'Recent';
+
+  // ── Search Screen ─────────────────────────────────────────────────────────
+  static const String searchScreenTitle = 'Search';
+  static const String searchHintText = 'Search....';
+  static const String searchPeopleSectionTitle = 'People';
+
+  // ── Create Group Screen ───────────────────────────────────────────────────
+  static const String createGroupScreenTitle = 'Create Group';
+  static const String createGroupDescriptionLabel = 'Group Description';
+  static const String createGroupTitleHintText = 'Enter your group title in here.....';
+  static const String createGroupAdminLabel = 'Group Admin';
+  static const String createGroupAdminRoleText = 'Group Admin';
+  static const String createGroupInvitedMembersLabel = 'Invited Members';
+  static const String createGroupButtonText = 'Create';
+
+  // ── Settings Screen ───────────────────────────────────────────────────────
+  static const String settingsScreenTitle = 'Settings';
+
+  // ── Profile Screen ────────────────────────────────────────────────────────
+  static const String profileMediaSharedText = 'Media Shared';
+  static const String profileViewAllText = 'View All';
 }

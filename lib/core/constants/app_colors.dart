@@ -25,5 +25,11 @@ class AppColors {
   static const Color dividerColor = Color(0xFFCDD1D0);
   static const Color dividerText = Color(0xFFD6E4E0);
   static const Color mutedGrey = Color(0xFFE6E6E6);
-  static const colorMutedGreyDark = Color(0xFF989E9C);
+  static const Color colorMutedGreyDark = Color(0xFF989E9C);
+
+  /// Transparent tinted green — used as chip/tag background
+  static final Color bgGreenLight = const Color(0xFF20A090).withAlpha(20);
+
+  /// Border color for dotted borders (add-member circle, etc.)
+  static const Color dottedBorderGrey = Color(0xFFCFD3D2);
 }

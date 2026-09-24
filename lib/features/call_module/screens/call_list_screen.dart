@@ -1,5 +1,6 @@
 import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
+import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
 import 'package:chatapp_firebase/features/call_module/widgets/call_list_tile.dart';
@@ -11,13 +12,13 @@ class CallListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.black,
       appBar: AppBar(
         actionsPadding: EdgeInsets.only(right: 24),
         leadingWidth: 65,
         backgroundColor: Colors.transparent,
         title: Text(
-          'Calls',
+          AppStrings.callsScreenTitle,
           style: AppTextStyles.heading(fontSize: 20, color: AppColors.white),
         ),
         centerTitle: true,
@@ -28,6 +29,7 @@ class CallListScreen extends StatelessWidget {
             iconSize: 22,
             containerSize: 44,
             iconColor: AppColors.white,
+            borderColor: AppColors.borderGrey,
           ),
         ),
         actions: [
@@ -36,6 +38,7 @@ class CallListScreen extends StatelessWidget {
             iconSize: 22,
             containerSize: 44,
             iconColor: AppColors.white,
+            borderColor: AppColors.borderGrey,
           ),
         ],
       ),
@@ -72,7 +75,7 @@ class CallListScreen extends StatelessWidget {
                     child: Align(
                       alignment: AlignmentGeometry.topLeft,
                       child: Text(
-                        'Recent',
+                        AppStrings.callsRecentSectionTitle,
                         style: AppTextStyles.heading(fontSize: 18),
                       ),
                     ),

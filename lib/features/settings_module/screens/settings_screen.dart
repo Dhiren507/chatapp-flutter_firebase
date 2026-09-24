@@ -16,13 +16,13 @@ class SettingsScreen extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.black,
         appBar: AppBar(
           actionsPadding: EdgeInsets.only(right: 24),
           leadingWidth: 65,
           backgroundColor: Colors.transparent,
           title: Text(
-            'Settings',
+            AppStrings.settingsScreenTitle,
             style: AppTextStyles.heading(fontSize: 20, color: AppColors.white),
           ),
           centerTitle: true,

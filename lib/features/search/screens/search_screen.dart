@@ -1,5 +1,6 @@
 import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
+import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
 import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
@@ -14,12 +15,12 @@ class SearchScreen extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         appBar: AppBar(
           leading: CommonBackButton(),
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.white,
           title: Text(
-            'Search',
+            AppStrings.searchScreenTitle,
             style: AppTextStyles.heading(fontSize: 20, color: AppColors.black),
           ),
           centerTitle: true,
@@ -57,7 +58,7 @@ class SearchScreen extends StatelessWidget {
                     onPressed: () {},
                     icon: Icon(Icons.close, color: AppColors.textPrimary),
                   ),
-                  hintText: 'Search....',
+                  hintText: AppStrings.searchHintText,
                   hintStyle: AppTextStyles.body(
                     fontWeight: FontWeight.w400,
                     fontSize: 14,
@@ -72,7 +73,7 @@ class SearchScreen extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              Text('People', style: AppTextStyles.heading()),
+              Text(AppStrings.searchPeopleSectionTitle, style: AppTextStyles.heading()),
 
               const SizedBox(height: 16),
 

@@ -1,4 +1,5 @@
 import 'package:chatapp_firebase/core/constants/app_assets.dart';
+import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
 import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
@@ -100,7 +101,7 @@ class ChatDetailScreen extends StatelessWidget {
                                         child: Align(
                                           alignment: .topCenter,
                                           child: Text(
-                                            'Share Content',
+                                            AppStrings.shareContentTitle,
                                             style: AppTextStyles.heading(),
                                           ),
                                         ),
@@ -118,46 +119,42 @@ class ChatDetailScreen extends StatelessWidget {
                                     children: [
                                       AttachmentOptionTile(
                                         iconPath: AppAssets.cameraOpenIcon,
-                                        attachmentOption: 'Camera',
+                                        attachmentOption: AppStrings.attachmentCameraText,
                                         onPressed: () {},
                                       ),
                                       const Divider(indent: 50, height: 20),
                                       AttachmentOptionTile(
                                         iconPath: AppAssets.documentIcon,
-                                        attachmentOption: 'Document',
-                                        attachmentSubtitle: 'Share your files',
+                                        attachmentOption: AppStrings.attachmentDocumentText,
+                                        attachmentSubtitle: AppStrings.attachmentDocumentSubtitle,
                                         onPressed: () {},
                                       ),
                                       const Divider(indent: 50, height: 20),
                                       AttachmentOptionTile(
                                         iconPath: AppAssets.networkIcon,
-                                        attachmentOption: 'Create a poll',
-                                        attachmentSubtitle:
-                                            'Create a poll for any query',
+                                        attachmentOption: AppStrings.attachmentPollText,
+                                        attachmentSubtitle: AppStrings.attachmentPollSubtitle,
                                         onPressed: () {},
                                       ),
                                       const Divider(indent: 50, height: 20),
                                       AttachmentOptionTile(
                                         iconPath: AppAssets.mediaImageIcon,
-                                        attachmentOption: 'Media',
-                                        attachmentSubtitle:
-                                            'Share photos and videos',
+                                        attachmentOption: AppStrings.attachmentMediaText,
+                                        attachmentSubtitle: AppStrings.attachmentMediaSubtitle,
                                         onPressed: () {},
                                       ),
                                       const Divider(indent: 50, height: 20),
                                       AttachmentOptionTile(
                                         iconPath: AppAssets.contactIcon,
-                                        attachmentOption: 'Contact',
-                                        attachmentSubtitle:
-                                            'Share your Contacts',
+                                        attachmentOption: AppStrings.attachmentContactText,
+                                        attachmentSubtitle: AppStrings.attachmentContactSubtitle,
                                         onPressed: () {},
                                       ),
                                       const Divider(indent: 50, height: 20),
                                       AttachmentOptionTile(
                                         iconPath: AppAssets.locationMarkIcon,
-                                        attachmentOption: 'Location',
-                                        attachmentSubtitle:
-                                            'Share your location',
+                                        attachmentOption: AppStrings.attachmentLocationText,
+                                        attachmentSubtitle: AppStrings.attachmentLocationSubtitle,
                                         onPressed: () {},
                                       ),
                                     ],
@@ -186,7 +183,7 @@ class ChatDetailScreen extends StatelessWidget {
                           vertical: 8,
                         ),
                         isDense: true,
-                        hintText: 'Type your message here...',
+                        hintText: AppStrings.chatMessageHintText,
                         hintStyle: AppTextStyles.body(
                           fontWeight: .w400,
                           fontSize: 14,

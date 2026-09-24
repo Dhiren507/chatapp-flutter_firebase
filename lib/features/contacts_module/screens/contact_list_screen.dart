@@ -11,7 +11,7 @@ class ContactListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.black,
       appBar: AppBar(
         actionsPadding: EdgeInsets.only(right: 24),
         leadingWidth: 65,
@@ -28,6 +28,7 @@ class ContactListScreen extends StatelessWidget {
             iconSize: 22,
             containerSize: 44,
             iconColor: AppColors.white,
+            borderColor: AppColors.borderGrey,
           ),
         ),
         actions: [
@@ -36,6 +37,7 @@ class ContactListScreen extends StatelessWidget {
             iconSize: 22,
             containerSize: 44,
             iconColor: AppColors.white,
+            borderColor: AppColors.borderGrey,
           ),
         ],
       ),
