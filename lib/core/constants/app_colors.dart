@@ -27,9 +27,10 @@ class AppColors {
   static const Color mutedGrey = Color(0xFFE6E6E6);
   static const Color colorMutedGreyDark = Color(0xFF989E9C);
 
-  /// Transparent tinted green — used as chip/tag background
   static final Color bgGreenLight = const Color(0xFF20A090).withAlpha(20);
 
-  /// Border color for dotted borders (add-member circle, etc.)
   static const Color dottedBorderGrey = Color(0xFFCFD3D2);
+
+  static const Color senderChatBubbleBg = Color(0xFFF2F7FB);
+
 }

@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:chatapp_firebase/core/widgets/common_button.dart';
 import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/routes/app_routes.dart';
+import 'package:chatapp_firebase/core/widgets/common_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';

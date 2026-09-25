@@ -1,9 +1,9 @@
-import 'package:chatapp_firebase/core/utils/validators.dart';
-import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
-import 'package:chatapp_firebase/core/widgets/common_button.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
+import 'package:chatapp_firebase/core/utils/validators.dart';
+import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
+import 'package:chatapp_firebase/core/widgets/common_button.dart';
 import 'package:chatapp_firebase/features/auth_module/signup/bloc/signup_bloc.dart';
 import 'package:chatapp_firebase/features/auth_module/widgets/common_input_field.dart';
 import 'package:flutter/material.dart';
@@ -26,11 +26,11 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPassController.dispose();
+    super.dispose();
   }
 
   @override

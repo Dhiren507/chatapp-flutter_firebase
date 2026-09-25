@@ -73,7 +73,10 @@ class SearchScreen extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              Text(AppStrings.searchPeopleSectionTitle, style: AppTextStyles.heading()),
+              Text(
+                AppStrings.searchPeopleSectionTitle,
+                style: AppTextStyles.heading(),
+              ),
 
               const SizedBox(height: 16),
 

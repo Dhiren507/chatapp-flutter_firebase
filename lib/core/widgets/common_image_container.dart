@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 class CommonImageContainer extends StatelessWidget {
-  String imgUrl;
-  Color? borderColor;
-  double size;
+  final String imgUrl;
+  final double borderRadius;
+  final double size;
 
-  CommonImageContainer({
+  const CommonImageContainer({
     super.key,
     required this.imgUrl,
     this.size = 92,
-    this.borderColor,
+    this.borderRadius = 16,
   });
 
   @override
@@ -18,7 +18,7 @@ class CommonImageContainer extends StatelessWidget {
       height: size,
       width: size,
       child: ClipRRect(
-        borderRadius: BorderRadiusGeometry.circular(16),
+        borderRadius: BorderRadiusGeometry.circular(borderRadius),
         child: Image.network(imgUrl),
       ),
     );

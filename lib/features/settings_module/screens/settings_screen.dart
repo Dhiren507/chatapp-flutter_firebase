@@ -4,9 +4,9 @@ import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
+import 'package:chatapp_firebase/core/widgets/pressable_option_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -34,7 +34,7 @@ class SettingsScreen extends StatelessWidget {
         body: Column(
           children: [
             const SizedBox(height: 20),
-      
+
             Expanded(
               child: Container(
                 width: double.maxFinite,
@@ -56,9 +56,9 @@ class SettingsScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-      
+
                     const SizedBox(height: 15),
-      
+
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Row(
@@ -68,9 +68,9 @@ class SettingsScreen extends StatelessWidget {
                             size: 60,
                             borderColor: Colors.transparent,
                           ),
-      
+
                           const SizedBox(width: 15),
-      
+
                           Column(
                             crossAxisAlignment: .start,
                             children: [
@@ -85,16 +85,16 @@ class SettingsScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-      
+
                           const Spacer(),
-      
+
                           SvgPicture.asset(AppAssets.qrCodeIcon),
                         ],
                       ),
                     ),
-      
+
                     Divider(),
-      
+
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -106,46 +106,16 @@ class SettingsScreen extends StatelessWidget {
                           physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
                             final option = AppStrings.settingsOptions[index];
-                            return GestureDetector(
-                              onTap: () {
+                            return PressableOptionTile(
+                              iconPath: option['leadingIcon'],
+                              optionTitle: option['optionText'],
+                              optionDescription: option['subtitle'],
+                              onPressed: () {
                                 Navigator.pushNamed(
                                   context,
                                   option['navigateTo'],
                                 );
                               },
-                              child: Row(
-                                children: [
-                                  Container(
-                                    height: 44,
-                                    width: 44,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.bgGrey,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: SvgPicture.asset(
-                                      option['leadingIcon'],
-                                      height: 16,
-                                      width: 16,
-                                      fit: BoxFit.scaleDown,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Column(
-                                    crossAxisAlignment: .start,
-                                    children: [
-                                      Text(
-                                        option['optionText'],
-                                        style: AppTextStyles.heading(),
-                                      ),
-                                      if (option['subtitle'] != '')
-                                        Text(
-                                          option['subtitle'],
-                                          style: AppTextStyles.body(),
-                                        ),
-                                    ],
-                                  ),
-                                ],
-                              ),
                             );
                           },
                           separatorBuilder: (context, index) =>

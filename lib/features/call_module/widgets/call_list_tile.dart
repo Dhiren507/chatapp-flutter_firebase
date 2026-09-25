@@ -13,27 +13,10 @@ class CallListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Stack(
-          clipBehavior: .none,
-          children: [
-            CommonAvatar(
-              imgPath: AppAssets.appleIcon,
-              size: 55,
-              borderColor: Colors.transparent,
-            ),
-            Positioned(
-              bottom: -0,
-              right: 5,
-              child: Container(
-                height: 10,
-                width: 10,
-                decoration: BoxDecoration(
-                  color: AppColors.activeGreen,
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-          ],
+        CommonAvatar(
+          imgPath: AppAssets.appleIcon,
+          size: 55,
+          borderColor: Colors.transparent,
         ),
 
         const SizedBox(width: 15),

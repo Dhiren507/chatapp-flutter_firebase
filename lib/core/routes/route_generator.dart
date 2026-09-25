@@ -5,6 +5,7 @@ import 'package:chatapp_firebase/features/chat_module/screens/chat_detail_screen
 import 'package:chatapp_firebase/features/group_module/create_group/screens/create_group_screen.dart';
 import 'package:chatapp_firebase/features/profile_module/user_profile_screen.dart';
 import 'package:chatapp_firebase/features/search/screens/search_screen.dart';
+import 'package:chatapp_firebase/features/status_module/screens/status_preview_screen.dart';
 import 'package:chatapp_firebase/features/tab_bar/cubit/tab_bar_index_cubit.dart';
 import 'package:chatapp_firebase/features/tab_bar/screens/tab_bar_base_screen.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../features/auth_module/login/screens/login_screen.dart';
 import '../../features/auth_module/signup/bloc/signup_bloc.dart';
 import '../../features/auth_module/signup/screens/signup_screen.dart';
+import '../../features/status_module/screens/status_view_screen.dart';
 import 'app_routes.dart';
 
 class RouteGenerator {
@@ -59,6 +61,17 @@ class RouteGenerator {
 
       case AppRoutes.crateGroupScreen:
         return MaterialPageRoute(builder: (context) => CreateGroupScreen());
+
+      case AppRoutes.statusPreviewScreen:
+        return MaterialPageRoute(
+          builder: (context) => StatusPreviewScreen(),
+          settings: settings,
+        );
+
+      case AppRoutes.statusViewScreen:
+        return MaterialPageRoute(
+          builder: (context) => StatusViewScreen(),
+        );
 
       default:
         return MaterialPageRoute(

@@ -57,7 +57,7 @@ class _TabBarBaseScreenState extends State<TabBarBaseScreen>
                 dividerColor: Colors.transparent,
                 labelStyle: AppTextStyles.heading(),
                 indicator: BoxDecoration(color: Colors.transparent),
-                splashFactory:NoSplash.splashFactory,
+                splashFactory: NoSplash.splashFactory,
                 tabs: [
                   Tab(
                     icon: SvgPicture.asset(

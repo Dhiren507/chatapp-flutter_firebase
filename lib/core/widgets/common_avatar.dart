@@ -2,15 +2,15 @@ import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CommonAvatar extends StatelessWidget {
-  String imgPath;
-  Color? borderColor;
-  double size;
+  final String imgPath;
+  final Color? borderColor;
+  final double size;
 
-  CommonAvatar({
+  const CommonAvatar({
     super.key,
     required this.imgPath,
     this.size = 44,
-    this.borderColor,
+    this.borderColor = AppColors.borderGrey,
   });
 
   @override

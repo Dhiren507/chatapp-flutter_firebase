@@ -1,11 +1,14 @@
 import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
+import 'package:chatapp_firebase/core/utils/image_picker_utils.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
+import 'package:chatapp_firebase/core/widgets/common_bottom_sheet.dart';
 import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
-import 'package:chatapp_firebase/features/chat_module/widgets/attachment_option_tile.dart';
+import 'package:chatapp_firebase/features/chat_module/widgets/chat_bubble.dart';
 import 'package:chatapp_firebase/features/chat_module/widgets/chat_header.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/app_routes.dart';
@@ -49,163 +52,107 @@ class ChatDetailScreen extends StatelessWidget {
       ),
       body: SafeArea(
         bottom: true,
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  return ListTile(title: Text('Hello World this is message!!'));
-                },
-                itemCount: 100,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.separated(
+                  itemBuilder: (context, index) {
+                    bool isMe = index % 2 == 0;
+                    return ChatBubble(
+                      isMe: isMe,
+                      mediaType: 'image',
+                      mediaUrls: ['', '', '', '', '', '', '', '', ''],
+                      messageText: 'hi',
+                    );
+                  },
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 20),
+                  itemCount: 100,
+                ),
               ),
-            ),
 
-            Padding(
-              padding: EdgeInsetsGeometry.symmetric(
-                horizontal: 24,
-                vertical: 12,
-              ),
-              child: Row(
-                spacing: 10,
-                children: [
-                  CommonSvgContainer(
-                    containerSize: 24,
-                    iconPath: AppAssets.attachmentIcon,
-                    onClick: () {
-                      showModalBottomSheet(
-                        backgroundColor: AppColors.white,
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return SafeArea(
-                            bottom: true,
-                            child: Column(
-                              mainAxisSize: .min,
-                              children: [
-                                SizedBox(height: 15),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  spacing: 10,
+                  children: [
+                    CommonSvgContainer(
+                      containerSize: 24,
+                      iconPath: AppAssets.attachmentIcon,
+                      onClick: () async {
+                        List<XFile> selectedAttachment =
+                            await showModalBottomSheet(
+                              backgroundColor: AppColors.white,
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (context) {
+                                return CommonBottomSheet(
+                                  onMediaPressed: () async {
+                                    List<XFile> selectedStatusImage =
+                                        await ImagePickerUtils.pickImage(
+                                          isMultiSelect: true,
+                                        );
+                                    if (context.mounted) {
+                                      Navigator.pop(
+                                        context,
+                                        selectedStatusImage,
+                                      );
+                                    }
+                                  },
+                                );
+                              },
+                            );
 
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment: .center,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Icon(Icons.close),
-                                      ),
-                                      Expanded(
-                                        child: Align(
-                                          alignment: .topCenter,
-                                          child: Text(
-                                            AppStrings.shareContentTitle,
-                                            style: AppTextStyles.heading(),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 24,
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      AttachmentOptionTile(
-                                        iconPath: AppAssets.cameraOpenIcon,
-                                        attachmentOption: AppStrings.attachmentCameraText,
-                                        onPressed: () {},
-                                      ),
-                                      const Divider(indent: 50, height: 20),
-                                      AttachmentOptionTile(
-                                        iconPath: AppAssets.documentIcon,
-                                        attachmentOption: AppStrings.attachmentDocumentText,
-                                        attachmentSubtitle: AppStrings.attachmentDocumentSubtitle,
-                                        onPressed: () {},
-                                      ),
-                                      const Divider(indent: 50, height: 20),
-                                      AttachmentOptionTile(
-                                        iconPath: AppAssets.networkIcon,
-                                        attachmentOption: AppStrings.attachmentPollText,
-                                        attachmentSubtitle: AppStrings.attachmentPollSubtitle,
-                                        onPressed: () {},
-                                      ),
-                                      const Divider(indent: 50, height: 20),
-                                      AttachmentOptionTile(
-                                        iconPath: AppAssets.mediaImageIcon,
-                                        attachmentOption: AppStrings.attachmentMediaText,
-                                        attachmentSubtitle: AppStrings.attachmentMediaSubtitle,
-                                        onPressed: () {},
-                                      ),
-                                      const Divider(indent: 50, height: 20),
-                                      AttachmentOptionTile(
-                                        iconPath: AppAssets.contactIcon,
-                                        attachmentOption: AppStrings.attachmentContactText,
-                                        attachmentSubtitle: AppStrings.attachmentContactSubtitle,
-                                        onPressed: () {},
-                                      ),
-                                      const Divider(indent: 50, height: 20),
-                                      AttachmentOptionTile(
-                                        iconPath: AppAssets.locationMarkIcon,
-                                        attachmentOption: AppStrings.attachmentLocationText,
-                                        attachmentSubtitle: AppStrings.attachmentLocationSubtitle,
-                                        onPressed: () {},
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                        if (selectedAttachment != null &&
+                            selectedAttachment.isNotEmpty) {
+                          print(
+                            'this is an attachment selected in chat screen${selectedAttachment[0].name}',
                           );
-                        },
-                      );
-                    },
-                  ),
-                  Expanded(
-                    child: TextField(
-                      keyboardType: .multiline,
-                      style: AppTextStyles.body(
-                        fontWeight: .w500,
-                        fontSize: 14,
-                        color: AppColors.textPrimary,
-                      ),
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: AppColors.bgDisables,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        isDense: true,
-                        hintText: AppStrings.chatMessageHintText,
-                        hintStyle: AppTextStyles.body(
-                          fontWeight: .w400,
+                        }
+                      },
+                    ),
+                    Expanded(
+                      child: TextField(
+                        keyboardType: .multiline,
+                        style: AppTextStyles.body(
+                          fontWeight: .w500,
                           fontSize: 14,
-                          color: AppColors.textSecondary,
+                          color: AppColors.textPrimary,
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: AppColors.bgDisables,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          isDense: true,
+                          hintText: AppStrings.chatMessageHintText,
+                          hintStyle: AppTextStyles.body(
+                            fontWeight: .w400,
+                            fontSize: 14,
+                            color: AppColors.textSecondary,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  CommonSvgContainer(
-                    containerSize: 42,
-                    iconPath: AppAssets.messageSendIcon,
-                    iconColor: AppColors.white,
-                    backgroundColor: AppColors.bgGreen,
-                  ),
-                ],
+                    CommonSvgContainer(
+                      containerSize: 42,
+                      iconPath: AppAssets.messageSendIcon,
+                      iconColor: AppColors.white,
+                      backgroundColor: AppColors.bgGreen,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -3,10 +3,13 @@ import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/routes/app_routes.dart';
+import 'package:chatapp_firebase/core/utils/image_picker_utils.dart';
 import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
+import 'package:chatapp_firebase/core/widgets/common_bottom_sheet.dart';
 import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
 import 'package:chatapp_firebase/features/chat_module/widgets/chat_list_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
@@ -62,10 +65,66 @@ class ChatListScreen extends StatelessWidget {
                             Positioned(
                               bottom: -1,
                               right: 0,
-                              child: CommonSvgContainer(
-                                containerSize: 16,
-                                backgroundColor: AppColors.white,
-                                iconPath: AppAssets.plusIcon,
+                              child: GestureDetector(
+                                onTap: () async {
+                                  List<XFile>?
+                                  statusImages = await showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return CommonBottomSheet(
+                                        isStatusScreen: true,
+                                        onMediaPressed: () async {
+                                          List<XFile> selectedStatusImage =
+                                              await ImagePickerUtils.pickImage(
+                                                isMultiSelect: false,
+                                              );
+                                          if (context.mounted) {
+                                            Navigator.pop(
+                                              context,
+                                              selectedStatusImage,
+                                            );
+                                          }
+                                        },
+                                        onCameraPressed: () async {
+                                          XFile? capturedImage =
+                                              await ImagePickerUtils.captureImage();
+
+                                          if (!context.mounted) return;
+
+                                          if (capturedImage != null) {
+                                            print(
+                                              'this is an captured image from camera' +
+                                                  capturedImage.name,
+                                            );
+                                            Navigator.pop(context, <XFile>[
+                                              capturedImage,
+                                            ]);
+                                          }
+                                        },
+                                      );
+                                    },
+                                  );
+
+                                  if (!context.mounted) return;
+
+                                  if (statusImages != null &&
+                                      statusImages.isNotEmpty) {
+                                    XFile? statusImage = statusImages[0];
+
+                                    print(statusImage.name);
+
+                                    Navigator.pushNamed(
+                                      context,
+                                      AppRoutes.statusPreviewScreen,
+                                      arguments: statusImage,
+                                    );
+                                  }
+                                },
+                                child: CommonSvgContainer(
+                                  containerSize: 16,
+                                  backgroundColor: AppColors.white,
+                                  iconPath: AppAssets.plusIcon,
+                                ),
                               ),
                             ),
                           ],
@@ -84,10 +143,18 @@ class ChatListScreen extends StatelessWidget {
                   return Column(
                     spacing: 10,
                     children: [
-                      CommonAvatar(
-                        imgPath: AppAssets.appleIcon,
-                        size: 58,
-                        borderColor: AppColors.highlightYellow,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.statusViewScreen,
+                          );
+                        },
+                        child: CommonAvatar(
+                          imgPath: AppAssets.appleIcon,
+                          size: 58,
+                          borderColor: AppColors.highlightYellow,
+                        ),
                       ),
                       Text(
                         'Hellow',

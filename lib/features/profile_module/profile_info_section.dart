@@ -18,7 +18,10 @@ class ProfileInfoSection extends StatelessWidget {
       spacing: 5,
       children: [
         Text(sectionTitle, style: AppTextStyles.body()),
-        Text(sectionValue, style: AppTextStyles.heading(fontSize: 18,fontFamily: '')),
+        Text(
+          sectionValue,
+          style: AppTextStyles.heading(fontSize: 18, fontFamily: ''),
+        ),
       ],
     );
   }

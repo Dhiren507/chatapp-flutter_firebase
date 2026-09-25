@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:chatapp_firebase/core/constants/app_assets.dart';
-import 'package:chatapp_firebase/core/utils/validators.dart';
-import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
-import 'package:chatapp_firebase/core/widgets/common_button.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
+import 'package:chatapp_firebase/core/utils/validators.dart';
+import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
+import 'package:chatapp_firebase/core/widgets/common_button.dart';
 import 'package:chatapp_firebase/features/auth_module/login/bloc/login_bloc.dart';
 import 'package:chatapp_firebase/features/auth_module/widgets/common_input_field.dart';
 import 'package:chatapp_firebase/features/auth_module/widgets/or_divider.dart';
@@ -28,9 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    super.dispose();
   }
 
   @override

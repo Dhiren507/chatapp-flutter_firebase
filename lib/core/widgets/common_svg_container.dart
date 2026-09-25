@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class CommonSvgContainer extends StatelessWidget {
-  String? iconPath;
-  double? iconSize;
-  Color? iconColor;
-  Color? backgroundColor;
-  double containerSize;
-  Color? borderColor;
-  VoidCallback? onClick;
+  final String? iconPath;
+  final double? iconSize;
+ final  Color? iconColor;
+  final Color? backgroundColor;
+  final double containerSize;
+  final Color? borderColor;
+  final VoidCallback? onClick;
 
-  CommonSvgContainer({
+  const CommonSvgContainer({
     super.key,
     this.iconPath,
     this.iconSize,

@@ -3,17 +3,17 @@ import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class AttachmentOptionTile extends StatelessWidget {
+class PressableOptionTile extends StatelessWidget {
   VoidCallback onPressed;
   String iconPath;
-  String attachmentOption;
-  String? attachmentSubtitle;
+  String optionTitle;
+  String? optionDescription;
 
-  AttachmentOptionTile({
+  PressableOptionTile({
     super.key,
     required this.iconPath,
-    required this.attachmentOption,
-    this.attachmentSubtitle,
+    required this.optionTitle,
+    this.optionDescription,
     required this.onPressed,
   });
 
@@ -41,9 +41,9 @@ class AttachmentOptionTile extends StatelessWidget {
           Column(
             crossAxisAlignment: .start,
             children: [
-              Text(attachmentOption, style: AppTextStyles.heading()),
-              if (attachmentSubtitle != null && attachmentSubtitle != '')
-                Text(attachmentSubtitle!, style: AppTextStyles.body()),
+              Text(optionTitle, style: AppTextStyles.heading()),
+              if (optionDescription != null && optionDescription != '')
+                Text(optionDescription!, style: AppTextStyles.body()),
             ],
           ),
         ],

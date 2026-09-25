@@ -11,4 +11,7 @@ class AppRoutes {
   static const String chatDetailScreen = '/chatDetail';
   static const String searchScreen = 'search';
   static const String crateGroupScreen = '/createGroup';
+
+  static const String statusPreviewScreen = '/previewStatus';
+  static const String statusViewScreen = '/viewStatus';
 }

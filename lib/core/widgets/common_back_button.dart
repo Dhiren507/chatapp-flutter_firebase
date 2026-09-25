@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class CommonBackButton extends StatelessWidget {
-  Color? arrowColor;
+  final Color? arrowColor;
 
-  CommonBackButton({super.key, this.arrowColor = AppColors.black});
+  const CommonBackButton({super.key, this.arrowColor = AppColors.black});
 
   @override
   Widget build(BuildContext context) {

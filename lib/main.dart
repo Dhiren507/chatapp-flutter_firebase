@@ -27,17 +27,14 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           dividerTheme: DividerThemeData(
             color: AppColors.dividerColor,
-            thickness: 1
+            thickness: 1,
           ),
-          appBarTheme: AppBarTheme(
-            surfaceTintColor: Colors.transparent,
-          ),
+          appBarTheme: AppBarTheme(surfaceTintColor: Colors.transparent),
           splashColor: Colors.transparent,
-          splashFactory:NoSplash.splashFactory,
-          highlightColor: Colors.transparent
+          splashFactory: NoSplash.splashFactory,
+          highlightColor: Colors.transparent,
         ),
       ),
     );
   }
 }
-
