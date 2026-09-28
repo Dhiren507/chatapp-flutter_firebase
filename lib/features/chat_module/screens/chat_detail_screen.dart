@@ -105,8 +105,7 @@ class ChatDetailScreen extends StatelessWidget {
                               },
                             );
 
-                        if (selectedAttachment != null &&
-                            selectedAttachment.isNotEmpty) {
+                        if (selectedAttachment.isNotEmpty) {
                           print(
                             'this is an attachment selected in chat screen${selectedAttachment[0].name}',
                           );

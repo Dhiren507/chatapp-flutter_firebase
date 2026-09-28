@@ -99,23 +99,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   if (Platform.isIOS)
-                    Container(
-                      height: 48,
-                      width: 48,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.borderGrey,
-                          width: 1,
+                      Container(
+                        height: 48,
+                        width: 48,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppColors.borderGrey,
+                            width: 1,
+                          ),
+                        ),
+                        child: SvgPicture.asset(
+                          AppAssets.appleIcon,
+                          height: 24,
+                          width: 24,
+                          fit: BoxFit.scaleDown,
                         ),
                       ),
-                      child: SvgPicture.asset(
-                        AppAssets.appleIcon,
-                        height: 24,
-                        width: 24,
-                        fit: BoxFit.scaleDown,
-                      ),
-                    ),
                 ],
               ),
 

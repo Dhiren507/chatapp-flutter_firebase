@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "313287695886",
+    "project_id": "chat-app-dhiren",
+    "storage_bucket": "chat-app-dhiren.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:313287695886:android:fc789130611288875fe65f",
+        "android_client_info": {
+          "package_name": "com.example.chatapp_firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP27KTifFg_j6jHn05eAJ4JtfGP80H1-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -90,7 +90,7 @@ class CommonBottomSheet extends StatelessWidget {
                     onPressed: () {},
                   ),
                   const Divider(indent: 50, height: 20),
-                  if (isGroupScreen != null && isGroupScreen!) ...[
+                  if (isGroupScreen) ...[
                     PressableOptionTile(
                       iconPath: AppAssets.networkIcon,
                       optionTitle: AppStrings.attachmentPollText,

@@ -1,0 +1,23 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "chat-app-dhiren",
+          "appId": "1:313287695886:android:fc789130611288875fe65f",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "chat-app-dhiren",
+          "configurations": {
+            "android": "1:313287695886:android:fc789130611288875fe65f",
+            "ios": "1:313287695886:ios:0a8186a0b453b0a65fe65f",
+            "web": "1:313287695886:web:4914c3c9f0ec81095fe65f"
+          }
+        }
+      }
+    }
+  }
+}

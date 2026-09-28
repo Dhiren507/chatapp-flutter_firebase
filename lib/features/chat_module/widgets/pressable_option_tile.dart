@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class PressableOptionTile extends StatelessWidget {
-  VoidCallback onPressed;
-  String iconPath;
-  String optionTitle;
-  String? optionDescription;
+  final VoidCallback onPressed;
+  final String iconPath;
+  final String optionTitle;
+  final String? optionDescription;
 
-  PressableOptionTile({
+  const PressableOptionTile({
     super.key,
     required this.iconPath,
     required this.optionTitle,
