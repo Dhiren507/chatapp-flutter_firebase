@@ -28,102 +28,108 @@ class _TabBarBaseScreenState extends State<TabBarBaseScreen>
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
 
-    _tabController.addListener(() {
-      if (!_tabController.indexIsChanging) {
-        context.read<TabBarIndexCubit>().changeTabBarIndex(
-          _tabController.index,
-        );
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      _tabController.addListener(() {
+        if (!_tabController.indexIsChanging) {
+          context.read<TabBarIndexCubit>().changeTabBarIndex(
+            _tabController.index,
+          );
+        }
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final activeIndex = context.watch<TabBarIndexCubit>().state;
-
     return Scaffold(
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          color: AppColors.white,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-            child: SizedBox(
-              height: 60,
-              child: TabBar(
-                labelPadding: EdgeInsets.zero,
-                controller: _tabController,
-                labelColor: AppColors.green,
-                unselectedLabelColor: AppColors.textSecondary,
-                dividerColor: Colors.transparent,
-                labelStyle: AppTextStyles.heading(),
-                indicator: BoxDecoration(color: Colors.transparent),
-                splashFactory: NoSplash.splashFactory,
-                tabs: [
-                  Tab(
-                    icon: SvgPicture.asset(
-                      AppAssets.messageIcon,
-                      height: 28,
-                      width: 28,
-                      fit: BoxFit.scaleDown,
-                      colorFilter: ColorFilter.mode(
-                        activeIndex == 0
-                            ? AppColors.green
-                            : AppColors.textSecondary,
-                        BlendMode.srcIn,
+      bottomNavigationBar: BlocBuilder<TabBarIndexCubit, int>(
+        builder: (context, activeIndex) {
+          return SafeArea(
+            child: Container(
+              color: AppColors.white,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                child: SizedBox(
+                  height: 60,
+                  child: TabBar(
+                    labelPadding: EdgeInsets.zero,
+                    controller: _tabController,
+                    labelColor: AppColors.green,
+                    unselectedLabelColor: AppColors.textSecondary,
+                    dividerColor: Colors.transparent,
+                    labelStyle: AppTextStyles.heading(),
+                    indicator: BoxDecoration(color: Colors.transparent),
+                    splashFactory: NoSplash.splashFactory,
+                    tabs: [
+                      Tab(
+                        icon: SvgPicture.asset(
+                          AppAssets.messageIcon,
+                          height: 28,
+                          width: 28,
+                          fit: BoxFit.scaleDown,
+                          colorFilter: ColorFilter.mode(
+                            activeIndex == 0
+                                ? AppColors.green
+                                : AppColors.textSecondary,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        text: AppStrings.tabBarLabelOne,
                       ),
-                    ),
-                    text: AppStrings.tabBarLabelOne,
-                  ),
-                  Tab(
-                    icon: SvgPicture.asset(
-                      AppAssets.callIcon,
-                      height: 28,
-                      width: 28,
-                      fit: BoxFit.scaleDown,
-                      colorFilter: ColorFilter.mode(
-                        activeIndex == 1
-                            ? AppColors.green
-                            : AppColors.textSecondary,
-                        BlendMode.srcIn,
+                      Tab(
+                        icon: SvgPicture.asset(
+                          AppAssets.callIcon,
+                          height: 28,
+                          width: 28,
+                          fit: BoxFit.scaleDown,
+                          colorFilter: ColorFilter.mode(
+                            activeIndex == 1
+                                ? AppColors.green
+                                : AppColors.textSecondary,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        text: AppStrings.tabBarLabelTwo,
                       ),
-                    ),
-                    text: AppStrings.tabBarLabelTwo,
-                  ),
-                  Tab(
-                    icon: SvgPicture.asset(
-                      AppAssets.contactIcon,
-                      height: 28,
-                      width: 28,
-                      fit: BoxFit.scaleDown,
-                      colorFilter: ColorFilter.mode(
-                        activeIndex == 2
-                            ? AppColors.green
-                            : AppColors.textSecondary,
-                        BlendMode.srcIn,
+                      Tab(
+                        icon: SvgPicture.asset(
+                          AppAssets.contactIcon,
+                          height: 28,
+                          width: 28,
+                          fit: BoxFit.scaleDown,
+                          colorFilter: ColorFilter.mode(
+                            activeIndex == 2
+                                ? AppColors.green
+                                : AppColors.textSecondary,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        text: AppStrings.tabBarLabelThree,
                       ),
-                    ),
-                    text: AppStrings.tabBarLabelThree,
-                  ),
-                  Tab(
-                    icon: SvgPicture.asset(
-                      AppAssets.settingsIcon,
-                      height: 28,
-                      width: 28,
-                      fit: BoxFit.scaleDown,
-                      colorFilter: ColorFilter.mode(
-                        activeIndex == 3
-                            ? AppColors.green
-                            : AppColors.textSecondary,
-                        BlendMode.srcIn,
+                      Tab(
+                        icon: SvgPicture.asset(
+                          AppAssets.settingsIcon,
+                          height: 28,
+                          width: 28,
+                          fit: BoxFit.scaleDown,
+                          colorFilter: ColorFilter.mode(
+                            activeIndex == 3
+                                ? AppColors.green
+                                : AppColors.textSecondary,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        text: AppStrings.tabBarLabelFour,
                       ),
-                    ),
-                    text: AppStrings.tabBarLabelFour,
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
       body: TabBarView(
         controller: _tabController,

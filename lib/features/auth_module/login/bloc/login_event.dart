@@ -8,3 +8,14 @@ class LoginInputFieldChanged extends LoginEvent {
 
   LoginInputFieldChanged({required this.email, required this.password});
 }
+
+class LoginRequested extends LoginEvent {
+  final String email;
+  final String password;
+
+  LoginRequested({required this.email, required this.password});
+}
+
+
+class LoginWithGoogleRequested extends LoginEvent {
+}

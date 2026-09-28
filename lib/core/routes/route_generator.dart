@@ -1,3 +1,4 @@
+import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
 import 'package:chatapp_firebase/features/auth_module/login/bloc/login_bloc.dart';
 import 'package:chatapp_firebase/features/auth_module/onboarding/screens/onboarding_screen.dart';
 import 'package:chatapp_firebase/features/auth_module/splash/screens/splash_screen.dart';
@@ -29,7 +30,8 @@ class RouteGenerator {
       case AppRoutes.loginScreen:
         return MaterialPageRoute(
           builder: (context) => BlocProvider<LoginBloc>(
-            create: (context) => LoginBloc(),
+            create: (context) =>
+                LoginBloc(authRepository: context.read<AuthRepository>()),
             child: const LoginScreen(),
           ),
         );
@@ -37,7 +39,8 @@ class RouteGenerator {
       case AppRoutes.signUpScreen:
         return MaterialPageRoute(
           builder: (context) => BlocProvider<SignupBloc>(
-            create: (context) => SignupBloc(),
+            create: (context) =>
+                SignupBloc(authRepository: context.read<AuthRepository>()),
             child: const SignupScreen(),
           ),
         );
@@ -69,9 +72,7 @@ class RouteGenerator {
         );
 
       case AppRoutes.statusViewScreen:
-        return MaterialPageRoute(
-          builder: (context) => StatusViewScreen(),
-        );
+        return MaterialPageRoute(builder: (context) => StatusViewScreen());
 
       default:
         return MaterialPageRoute(

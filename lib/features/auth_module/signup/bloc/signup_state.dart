@@ -1,9 +1,30 @@
 part of 'signup_bloc.dart';
 
-sealed class SignupState {}
+enum SignupStatus { initial, loading, success, error }
 
-final class SignupInitial extends SignupState {}
+enum ButtonStatus { initial, disabled, enabled }
 
-class ButtonEnabled extends SignupState {}
+final class SignupState {
+  final SignupStatus status;
+  final ButtonStatus buttonStatus;
+  final String errorMsg;
 
-class ButtonDisabled extends SignupState {}
+  const SignupState({
+    this.status = .initial,
+    this.buttonStatus = .disabled,
+    this.errorMsg = '',
+  });
+
+  SignupState copyWith({
+    SignupStatus? status,
+    ButtonStatus? buttonStatus,
+    String? errorMsg,
+  }) {
+    return SignupState(
+      status: status ?? this.status,
+      buttonStatus: buttonStatus ?? this.buttonStatus,
+      errorMsg: errorMsg ?? this.errorMsg,
+    );
+  }
+}
+

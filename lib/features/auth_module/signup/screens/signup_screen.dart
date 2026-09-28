@@ -1,6 +1,7 @@
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
+import 'package:chatapp_firebase/core/routes/app_routes.dart';
 import 'package:chatapp_firebase/core/utils/validators.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
 import 'package:chatapp_firebase/core/widgets/common_button.dart';
@@ -155,17 +156,45 @@ class _SignupScreenState extends State<SignupScreen> {
 
               SizedBox(height: MediaQuery.of(context).size.height * 0.15),
 
-              BlocBuilder<SignupBloc, SignupState>(
+              BlocConsumer<SignupBloc, SignupState>(
+                listener: (context, state) {
+                  if (state.status == SignupStatus.success) {
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.loginScreen,
+                    );
+                  }
+
+                  if (state.status == SignupStatus.error) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(state.errorMsg),backgroundColor: AppColors.bgError,));
+                  }
+                },
                 builder: (context, state) {
+                  bool isButtonEnabled =
+                      state.buttonStatus == ButtonStatus.enabled;
+                  bool isLoading = state.status == SignupStatus.loading;
+
                   return CommonButton(
                     label: AppStrings.createAnAccountText,
-                    onPressed: state is ButtonEnabled
+                    isLoading: isLoading,
+                    onPressed: isButtonEnabled
                         ? () {
-                            _formKey.currentState?.validate();
+                            bool? isFormValid = _formKey.currentState
+                                ?.validate();
+                            if (isFormValid!) {
+                              context.read<SignupBloc>().add(
+                                SignupRequested(
+                                  name: _nameController.text.trim(),
+                                  email: _emailController.text.trim(),
+                                  password: _passwordController.text.trim(),
+                                ),
+                              );
+                            }
                           }
                         : null,
                     backgroundColor: AppColors.green,
-                    textColor: state is ButtonEnabled
+                    textColor: isButtonEnabled
                         ? AppColors.white
                         : AppColors.textSecondary,
                   );

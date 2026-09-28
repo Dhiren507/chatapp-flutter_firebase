@@ -4,9 +4,11 @@ import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
+import 'package:chatapp_firebase/core/routes/app_routes.dart';
 import 'package:chatapp_firebase/core/utils/validators.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
 import 'package:chatapp_firebase/core/widgets/common_button.dart';
+import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
 import 'package:chatapp_firebase/features/auth_module/login/bloc/login_bloc.dart';
 import 'package:chatapp_firebase/features/auth_module/widgets/common_input_field.dart';
 import 'package:chatapp_firebase/features/auth_module/widgets/or_divider.dart';
@@ -84,38 +86,47 @@ class _LoginScreenState extends State<LoginScreen> {
                       fit: BoxFit.scaleDown,
                     ),
                   ),
-                  Container(
-                    height: 48,
-                    width: 48,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.borderGrey, width: 1),
-                    ),
-                    child: SvgPicture.asset(
-                      AppAssets.googleIcon,
-                      height: 24,
-                      width: 24,
-                      fit: BoxFit.scaleDown,
+                  GestureDetector(
+                    onTap: () {
+                      print('google login buttion clicked');
+                      context.read<AuthRepository>().loginWithGoogle();
+                    },
+                    child: Container(
+                      height: 48,
+                      width: 48,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.borderGrey,
+                          width: 1,
+                        ),
+                      ),
+                      child: SvgPicture.asset(
+                        AppAssets.googleIcon,
+                        height: 24,
+                        width: 24,
+                        fit: BoxFit.scaleDown,
+                      ),
                     ),
                   ),
                   if (Platform.isIOS)
-                      Container(
-                        height: 48,
-                        width: 48,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.borderGrey,
-                            width: 1,
-                          ),
-                        ),
-                        child: SvgPicture.asset(
-                          AppAssets.appleIcon,
-                          height: 24,
-                          width: 24,
-                          fit: BoxFit.scaleDown,
+                    Container(
+                      height: 48,
+                      width: 48,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.borderGrey,
+                          width: 1,
                         ),
                       ),
+                      child: SvgPicture.asset(
+                        AppAssets.appleIcon,
+                        height: 24,
+                        width: 24,
+                        fit: BoxFit.scaleDown,
+                      ),
+                    ),
                 ],
               ),
 
@@ -165,17 +176,45 @@ class _LoginScreenState extends State<LoginScreen> {
 
               SizedBox(height: MediaQuery.of(context).size.height * 0.19),
 
-              BlocBuilder<LoginBloc, LoginState>(
+              BlocConsumer<LoginBloc, LoginState>(
+                listener: (context, state) {
+                  if (state.status == .error) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(state.errorMsg)));
+                  }
+
+                  if (state.status == LoginStatus.success) {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      AppRoutes.mainScreen,
+                      (route) => false,
+                    );
+                  }
+                },
                 builder: (context, state) {
+                  bool isButtonEnabled =
+                      state.buttonStatus == ButtonStatus.enabled;
+                  bool isLoading = state.status == LoginStatus.loading;
+
                   return CommonButton(
                     label: AppStrings.logInText,
-                    onPressed: state is ButtonEnabled
+                    isLoading: isLoading,
+                    onPressed: isButtonEnabled
                         ? () {
-                            _formKey.currentState?.validate();
+                            bool? isFormValid = _formKey.currentState
+                                ?.validate();
+                            if (isFormValid!) {
+                              context.read<LoginBloc>().add(
+                                LoginRequested(
+                                  email: _emailController.text.trim(),
+                                  password: _passwordController.text.trim(),
+                                ),
+                              );
+                            }
                           }
                         : null,
                     backgroundColor: AppColors.green,
-                    textColor: state is ButtonEnabled
+                    textColor: isButtonEnabled
                         ? AppColors.white
                         : AppColors.textSecondary,
                   );

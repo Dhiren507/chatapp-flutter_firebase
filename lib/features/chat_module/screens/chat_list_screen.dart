@@ -7,8 +7,10 @@ import 'package:chatapp_firebase/core/utils/image_picker_utils.dart';
 import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
 import 'package:chatapp_firebase/core/widgets/common_bottom_sheet.dart';
 import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
+import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
 import 'package:chatapp_firebase/features/chat_module/widgets/chat_list_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ChatListScreen extends StatelessWidget {
@@ -37,7 +39,21 @@ class ChatListScreen extends StatelessWidget {
             borderColor: AppColors.borderGrey,
           ),
         ),
-        actions: [CommonAvatar(imgPath: AppAssets.appleIcon)],
+        actions: [
+          CommonAvatar(imgPath: AppAssets.appleIcon),
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              context.read<AuthRepository>().logOut;
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.onboardingScreen,
+                (route) => false,
+              );
+            },
+            color: AppColors.bgError,
+          ),
+        ],
       ),
       body: Column(
         children: [
