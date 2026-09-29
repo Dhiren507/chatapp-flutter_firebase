@@ -1,9 +1,9 @@
 import 'package:chatapp_firebase/features/auth_module/data/data_providers/firebase_auth_provider.dart';
 
 class AuthRepository {
-  final FirebaseAuthProvider _authProvider;
+  final AppAuthProvider _authProvider;
 
-  AuthRepository({required FirebaseAuthProvider provider})
+  AuthRepository({required AppAuthProvider provider})
     : _authProvider = provider;
 
   Future<void> loginWithEmailAndPassword({
@@ -27,7 +27,7 @@ class AuthRepository {
     final credential = await _authProvider.loginWithGoogleRaw();
 
     final user = credential?.user;
-    if (user == null) {
+    if (credential == null || user == null) {
       throw Exception('User data not found.');
     }
   }
@@ -54,8 +54,6 @@ class AuthRepository {
   }
 
   String? getCurrentUserId() {
-    _authProvider.getCurrentUser();
-
     final user = _authProvider.getCurrentUser();
 
     return user?.uid;

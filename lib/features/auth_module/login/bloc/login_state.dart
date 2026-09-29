@@ -2,7 +2,7 @@ part of 'login_bloc.dart';
 
 enum LoginStatus { initial, loading, success, error }
 
-enum ButtonStatus { initial, disabled, enabled }
+enum ButtonStatus { disabled, enabled }
 
 final class LoginState {
   final LoginStatus status;
@@ -27,19 +27,3 @@ final class LoginState {
     );
   }
 }
-
-final class LoginInitial extends LoginState {}
-
-final class LoginLoading extends LoginState {}
-
-final class LoginSuccess extends LoginState {}
-
-final class LoginError extends LoginState {
-  final String message;
-
-  LoginError({required this.message});
-}
-
-final class ButtonDisabled extends LoginState {}
-
-final class ButtonEnabled extends LoginState {}

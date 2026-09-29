@@ -1,8 +1,13 @@
 import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
 import 'package:chatapp_firebase/features/auth_module/login/bloc/login_bloc.dart';
+import 'package:chatapp_firebase/features/auth_module/onboarding/bloc/onboarding_bloc.dart';
 import 'package:chatapp_firebase/features/auth_module/onboarding/screens/onboarding_screen.dart';
 import 'package:chatapp_firebase/features/auth_module/splash/screens/splash_screen.dart';
-import 'package:chatapp_firebase/features/chat_module/screens/chat_detail_screen.dart';
+import 'package:chatapp_firebase/features/chat_module/chat_detail/bloc/chat_detail_bloc.dart';
+import 'package:chatapp_firebase/features/chat_module/chat_detail/data/repositories/chat_repository.dart';
+import 'package:chatapp_firebase/features/chat_module/chat_detail/screens/chat_detail_screen.dart';
+import 'package:chatapp_firebase/features/contacts_module/bloc/contact_list_bloc.dart';
+import 'package:chatapp_firebase/features/contacts_module/data/repositories/contact_repository.dart';
 import 'package:chatapp_firebase/features/group_module/create_group/screens/create_group_screen.dart';
 import 'package:chatapp_firebase/features/profile_module/user_profile_screen.dart';
 import 'package:chatapp_firebase/features/search/screens/search_screen.dart';
@@ -25,7 +30,13 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => SplashScreen());
 
       case AppRoutes.onboardingScreen:
-        return MaterialPageRoute(builder: (context) => OnboardingScreen());
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider<OnboardingBloc>(
+            create: (context) =>
+                OnboardingBloc(authRepository: context.read<AuthRepository>()),
+            child: const OnboardingScreen(),
+          ),
+        );
 
       case AppRoutes.loginScreen:
         return MaterialPageRoute(
@@ -47,9 +58,33 @@ class RouteGenerator {
 
       case AppRoutes.mainScreen:
         return MaterialPageRoute(
-          builder: (context) => BlocProvider<TabBarIndexCubit>(
-            create: (context) => TabBarIndexCubit(),
-            child: const TabBarBaseScreen(),
+          builder: (context) => MultiRepositoryProvider(
+            providers: [
+              RepositoryProvider(create: (context) => ContactRepository()),
+              RepositoryProvider(create: (context) => ChatRepository()),
+            ],
+            child: Builder(
+              builder: (innerContext) {
+                return MultiBlocProvider(
+                  providers: [
+                    BlocProvider<TabBarIndexCubit>(
+                      create: (context) => TabBarIndexCubit(),
+                    ),
+                    BlocProvider<ContactListBloc>(
+                      create: (context) => ContactListBloc(
+                        contactRepo: context.read<ContactRepository>(),
+                      ),
+                    ),
+                    BlocProvider<ChatDetailBloc>(
+                      create: (context) => ChatDetailBloc(
+                        chatRepo: context.read<ChatRepository>(),
+                      ),
+                    ),
+                  ],
+                  child: const TabBarBaseScreen(),
+                );
+              },
+            ),
           ),
         );
 
@@ -57,7 +92,16 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (context) => UserProfileScreen());
 
       case AppRoutes.chatDetailScreen:
-        return MaterialPageRoute(builder: (context) => ChatDetailScreen());
+        return MaterialPageRoute(
+          builder: (context) => RepositoryProvider(
+            create: (context) => ChatRepository(),
+            child: BlocProvider<ChatDetailBloc>(
+              create: (context) =>
+                  ChatDetailBloc(chatRepo: context.read<ChatRepository>()),
+              child: const ChatDetailScreen(),
+            ),
+          ),
+        );
 
       case AppRoutes.searchScreen:
         return MaterialPageRoute(builder: (context) => SearchScreen());

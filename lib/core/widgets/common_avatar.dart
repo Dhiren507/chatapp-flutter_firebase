@@ -1,5 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CommonAvatar extends StatelessWidget {
   final String imgPath;
@@ -26,9 +29,11 @@ class CommonAvatar extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadiusGeometry.circular(size / 2),
-        child: Image.network(
-          'https://preview.redd.it/what-do-you-like-about-toby-maguires-spider-man-v0-jmobfrotmnlb1.jpg?width=1080&crop=smart&auto=webp&s=676fd6fef512f6334105a4c1018badb052b2a1f6',
-          fit: BoxFit.cover,
+        child: CachedNetworkImage(
+          imageUrl: imgPath,
+          errorWidget: (context, url, error) {
+            return SvgPicture.asset(AppAssets.contactIcon, fit: BoxFit.cover);
+          },
         ),
       ),
     );

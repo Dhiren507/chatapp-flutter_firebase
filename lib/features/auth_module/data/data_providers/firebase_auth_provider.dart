@@ -1,8 +1,9 @@
+import 'package:chatapp_firebase/core/constants/app_keys.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class FirebaseAuthProvider {
+class AppAuthProvider {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firebaseDb = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
@@ -20,13 +21,9 @@ class FirebaseAuthProvider {
   Future<UserCredential?> loginWithGoogleRaw() async {
     final List<String> scopes = ['email', 'profile'];
 
-    final GoogleSignInAccount? googleUser = await _googleSignIn.authenticate(
+    final GoogleSignInAccount googleUser = await _googleSignIn.authenticate(
       scopeHint: scopes,
     );
-
-    if (googleUser == null) {
-      return null;
-    }
 
     final googleAuth = await googleUser.authorizationClient.authorizeScopes(
       scopes,
@@ -37,7 +34,23 @@ class FirebaseAuthProvider {
       idToken: googleUser.authentication.idToken,
     );
 
-    return await _firebaseAuth.signInWithCredential(credential);
+    final UserCredential userCredential = await _firebaseAuth
+        .signInWithCredential(credential);
+
+    if (userCredential.additionalUserInfo?.isNewUser == true) {
+      await _firebaseDb.collection(AppKeys.userCollectionKey).doc(userCredential.user!.uid).set({
+        'uid': userCredential.user!.uid,
+        'name': userCredential.additionalUserInfo!.profile?['name'],
+        'email': userCredential.user!.email,
+        'phone': '',
+        'photoUrl': userCredential.additionalUserInfo!.profile?['picture'],
+        'bio_text': '',
+        'created_at': FieldValue.serverTimestamp(),
+        'updated_at': FieldValue.serverTimestamp(),
+      });
+    }
+
+    return userCredential;
   }
 
   Future<UserCredential> registerWithEmailAndPassword({
@@ -51,12 +64,12 @@ class FirebaseAuthProvider {
     );
 
     if (credential.user != null) {
-      await _firebaseDb.collection('users').doc(credential.user!.uid).set({
+      await _firebaseDb.collection(AppKeys.userCollectionKey).doc(credential.user!.uid).set({
         'uid': credential.user!.uid,
         'name': name,
         'email': email,
         'phone': '',
-        'photoUrl': 'https://img.magnific.com/free-vector/user-circles-set_78370-4704.jpg?semt=ais_hybrid&w=740&q=80',
+        'photoUrl': '',
         'bio_text': '',
         'created_at': FieldValue.serverTimestamp(),
         'updated_at': FieldValue.serverTimestamp(),

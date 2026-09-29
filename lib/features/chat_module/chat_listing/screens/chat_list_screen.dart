@@ -44,7 +44,7 @@ class ChatListScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () {
-              context.read<AuthRepository>().logOut;
+              context.read<AuthRepository>().logOut();
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.onboardingScreen,
@@ -108,10 +108,6 @@ class ChatListScreen extends StatelessWidget {
                                           if (!context.mounted) return;
 
                                           if (capturedImage != null) {
-                                            print(
-                                              'this is an captured image from camera' +
-                                                  capturedImage.name,
-                                            );
                                             Navigator.pop(context, <XFile>[
                                               capturedImage,
                                             ]);

@@ -16,6 +16,4 @@ class LoginRequested extends LoginEvent {
   LoginRequested({required this.email, required this.password});
 }
 
-
-class LoginWithGoogleRequested extends LoginEvent {
-}
+class LoginWithGoogleRequested extends LoginEvent {}

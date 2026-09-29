@@ -84,7 +84,12 @@ class SearchScreen extends StatelessWidget {
                 child: ListView.separated(
                   padding: const EdgeInsets.only(bottom: 16),
                   itemBuilder: (context, index) {
-                    return const ContactListTile();
+                    return const ContactListTile(
+                      contactName: 'Spiderman',
+                      profileUrl: '',
+                      contactBio:
+                          'with Great responsibility comes great power ',
+                    );
                   },
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 20),

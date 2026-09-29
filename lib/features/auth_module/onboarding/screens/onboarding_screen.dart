@@ -6,8 +6,10 @@ import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/routes/app_routes.dart';
 import 'package:chatapp_firebase/core/widgets/common_button.dart';
+import 'package:chatapp_firebase/features/auth_module/onboarding/bloc/onboarding_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../widgets/or_divider.dart';
@@ -131,18 +133,26 @@ class OnboardingScreen extends StatelessWidget {
                       fit: BoxFit.scaleDown,
                     ),
                   ),
-                  Container(
-                    height: 48,
-                    width: 48,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.borderGrey, width: 1),
-                    ),
-                    child: SvgPicture.asset(
-                      AppAssets.googleIcon,
-                      height: 24,
-                      width: 24,
-                      fit: BoxFit.scaleDown,
+                  GestureDetector(
+                    onTap: () {
+                      context.read<OnboardingBloc>().add(GoogleAuthRequested());
+                    },
+                    child: Container(
+                      height: 48,
+                      width: 48,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.borderGrey,
+                          width: 1,
+                        ),
+                      ),
+                      child: SvgPicture.asset(
+                        AppAssets.googleIcon,
+                        height: 24,
+                        width: 24,
+                        fit: BoxFit.scaleDown,
+                      ),
                     ),
                   ),
                   if (Platform.isIOS)
@@ -172,13 +182,36 @@ class OnboardingScreen extends StatelessWidget {
 
               const SizedBox(height: 35),
 
-              CommonButton(
-                label: AppStrings.signUpWithEmailText,
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.signUpScreen);
+              BlocConsumer<OnboardingBloc, OnboardingState>(
+                builder: (context, state) {
+                  bool isLoading = state is OnboardingLoading;
+
+                  return CommonButton(
+                    label: AppStrings.signUpWithEmailText,
+                    isLoading: isLoading,
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.signUpScreen,
+                            );
+                          },
+                  );
+                },
+                listener: (context, state) {
+                  if (state is OnboardingSuccess) {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      AppRoutes.mainScreen,
+                      (route) => false,
+                    );
+                  }
+                  if (state is OnboardingError) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(state.errorMsg)));
+                  }
                 },
               ),
-
 
               Row(
                 mainAxisAlignment: .center,

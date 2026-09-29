@@ -5,7 +5,11 @@ import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
 import 'package:flutter/material.dart';
 
 class ChatHeader extends StatelessWidget {
-  const ChatHeader({super.key});
+  final String imgUrl;
+  final String userName;
+  final String status;
+
+  const ChatHeader({super.key, required this.imgUrl, required this.userName, required this.status,});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +19,7 @@ class ChatHeader extends StatelessWidget {
           clipBehavior: .none,
           children: [
             CommonAvatar(
-              imgPath: AppAssets.appleIcon,
+              imgPath: imgUrl,
               size: 44,
               borderColor: Colors.transparent,
             ),
@@ -40,7 +44,7 @@ class ChatHeader extends StatelessWidget {
           crossAxisAlignment: .start,
           children: [
             Text(
-              'John Abraham',
+              userName,
               style: AppTextStyles.heading(fontSize: 16),
               overflow: .ellipsis,
             ),

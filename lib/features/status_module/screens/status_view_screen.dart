@@ -24,7 +24,7 @@ class StatusViewScreen extends StatelessWidget {
           onTap: () {
             Navigator.pushNamed(context, AppRoutes.profileScreen);
           },
-          child: ChatHeader(),
+          child: ChatHeader(userName: '', status: '', imgUrl: ''),
         ),
         titleSpacing: 0,
       ),

@@ -1,5 +1,4 @@
 import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -37,24 +36,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         password: event.password,
       );
       emit(state.copyWith(status: .success));
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalid-email') {
-        emit(
-          state.copyWith(
-            status: .error,
-            errorMsg: 'invalid credentials entered',
-          ),
-        );
-      } else {
-        emit(
-          state.copyWith(
-            status: .error,
-            errorMsg: 'invalid credentials entered',
-          ),
-        );
-      }
     } catch (e) {
-      emit(state.copyWith(status: .error, errorMsg: e.toString()));
+      String errorMsg = (e as dynamic).message ?? e.toString();
+
+      emit(state.copyWith(status: .error, errorMsg: errorMsg));
     } finally {
       emit(state.copyWith(status: .initial, errorMsg: ''));
     }
@@ -68,24 +53,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       await _authRepository.loginWithGoogle();
       emit(state.copyWith(status: .success));
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalid-email') {
-        emit(
-          state.copyWith(
-            status: .error,
-            errorMsg: 'invalid credentials entered',
-          ),
-        );
-      } else {
-        emit(
-          state.copyWith(
-            status: .error,
-            errorMsg: 'invalid credentials entered',
-          ),
-        );
-      }
     } catch (e) {
-      emit(state.copyWith(status: .error, errorMsg: e.toString()));
+      String errorMsg = (e as dynamic).message ?? e.toString();
+
+      emit(state.copyWith(status: .error, errorMsg: errorMsg));
     } finally {
       emit(state.copyWith(status: .initial, errorMsg: ''));
     }

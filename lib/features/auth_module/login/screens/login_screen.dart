@@ -8,7 +8,6 @@ import 'package:chatapp_firebase/core/routes/app_routes.dart';
 import 'package:chatapp_firebase/core/utils/validators.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
 import 'package:chatapp_firebase/core/widgets/common_button.dart';
-import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
 import 'package:chatapp_firebase/features/auth_module/login/bloc/login_bloc.dart';
 import 'package:chatapp_firebase/features/auth_module/widgets/common_input_field.dart';
 import 'package:chatapp_firebase/features/auth_module/widgets/or_divider.dart';
@@ -89,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   GestureDetector(
                     onTap: () {
                       print('google login buttion clicked');
-                      context.read<AuthRepository>().loginWithGoogle();
+                      context.read<LoginBloc>().add(LoginWithGoogleRequested());
                     },
                     child: Container(
                       height: 48,

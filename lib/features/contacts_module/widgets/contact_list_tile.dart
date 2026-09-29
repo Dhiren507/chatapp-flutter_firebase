@@ -4,7 +4,16 @@ import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
 import 'package:flutter/material.dart';
 
 class ContactListTile extends StatelessWidget {
-  const ContactListTile({super.key});
+  final String profileUrl;
+  final String contactName;
+  final String contactBio;
+
+  const ContactListTile({
+    super.key,
+    required this.profileUrl,
+    required this.contactName,
+    required this.contactBio,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,14 +31,12 @@ class ContactListTile extends StatelessWidget {
           crossAxisAlignment: .start,
           children: [
             Text(
-              'John Abraham',
+              contactName,
               style: AppTextStyles.heading(fontSize: 18),
               overflow: .ellipsis,
             ),
-            Text(
-              'Life is going good af...',
-              style: AppTextStyles.body(fontSize: 12),
-            ),
+            if(contactBio != '')
+              Text(contactBio, style: AppTextStyles.body(fontSize: 12)),
           ],
         ),
       ],
