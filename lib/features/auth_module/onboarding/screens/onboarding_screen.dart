@@ -24,7 +24,30 @@ class OnboardingScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        toolbarHeight: 0,
+        toolbarHeight: 25,
+        title: Row(
+          mainAxisAlignment: .center,
+          children: [
+            SvgPicture.asset(
+              AppAssets.cLogo,
+              height: 20,
+              width: 16,
+              fit: BoxFit.scaleDown,
+              colorFilter: ColorFilter.mode(
+                AppColors.white,
+                BlendMode.srcIn,
+              ),
+            ),
+            const SizedBox(width: 5),
+            Text(
+              AppStrings.chatboxText,
+              style: AppTextStyles.body(
+                fontWeight: FontWeight.w500,
+                color: AppColors.white,
+              ),
+            ),
+          ],
+        ),
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
       body: SingleChildScrollView(
@@ -32,32 +55,6 @@ class OnboardingScreen extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: .center,
-                children: [
-                  SvgPicture.asset(
-                    AppAssets.cLogo,
-                    height: 20,
-                    width: 16,
-                    fit: BoxFit.scaleDown,
-                    colorFilter: ColorFilter.mode(
-                      AppColors.white,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    AppStrings.chatboxText,
-                    style: AppTextStyles.body(
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.white,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 25),
-
               RichText(
                 text: TextSpan(
                   children: [

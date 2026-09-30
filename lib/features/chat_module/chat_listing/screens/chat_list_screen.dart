@@ -8,13 +8,32 @@ import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
 import 'package:chatapp_firebase/core/widgets/common_bottom_sheet.dart';
 import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
 import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
+import 'package:chatapp_firebase/features/chat_module/chat_listing/bloc/chat_list_bloc.dart';
 import 'package:chatapp_firebase/features/chat_module/widgets/chat_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
-class ChatListScreen extends StatelessWidget {
+class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
+
+  @override
+  State<ChatListScreen> createState() => _ChatListScreenState();
+}
+
+class _ChatListScreenState extends State<ChatListScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ChatListBloc>().add(
+        ChatListFetchRequested(
+          currentUserId: context.read<AuthRepository>().getCurrentUserId()!,
+        ),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,21 +58,7 @@ class ChatListScreen extends StatelessWidget {
             borderColor: AppColors.borderGrey,
           ),
         ),
-        actions: [
-          CommonAvatar(imgPath: AppAssets.appleIcon),
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () {
-              context.read<AuthRepository>().logOut();
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                AppRoutes.onboardingScreen,
-                (route) => false,
-              );
-            },
-            color: AppColors.bgError,
-          ),
-        ],
+        actions: [CommonAvatar(imgPath: AppAssets.appleIcon)],
       ),
       body: Column(
         children: [
@@ -163,7 +168,7 @@ class ChatListScreen extends StatelessWidget {
                           );
                         },
                         child: CommonAvatar(
-                          imgPath: AppAssets.appleIcon,
+                          imgPath: 'lskjfs',
                           size: 58,
                           borderColor: AppColors.highlightYellow,
                         ),
@@ -210,22 +215,44 @@ class ChatListScreen extends StatelessWidget {
                   const SizedBox(height: 30),
 
                   Expanded(
-                    child: ListView.separated(
-                      padding: EdgeInsets.symmetric(horizontal: 24),
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              AppRoutes.chatDetailScreen,
-                            );
-                          },
-                          child: ChatListTile(),
-                        );
+                    child: BlocBuilder<ChatListBloc, ChatListState>(
+                      builder: (context, state) {
+                        if (state is ChatListLoading) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        if (state is ChatListError) {
+                          Center(child: Text(state.errorMsg));
+                        }
+
+                        if (state is ChatListLoaded) {
+                          return ListView.separated(
+                            padding: EdgeInsets.symmetric(horizontal: 24),
+                            itemBuilder: (context, index) {
+                              final chatTileData = state.chatList[index];
+
+                              print(
+                                'this is the chat tile data ${chatTileData.chatId}',
+                              );
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    AppRoutes.chatDetailScreen,
+                                    arguments:
+                                        chatTileData.otherUserProfile?.uid,
+                                  );
+                                },
+                                child: ChatListTile(chatListData: chatTileData),
+                              );
+                            },
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 20),
+                            itemCount: state.chatList.length,
+                          );
+                        }
+                        return SizedBox.shrink();
                       },
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 20),
-                      itemCount: 15,
                     ),
                   ),
                 ],

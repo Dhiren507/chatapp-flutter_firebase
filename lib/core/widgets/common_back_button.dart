@@ -22,7 +22,7 @@ class CommonBackButton extends StatelessWidget {
         colorFilter: ColorFilter.mode(arrowColor!, BlendMode.srcIn),
       ),
       onPressed: () {
-        Navigator.pop(context);
+        Navigator.maybePop(context);
       },
     );
   }

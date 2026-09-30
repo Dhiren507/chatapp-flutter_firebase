@@ -9,10 +9,11 @@ final class ChatDetailInitial extends ChatDetailState {}
 final class ChatDetailLoading extends ChatDetailState {}
 
 final class ChatLoaded extends ChatDetailState {
-  final UserModel profile;
-  final ChatModel? currentChat;
+  final String chatId;
+  final UserModel receiverUserProfile;
+  final UserChatModel? currentChat;
 
-  ChatLoaded({required this.profile, this.currentChat});
+  ChatLoaded({required this.receiverUserProfile, required this.currentChat, required this.chatId});
 }
 
 final class ChatError extends ChatDetailState {

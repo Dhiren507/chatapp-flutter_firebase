@@ -4,8 +4,9 @@ import 'package:chatapp_firebase/features/auth_module/onboarding/bloc/onboarding
 import 'package:chatapp_firebase/features/auth_module/onboarding/screens/onboarding_screen.dart';
 import 'package:chatapp_firebase/features/auth_module/splash/screens/splash_screen.dart';
 import 'package:chatapp_firebase/features/chat_module/chat_detail/bloc/chat_detail_bloc.dart';
-import 'package:chatapp_firebase/features/chat_module/chat_detail/data/repositories/chat_repository.dart';
 import 'package:chatapp_firebase/features/chat_module/chat_detail/screens/chat_detail_screen.dart';
+import 'package:chatapp_firebase/features/chat_module/chat_listing/bloc/chat_list_bloc.dart';
+import 'package:chatapp_firebase/features/chat_module/data/repositories/chat_repository.dart';
 import 'package:chatapp_firebase/features/contacts_module/bloc/contact_list_bloc.dart';
 import 'package:chatapp_firebase/features/contacts_module/data/repositories/contact_repository.dart';
 import 'package:chatapp_firebase/features/group_module/create_group/screens/create_group_screen.dart';
@@ -63,27 +64,22 @@ class RouteGenerator {
               RepositoryProvider(create: (context) => ContactRepository()),
               RepositoryProvider(create: (context) => ChatRepository()),
             ],
-            child: Builder(
-              builder: (innerContext) {
-                return MultiBlocProvider(
-                  providers: [
-                    BlocProvider<TabBarIndexCubit>(
-                      create: (context) => TabBarIndexCubit(),
-                    ),
-                    BlocProvider<ContactListBloc>(
-                      create: (context) => ContactListBloc(
-                        contactRepo: context.read<ContactRepository>(),
-                      ),
-                    ),
-                    BlocProvider<ChatDetailBloc>(
-                      create: (context) => ChatDetailBloc(
-                        chatRepo: context.read<ChatRepository>(),
-                      ),
-                    ),
-                  ],
-                  child: const TabBarBaseScreen(),
-                );
-              },
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider<TabBarIndexCubit>(
+                  create: (context) => TabBarIndexCubit(),
+                ),
+                BlocProvider<ContactListBloc>(
+                  create: (context) => ContactListBloc(
+                    contactRepo: context.read<ContactRepository>(),
+                  ),
+                ),
+                BlocProvider<ChatListBloc>(
+                  create: (context) =>
+                      ChatListBloc(chatRepo: context.read<ChatRepository>()),
+                ),
+              ],
+              child: const TabBarBaseScreen(),
             ),
           ),
         );
@@ -101,6 +97,7 @@ class RouteGenerator {
               child: const ChatDetailScreen(),
             ),
           ),
+          settings: settings,
         );
 
       case AppRoutes.searchScreen:

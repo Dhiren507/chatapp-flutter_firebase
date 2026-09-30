@@ -2,8 +2,19 @@ part of 'chat_detail_bloc.dart';
 
 sealed class ChatDetailEvent {}
 
-class ChatDetailLoaded extends ChatDetailEvent {
+class ChatDetailFetchRequested extends ChatDetailEvent {
+  final String currentUserid;
   final String otherUserId;
 
-  ChatDetailLoaded({required this.otherUserId});
+  ChatDetailFetchRequested({
+    required this.otherUserId,
+    required this.currentUserid,
+  });
+}
+
+class SendMessagePressed extends ChatDetailEvent {
+  final String currentUserid;
+  final String msgText;
+
+  SendMessagePressed({required this.msgText, required this.currentUserid});
 }

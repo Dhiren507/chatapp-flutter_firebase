@@ -1,4 +1,4 @@
-import 'package:chatapp_firebase/core/constants/app_assets.dart';
+
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,7 @@ class ContactListTile extends StatelessWidget {
     return Row(
       children: [
         CommonAvatar(
-          imgPath: AppAssets.appleIcon,
+          imgPath: profileUrl,
           size: 55,
           borderColor: Colors.transparent,
         ),

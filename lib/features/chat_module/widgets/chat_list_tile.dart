@@ -1,11 +1,13 @@
-import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
+import 'package:chatapp_firebase/features/chat_module/chat_listing/data/models/chat_list_model.dart';
 import 'package:flutter/material.dart';
 
 class ChatListTile extends StatelessWidget {
-  const ChatListTile({super.key});
+  final ChatListModel chatListData;
+
+  const ChatListTile({super.key, required this.chatListData});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +17,7 @@ class ChatListTile extends StatelessWidget {
           clipBehavior: .none,
           children: [
             CommonAvatar(
-              imgPath: AppAssets.appleIcon,
+              imgPath: chatListData.otherUserProfile?.photoUrl ?? '',
               size: 55,
               borderColor: Colors.transparent,
             ),
@@ -41,12 +43,12 @@ class ChatListTile extends StatelessWidget {
             crossAxisAlignment: .start,
             children: [
               Text(
-                'Alex Linderson no way home how are you doing this lol',
+                chatListData.otherUserProfile?.name ?? '',
                 style: AppTextStyles.heading(fontSize: 20),
                 overflow: .ellipsis,
               ),
               Text(
-                'Hellow how are you doing this no way home how are you freaking doing this lol',
+                chatListData.lastMessage?.messageText ?? '',
                 style: AppTextStyles.body(fontSize: 12),
                 overflow: .ellipsis,
               ),

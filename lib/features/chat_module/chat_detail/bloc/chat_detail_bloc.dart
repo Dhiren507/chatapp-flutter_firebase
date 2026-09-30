@@ -1,6 +1,6 @@
 import 'package:chatapp_firebase/core/data/models/user_model.dart';
-import 'package:chatapp_firebase/features/chat_module/chat_detail/data/repositories/chat_repository.dart';
-import 'package:chatapp_firebase/features/chat_module/chat_detail/models/chat_model.dart';
+import 'package:chatapp_firebase/features/chat_module/data/models/user_chat_model.dart';
+import 'package:chatapp_firebase/features/chat_module/data/repositories/chat_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'chat_detail_event.dart';
@@ -10,11 +10,12 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
   final ChatRepository _chatRepo;
 
   ChatDetailBloc({required this._chatRepo}) : super(ChatDetailInitial()) {
-    on<ChatDetailLoaded>(_onChatDetailLoaded);
+    on<ChatDetailFetchRequested>(_onChatDetailFetchRequested);
+    on<SendMessagePressed>(_onSendMessagePressed);
   }
 
-  Future<void> _onChatDetailLoaded(
-    ChatDetailLoaded event,
+  Future<void> _onChatDetailFetchRequested(
+    ChatDetailFetchRequested event,
     Emitter<ChatDetailState> emit,
   ) async {
     emit(ChatDetailLoading());
@@ -23,11 +24,54 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
         event.otherUserId,
       );
 
-      // we will also need to check in here if the chats collection if chatId with current_user_id and other_user id exists then fetch the chatJson and load the data
+      final List<String> ids = [event.currentUserid, event.otherUserId]..sort();
 
-      emit(ChatLoaded(profile: otherUserProfile));
+      final String chatId = "${ids[0]}_${ids[1]}";
+
+      final UserChatModel? chatData = await _chatRepo.fetchChatSession(chatId);
+
+      emit(
+        ChatLoaded(
+          receiverUserProfile: otherUserProfile,
+          currentChat: chatData,
+          chatId: chatId,
+        ),
+      );
     } catch (e) {
       emit(ChatError(errorMsg: e.toString()));
+    }
+  }
+
+  Future<void> _onSendMessagePressed(
+    SendMessagePressed event,
+    Emitter<ChatDetailState> emit,
+  ) async {
+    final currentState = state;
+
+    if (currentState is ChatLoaded) {
+      try {
+        await _chatRepo.sendMessage(
+          chatId: currentState.chatId,
+          senderId: event.currentUserid,
+          receiverId: currentState.receiverUserProfile.uid!,
+          isGroupChat: false,
+          text: event.msgText,
+        );
+
+        UserChatModel? updatedChatData = await _chatRepo.fetchChatSession(
+          currentState.chatId,
+        );
+
+        emit(
+          ChatLoaded(
+            receiverUserProfile: currentState.receiverUserProfile,
+            currentChat: updatedChatData,
+            chatId: currentState.chatId,
+          ),
+        );
+      } catch (e) {
+        emit(ChatError(errorMsg: e.toString()));
+      }
     }
   }
 }

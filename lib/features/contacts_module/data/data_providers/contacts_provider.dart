@@ -9,8 +9,7 @@ class ContactsProvider {
     print(querySnapshot.docs.first);
 
     return querySnapshot.docs.map((doc) {
-      final data = doc.data();
-      return data;
+      return doc.data();
     }).toList();
   }
 }
