@@ -9,7 +9,6 @@ import 'package:chatapp_firebase/core/widgets/pressable_option_tile.dart';
 import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});

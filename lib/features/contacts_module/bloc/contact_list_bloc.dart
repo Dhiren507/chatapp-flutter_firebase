@@ -1,5 +1,5 @@
 import 'package:chatapp_firebase/core/data/models/user_model.dart';
-import 'package:chatapp_firebase/features/contacts_module/data/repositories/contact_repository.dart';
+import 'package:chatapp_firebase/core/data/repositories/contact_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'contact_list_event.dart';
@@ -18,7 +18,7 @@ class ContactListBloc extends Bloc<ContactListEvent, ContactListState> {
   ) async {
     emit(ContactListLoading());
     try {
-      final contactList = await _contactRepo.getAllContacts();
+      final contactList = await _contactRepo.getAllContacts(event.currentUserId);
 
       final List<UserModel> sortedContacts = List.from(contactList)
         ..sort(

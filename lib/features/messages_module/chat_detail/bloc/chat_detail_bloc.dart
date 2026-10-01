@@ -1,4 +1,5 @@
-import 'package:chatapp_firebase/core/data/models/user_model.dart';
+import 'dart:async';
+
 import 'package:chatapp_firebase/features/messages_module/data/models/user_chat_model.dart';
 import 'package:chatapp_firebase/features/messages_module/data/repositories/chat_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,10 +9,12 @@ part 'chat_detail_state.dart';
 
 class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
   final ChatRepository _chatRepo;
+  StreamSubscription<UserChatModel?>? _chatSubscription;
 
   ChatDetailBloc({required this._chatRepo}) : super(ChatDetailInitial()) {
     on<ChatDetailFetchRequested>(_onChatDetailFetchRequested);
     on<SendMessagePressed>(_onSendMessagePressed);
+    on<ChatDocumentUpdated>(_onChatDocumentUpdated);
   }
 
   Future<void> _onChatDetailFetchRequested(
@@ -20,26 +23,32 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
   ) async {
     emit(ChatDetailLoading());
     try {
-      final UserModel otherUserProfile = await _chatRepo.fetchUserProfile(
-        event.otherUserId,
-      );
-
       final List<String> ids = [event.currentUserid, event.otherUserId]..sort();
 
       final String chatId = "${ids[0]}_${ids[1]}";
 
-      final UserChatModel? chatData = await _chatRepo.fetchChatSession(chatId);
+      await _chatSubscription?.cancel();
 
-      emit(
-        ChatLoaded(
-          receiverUserProfile: otherUserProfile,
-          currentChat: chatData,
-          chatId: chatId,
-        ),
-      );
+      // final UserChatModel? chatData = await _chatRepo.fetchChatSession(chatId);
+      // emit(ChatLoaded(currentChat: chatData, chatId: chatId));
+
+      _chatSubscription = _chatRepo.streamCurrentChatSession(chatId).listen((
+        newChatData,
+      ) {
+        add(ChatDocumentUpdated(chatData: newChatData, chatId: chatId));
+      });
+
+
     } catch (e) {
       emit(ChatError(errorMsg: e.toString()));
     }
+  }
+
+  void _onChatDocumentUpdated(
+    ChatDocumentUpdated event,
+    Emitter<ChatDetailState> emit,
+  ) {
+    emit(ChatLoaded(currentChat: event.chatData, chatId: event.chatId));
   }
 
   Future<void> _onSendMessagePressed(
@@ -53,25 +62,22 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
         await _chatRepo.sendMessage(
           chatId: currentState.chatId,
           senderId: event.currentUserid,
-          receiverId: currentState.receiverUserProfile.uid!,
+          receiverId: event.receiverUserid,
           isGroupChat: false,
           text: event.msgText,
-        );
-
-        UserChatModel? updatedChatData = await _chatRepo.fetchChatSession(
-          currentState.chatId,
-        );
-
-        emit(
-          ChatLoaded(
-            receiverUserProfile: currentState.receiverUserProfile,
-            currentChat: updatedChatData,
-            chatId: currentState.chatId,
-          ),
         );
       } catch (e) {
         emit(ChatError(errorMsg: e.toString()));
       }
     }
   }
+
+  @override
+  Future<void> close() async {
+    // TODO: implement close
+    await _chatSubscription?.cancel();
+    return super.close();
+  }
 }
+
+/* Group ke chat ka flow.. */

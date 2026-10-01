@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 class CommonSvgContainer extends StatelessWidget {
   final String? iconPath;
   final double? iconSize;
- final  Color? iconColor;
+  final Color? iconColor;
   final Color? backgroundColor;
   final double containerSize;
   final Color? borderColor;
@@ -44,10 +44,9 @@ class CommonSvgContainer extends StatelessWidget {
                   child: SvgPicture.asset(
                     iconPath!,
                     fit: BoxFit.contain,
-                    colorFilter: ColorFilter.mode(
-                      iconColor ?? AppColors.black,
-                      BlendMode.srcIn,
-                    ),
+                    colorFilter: iconColor != null
+                        ? ColorFilter.mode(iconColor!, BlendMode.srcIn)
+                        : null,
                   ),
                 )
               : const SizedBox.shrink(),
@@ -56,3 +55,11 @@ class CommonSvgContainer extends StatelessWidget {
     );
   }
 }
+
+/*
+* creating a group
+*
+*
+*
+*
+* */

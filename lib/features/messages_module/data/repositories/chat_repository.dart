@@ -86,7 +86,7 @@ class ChatRepository {
     return UserChatModel.fromJson(chatData);
   }
 
-  Future<List<UserChatModel>?> fetchChatList(String userId) async {
+  Future<List<UserChatModel>> fetchUserChatList(String userId) async {
     final chatsQuerySnapshot = await _firebaseDb
         .collection(AppKeys.chatCollectionKey)
         .where('members', arrayContains: userId)
@@ -105,5 +105,19 @@ class ChatRepository {
     }
 
     return [];
+  }
+
+  Stream<UserChatModel?> streamCurrentChatSession(String chatId) {
+    final snapshots = _firebaseDb
+        .collection(AppKeys.chatCollectionKey)
+        .doc(chatId)
+        .snapshots();
+
+    return snapshots.map((chatDocSnapshot) {
+      if (!chatDocSnapshot.exists || chatDocSnapshot.data() == null) {
+        return null;
+      }
+      return UserChatModel.fromJson(chatDocSnapshot.data()!);
+    });
   }
 }

@@ -27,17 +27,19 @@ class ContactListTile extends StatelessWidget {
 
         const SizedBox(width: 15),
 
-        Column(
-          crossAxisAlignment: .start,
-          children: [
-            Text(
-              contactName,
-              style: AppTextStyles.heading(fontSize: 18),
-              overflow: .ellipsis,
-            ),
-            if(contactBio != '')
-              Text(contactBio, style: AppTextStyles.body(fontSize: 12)),
-          ],
+        Flexible(
+          child: Column(
+            crossAxisAlignment: .start,
+            children: [
+              Text(
+                contactName,
+                style: AppTextStyles.heading(fontSize: 18),
+                overflow: .ellipsis,
+              ),
+              if(contactBio != '')
+                Text(contactBio, style: AppTextStyles.body(fontSize: 12), overflow: .ellipsis,),
+            ],
+          ),
         ),
       ],
     );

@@ -14,7 +14,15 @@ class ChatDetailFetchRequested extends ChatDetailEvent {
 
 class SendMessagePressed extends ChatDetailEvent {
   final String currentUserid;
+  final String receiverUserid;
   final String msgText;
 
-  SendMessagePressed({required this.msgText, required this.currentUserid});
+  SendMessagePressed({required this.msgText, required this.currentUserid, required this.receiverUserid});
 }
+
+class ChatDocumentUpdated extends ChatDetailEvent {
+  final UserChatModel? chatData;
+  final String chatId;
+  ChatDocumentUpdated({required this.chatData, required this.chatId});
+}
+

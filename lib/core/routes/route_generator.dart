@@ -1,16 +1,17 @@
+import 'package:chatapp_firebase/core/data/repositories/contact_repository.dart';
 import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
 import 'package:chatapp_firebase/features/auth_module/login/bloc/login_bloc.dart';
 import 'package:chatapp_firebase/features/auth_module/onboarding/bloc/onboarding_bloc.dart';
 import 'package:chatapp_firebase/features/auth_module/onboarding/screens/onboarding_screen.dart';
 import 'package:chatapp_firebase/features/auth_module/splash/screens/splash_screen.dart';
+import 'package:chatapp_firebase/features/contacts_module/bloc/contact_list_bloc.dart';
+import 'package:chatapp_firebase/features/group_module/create_group/screens/create_group_screen.dart';
 import 'package:chatapp_firebase/features/messages_module/chat_detail/bloc/chat_detail_bloc.dart';
 import 'package:chatapp_firebase/features/messages_module/chat_detail/screens/chat_detail_screen.dart';
 import 'package:chatapp_firebase/features/messages_module/chat_listing/bloc/chat_list_bloc.dart';
 import 'package:chatapp_firebase/features/messages_module/data/repositories/chat_repository.dart';
-import 'package:chatapp_firebase/features/contacts_module/bloc/contact_list_bloc.dart';
-import 'package:chatapp_firebase/features/contacts_module/data/repositories/contact_repository.dart';
-import 'package:chatapp_firebase/features/group_module/create_group/screens/create_group_screen.dart';
 import 'package:chatapp_firebase/features/profile_module/user_profile_screen.dart';
+import 'package:chatapp_firebase/features/search_module/bloc/search_bloc.dart';
 import 'package:chatapp_firebase/features/search_module/screens/search_screen.dart';
 import 'package:chatapp_firebase/features/status_module/screens/status_preview_screen.dart';
 import 'package:chatapp_firebase/features/tab_bar/cubit/tab_bar_index_cubit.dart';
@@ -101,7 +102,16 @@ class RouteGenerator {
         );
 
       case AppRoutes.searchScreen:
-        return MaterialPageRoute(builder: (context) => SearchScreen());
+        return MaterialPageRoute(
+          builder: (context) => RepositoryProvider(
+            create: (context) => ContactRepository(),
+            child: BlocProvider<SearchBloc>(
+              create: (context) =>
+                  SearchBloc(contactRepo: context.read<ContactRepository>()),
+              child: const SearchScreen(),
+            ),
+          ),
+        );
 
       case AppRoutes.crateGroupScreen:
         return MaterialPageRoute(builder: (context) => CreateGroupScreen());

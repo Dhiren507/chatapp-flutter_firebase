@@ -1,11 +1,14 @@
+import 'package:chatapp_firebase/core/constants/app_keys.dart';
 import 'package:chatapp_firebase/core/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ContactRepository {
   final FirebaseFirestore _firebaseDb = FirebaseFirestore.instance;
 
-  Future<List<UserModel>> getAllContacts() async {
-    final querySnapshot = await _firebaseDb.collection('users').get();
+  Future<List<UserModel>> getAllContacts(String currentUserId) async {
+    final querySnapshot = await _firebaseDb
+        .collection(AppKeys.userCollectionKey).where('uid', isNotEqualTo: currentUserId)
+        .get();
 
     print(querySnapshot.docs.first);
 

@@ -226,30 +226,36 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         }
 
                         if (state is ChatListLoaded) {
-                          return ListView.separated(
-                            padding: EdgeInsets.symmetric(horizontal: 24),
-                            itemBuilder: (context, index) {
-                              final chatTileData = state.chatList[index];
+                          return state.chatList.isNotEmpty
+                              ? ListView.separated(
+                                  padding: EdgeInsets.symmetric(horizontal: 24),
+                                  itemBuilder: (context, index) {
+                                    final chatTileData = state.chatList[index];
 
-                              print(
-                                'this is the chat tile data ${chatTileData.chatId}',
-                              );
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    AppRoutes.chatDetailScreen,
-                                    arguments:
-                                        chatTileData.otherUserProfile?.uid,
-                                  );
-                                },
-                                child: ChatListTile(chatListData: chatTileData),
-                              );
-                            },
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(height: 20),
-                            itemCount: state.chatList.length,
-                          );
+                                    print(
+                                      'this is the chat tile data ${chatTileData.chatId}',
+                                    );
+
+                                    return GestureDetector(
+                                      behavior: .opaque,
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          AppRoutes.chatDetailScreen,
+                                          arguments:
+                                              chatTileData.otherUserProfile,
+                                        );
+                                      },
+                                      child: ChatListTile(
+                                        chatListData: chatTileData,
+                                      ),
+                                    );
+                                  },
+                                  separatorBuilder: (context, index) =>
+                                      const SizedBox(height: 20),
+                                  itemCount: state.chatList.length,
+                                )
+                              : const Center(child: Text('No Chats Yet!'));
                         }
                         return SizedBox.shrink();
                       },

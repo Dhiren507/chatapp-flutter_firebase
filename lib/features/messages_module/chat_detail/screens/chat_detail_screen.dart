@@ -1,7 +1,9 @@
 import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
+import 'package:chatapp_firebase/core/data/models/user_model.dart';
 import 'package:chatapp_firebase/core/routes/app_routes.dart';
+import 'package:chatapp_firebase/core/utils/date_formatter.dart';
 import 'package:chatapp_firebase/core/utils/image_picker_utils.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
 import 'package:chatapp_firebase/core/widgets/common_bottom_sheet.dart';
@@ -9,13 +11,13 @@ import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
 import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
 import 'package:chatapp_firebase/features/messages_module/chat_detail/bloc/chat_detail_bloc.dart';
 import 'package:chatapp_firebase/features/messages_module/data/models/user_chat_model.dart';
-import 'package:chatapp_firebase/features/messages_module/widgets/chat_bubble.dart';
 import 'package:chatapp_firebase/features/messages_module/widgets/chat_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../widgets/chat_bubble.dart';
 
 class ChatDetailScreen extends StatefulWidget {
   const ChatDetailScreen({super.key});
@@ -26,18 +28,19 @@ class ChatDetailScreen extends StatefulWidget {
 
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final TextEditingController _msgController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final String otherUserId =
-          ModalRoute.of(context)?.settings.arguments as String;
+      final UserModel otherUserProfile =
+          ModalRoute.of(context)?.settings.arguments as UserModel;
 
       context.read<ChatDetailBloc>().add(
         ChatDetailFetchRequested(
-          otherUserId: otherUserId,
+          otherUserId: otherUserProfile.uid!,
           currentUserid: context.read<AuthRepository>().getCurrentUserId()!,
         ),
       );
@@ -45,7 +48,18 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    _msgController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final UserModel otherUserProfile =
+        ModalRoute.of(context)?.settings.arguments as UserModel;
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.white,
@@ -60,9 +74,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   Navigator.pushNamed(context, AppRoutes.profileScreen);
                 },
                 child: ChatHeader(
-                  imgUrl: state.receiverUserProfile.photoUrl ?? '',
+                  imgUrl: otherUserProfile.photoUrl ?? '',
                   status: 'Active Now',
-                  userName: state.receiverUserProfile.name ?? '',
+                  userName: otherUserProfile.name ?? '',
                 ),
               );
             }
@@ -89,7 +103,20 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         actionsPadding: EdgeInsets.only(right: 24),
         titleSpacing: 0,
       ),
-      body: BlocBuilder<ChatDetailBloc, ChatDetailState>(
+      body: BlocConsumer<ChatDetailBloc, ChatDetailState>(
+        listener: (context, state) {
+          if (state is ChatLoaded) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_scrollController.hasClients) {
+                _scrollController.animateTo(
+                  _scrollController.position.maxScrollExtent,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                );
+              }
+            });
+          }
+        },
         builder: (context, state) {
           if (state is ChatDetailLoading) {
             return Center(child: CircularProgressIndicator());
@@ -109,25 +136,80 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                     Expanded(
                       child: messages.isNotEmpty
                           ? ListView.separated(
+                              controller: _scrollController,
                               itemBuilder: (context, index) {
                                 final MessageModel msg = messages[index];
+
+                                final DateTime currentMsgTime = msg.createdAt!;
+                                String currentLabel = getChatDayLabel(
+                                  currentMsgTime,
+                                );
+                                bool showLabel = false;
+
+                                if (index == 0) {
+                                  showLabel = true;
+                                } else {
+                                  final prevMsg = messages[index - 1];
+                                  final DateTime prevMsgTime =
+                                      prevMsg.createdAt!;
+                                  final bool isSameDay =
+                                      currentMsgTime.year == prevMsgTime.year &&
+                                      currentMsgTime.month ==
+                                          prevMsgTime.month &&
+                                      currentMsgTime.day == prevMsgTime.day;
+
+                                  if (!isSameDay) {
+                                    showLabel = true;
+                                  }
+                                }
+
                                 bool isMe =
                                     msg.senderId ==
                                     context
                                         .read<AuthRepository>()
                                         .getCurrentUserId()!;
-                                return ChatBubble(
-                                  isMe: isMe,
-                                  message: msg,
+
+                                return Column(
+                                  children: [
+                                    if (showLabel) ...[
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 10,
+                                        ),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: AppColors.bgGrey,
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                          ),
+
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 2,
+                                              horizontal: 6,
+                                            ),
+                                            child: Text(
+                                              currentLabel,
+                                              style: AppTextStyles.heading(
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                    ChatBubble(isMe: isMe, message: msg),
+                                  ],
                                 );
                               },
                               separatorBuilder: (context, index) =>
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 5),
                               itemCount: messages.length,
                             )
                           : Center(child: Text('No Messages Yet!')),
                     ),
-              
+
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Row(
@@ -159,7 +241,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                       );
                                     },
                                   );
-              
+
                               if (selectedAttachment.isNotEmpty) {
                                 print(
                                   'this is an attachment selected in chat screen${selectedAttachment[0].name}',
@@ -199,13 +281,14 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              if(_msgController.text.isNotEmpty){
+                              if (_msgController.text.isNotEmpty) {
                                 context.read<ChatDetailBloc>().add(
                                   SendMessagePressed(
                                     msgText: _msgController.text.trim(),
                                     currentUserid: context
                                         .read<AuthRepository>()
                                         .getCurrentUserId()!,
+                                    receiverUserid: otherUserProfile.uid!,
                                   ),
                                 );
                                 _msgController.clear();
@@ -214,7 +297,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                             child: CommonSvgContainer(
                               containerSize: 42,
                               iconPath: AppAssets.messageSendIcon,
-                              iconColor: AppColors.black,
                               backgroundColor: AppColors.bgGreen,
                             ),
                           ),

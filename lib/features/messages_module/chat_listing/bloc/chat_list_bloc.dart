@@ -20,7 +20,7 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
     emit(ChatListLoading());
 
     try {
-      final List<UserChatModel>? rawChatList = await _chatRepo.fetchChatList(
+      final List<UserChatModel> rawChatList = await _chatRepo.fetchUserChatList(
         event.currentUserId,
       );
 
@@ -30,7 +30,7 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
         emit(ChatListLoaded(chatList: []));
       }
 
-      final List<ChatListModel> finalChatList = rawChatList!.map((chat) {
+      final List<ChatListModel> finalChatList = rawChatList.map((chat) {
         final otherUserProfile = chat.profiles?.firstWhere(
           (profile) => profile.uid != event.currentUserId,
         );

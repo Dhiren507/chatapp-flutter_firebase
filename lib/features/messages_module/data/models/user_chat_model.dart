@@ -1,4 +1,5 @@
 import 'package:chatapp_firebase/core/data/models/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserChatModel {
   final String? chatId;
@@ -50,11 +51,11 @@ class UserChatModel {
               )
               .toList() ??
           [],
-      createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'].toString())
+      createdAt: json['created_at'] != null
+          ? (json['created_at'] as Timestamp).toDate()
           : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.tryParse(json['updatedAt'].toString())
+      updatedAt: json['updated_at'] != null
+          ? (json['updated_at'] as Timestamp).toDate()
           : null,
     );
   }
@@ -101,10 +102,10 @@ class MessageModel {
           : null,
       mediaType: json['mediaType'],
       createdAt: json['created_at'] != null
-          ? DateTime.tryParse(json['created_at'].toString())
+          ? (json['created_at'] as Timestamp).toDate()
           : null,
       updatedAt: json['updated_at'] != null
-          ? DateTime.tryParse(json['updated_at'].toString())
+          ? (json['updated_at'] as Timestamp).toDate()
           : null,
     );
   }

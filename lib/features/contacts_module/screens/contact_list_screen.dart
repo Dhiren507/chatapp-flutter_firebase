@@ -3,6 +3,7 @@ import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/routes/app_routes.dart';
 import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
+import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
 import 'package:chatapp_firebase/features/contacts_module/bloc/contact_list_bloc.dart';
 import 'package:chatapp_firebase/features/contacts_module/widgets/contact_list_tile.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,11 @@ class _ContactListScreenState extends State<ContactListScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    context.read<ContactListBloc>().add(ContactListFetchRequested());
+    context.read<ContactListBloc>().add(
+      ContactListFetchRequested(
+        currentUserId: context.read<AuthRepository>().getCurrentUserId()!,
+      ),
+    );
   }
 
   @override
@@ -147,8 +152,13 @@ class _ContactListScreenState extends State<ContactListScreen> {
                                     ),
                                   ],
                                   GestureDetector(
+                                    behavior: .opaque,
                                     onTap: () {
-                                      Navigator.pushNamed(context, AppRoutes.chatDetailScreen, arguments: contact.uid);
+                                      Navigator.pushNamed(
+                                        context,
+                                        AppRoutes.chatDetailScreen,
+                                        arguments: contact,
+                                      );
                                     },
                                     child: ContactListTile(
                                       contactName: contact.name ?? '',
