@@ -7,7 +7,7 @@ import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/routes/app_routes.dart';
-import '../../chat_module/widgets/chat_header.dart';
+import '../../messages_module/widgets/chat_header.dart';
 
 class StatusViewScreen extends StatelessWidget {
   const StatusViewScreen({super.key});

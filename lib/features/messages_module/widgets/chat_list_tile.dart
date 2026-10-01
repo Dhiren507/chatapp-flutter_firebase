@@ -1,7 +1,7 @@
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
-import 'package:chatapp_firebase/features/chat_module/chat_listing/data/models/chat_list_model.dart';
+import 'package:chatapp_firebase/features/messages_module/data/models/chat_list_model.dart';
 import 'package:flutter/material.dart';
 
 class ChatListTile extends StatelessWidget {

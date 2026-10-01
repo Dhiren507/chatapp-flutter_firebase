@@ -2,7 +2,7 @@ import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/features/call_module/screens/call_list_screen.dart';
-import 'package:chatapp_firebase/features/chat_module/chat_listing/screens/chat_list_screen.dart';
+import 'package:chatapp_firebase/features/messages_module/chat_listing/screens/chat_list_screen.dart';
 import 'package:chatapp_firebase/features/contacts_module/screens/contact_list_screen.dart';
 import 'package:chatapp_firebase/features/settings_module/screens/settings_screen.dart';
 import 'package:chatapp_firebase/features/tab_bar/cubit/tab_bar_index_cubit.dart';

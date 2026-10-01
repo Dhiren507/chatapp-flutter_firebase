@@ -1,5 +1,5 @@
 import 'package:chatapp_firebase/core/data/models/user_model.dart';
-import 'package:chatapp_firebase/features/chat_module/data/models/user_chat_model.dart';
+import 'package:chatapp_firebase/features/messages_module/data/models/user_chat_model.dart';
 
 class ChatListModel {
   final String? chatId;

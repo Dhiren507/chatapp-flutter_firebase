@@ -6,7 +6,7 @@ import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
 import 'package:chatapp_firebase/core/widgets/common_image_container.dart';
 import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
-import 'package:chatapp_firebase/features/profile_module/profile_info_section.dart';
+import 'package:chatapp_firebase/features/profile_module/widgets/profile_info_section.dart';
 import 'package:flutter/material.dart';
 
 class UserProfileScreen extends StatelessWidget {

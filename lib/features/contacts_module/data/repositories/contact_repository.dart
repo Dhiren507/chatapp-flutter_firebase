@@ -1,14 +1,17 @@
 import 'package:chatapp_firebase/core/data/models/user_model.dart';
-import 'package:chatapp_firebase/features/contacts_module/data/data_providers/contacts_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ContactRepository {
-  final ContactsProvider _contactsProvider;
-
-  ContactRepository({ContactsProvider? contactProvider})
-    : _contactsProvider = contactProvider ?? ContactsProvider();
+  final FirebaseFirestore _firebaseDb = FirebaseFirestore.instance;
 
   Future<List<UserModel>> getAllContacts() async {
-    final contactListJson = await _contactsProvider.fetchAllContactsJson();
+    final querySnapshot = await _firebaseDb.collection('users').get();
+
+    print(querySnapshot.docs.first);
+
+    final contactListJson = querySnapshot.docs.map((doc) {
+      return doc.data();
+    }).toList();
 
     print('this is list of json : $contactListJson');
 

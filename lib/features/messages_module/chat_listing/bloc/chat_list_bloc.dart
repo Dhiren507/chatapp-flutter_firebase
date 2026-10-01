@@ -1,6 +1,6 @@
-import 'package:chatapp_firebase/features/chat_module/chat_listing/data/models/chat_list_model.dart';
-import 'package:chatapp_firebase/features/chat_module/data/models/user_chat_model.dart';
-import 'package:chatapp_firebase/features/chat_module/data/repositories/chat_repository.dart';
+import 'package:chatapp_firebase/features/messages_module/data/models/chat_list_model.dart';
+import 'package:chatapp_firebase/features/messages_module/data/models/user_chat_model.dart';
+import 'package:chatapp_firebase/features/messages_module/data/repositories/chat_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'chat_list_event.dart';
