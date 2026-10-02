@@ -5,6 +5,7 @@ import 'package:chatapp_firebase/features/auth_module/onboarding/bloc/onboarding
 import 'package:chatapp_firebase/features/auth_module/onboarding/screens/onboarding_screen.dart';
 import 'package:chatapp_firebase/features/auth_module/splash/screens/splash_screen.dart';
 import 'package:chatapp_firebase/features/contacts_module/bloc/contact_list_bloc.dart';
+import 'package:chatapp_firebase/features/group_module/create_group/bloc/create_group_bloc.dart';
 import 'package:chatapp_firebase/features/group_module/create_group/screens/create_group_screen.dart';
 import 'package:chatapp_firebase/features/messages_module/chat_detail/bloc/chat_detail_bloc.dart';
 import 'package:chatapp_firebase/features/messages_module/chat_detail/screens/chat_detail_screen.dart';
@@ -111,10 +112,21 @@ class RouteGenerator {
               child: const SearchScreen(),
             ),
           ),
+          settings: settings,
         );
 
       case AppRoutes.crateGroupScreen:
-        return MaterialPageRoute(builder: (context) => CreateGroupScreen());
+        return MaterialPageRoute(
+          builder: (context) => RepositoryProvider(
+            create: (context) => ChatRepository(),
+            child: BlocProvider<CreateGroupBloc>(
+              create: (context) =>
+                  CreateGroupBloc(chatRepo: context.read<ChatRepository>()),
+              child: const CreateGroupScreen(),
+            ),
+          ),
+          settings: settings,
+        );
 
       case AppRoutes.statusPreviewScreen:
         return MaterialPageRoute(

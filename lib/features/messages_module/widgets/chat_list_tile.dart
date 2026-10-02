@@ -17,7 +17,7 @@ class ChatListTile extends StatelessWidget {
           clipBehavior: .none,
           children: [
             CommonAvatar(
-              imgPath: chatListData.otherUserProfile?.photoUrl ?? '',
+              imgPath: chatListData.otherUserProfile?.photoUrl ?? chatListData.groupProfile!,
               size: 55,
               borderColor: Colors.transparent,
             ),
@@ -43,7 +43,7 @@ class ChatListTile extends StatelessWidget {
             crossAxisAlignment: .start,
             children: [
               Text(
-                chatListData.otherUserProfile?.name ?? '',
+                chatListData.otherUserProfile?.name ?? chatListData.groupName!,
                 style: AppTextStyles.heading(fontSize: 20),
                 overflow: .ellipsis,
               ),

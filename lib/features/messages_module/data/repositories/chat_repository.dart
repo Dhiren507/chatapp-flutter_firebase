@@ -7,12 +7,12 @@ class ChatRepository {
   final FirebaseFirestore _firebaseDb = FirebaseFirestore.instance;
 
   Future<UserModel> fetchUserProfile(String uid) async {
-    final querySnapshot = await _firebaseDb
+    final userDocSnapshot = await _firebaseDb
         .collection(AppKeys.userCollectionKey)
         .doc(uid)
         .get();
 
-    final userProfileJson = querySnapshot.data()!;
+    final userProfileJson = userDocSnapshot.data()!;
 
     print('this is the userProfile json : $userProfileJson');
     return UserModel.fromJson(userProfileJson);
@@ -20,14 +20,16 @@ class ChatRepository {
 
   Future<void> sendMessage({
     required String chatId,
-    required String senderId,
-    required String receiverId,
+    required UserModel sender,
+    UserModel? receiver,
     required bool isGroupChat,
     required String text,
   }) async {
     final newMessage = MessageModel(
       msgId: DateTime.now().microsecondsSinceEpoch.toString(),
-      senderId: senderId,
+      senderId: sender.uid,
+      senderName: sender.name,
+      senderProfileUrl: sender.photoUrl,
       messageText: text,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
@@ -41,21 +43,21 @@ class ChatRepository {
 
     final chatSnapshot = await chatRef.get();
 
-    if (!chatSnapshot.exists) {
+    if (!chatSnapshot.exists && !isGroupChat) {
       final currentUserData = await _firebaseDb
           .collection(AppKeys.userCollectionKey)
-          .doc(senderId)
+          .doc(sender.uid)
           .get();
 
       final otherUserData = await _firebaseDb
           .collection(AppKeys.userCollectionKey)
-          .doc(receiverId)
+          .doc(receiver?.uid)
           .get();
 
       await chatRef.set({
         'chatId': chatId,
         'isGroup': isGroupChat,
-        'members': [senderId, receiverId],
+        'members': [sender.uid, receiver?.uid],
         'messages': [newMessageJson],
         'profiles': [currentUserData.data(), otherUserData.data()],
         'created_at': FieldValue.serverTimestamp(),
@@ -92,19 +94,14 @@ class ChatRepository {
         .where('members', arrayContains: userId)
         .get();
 
-    final chatListJson = chatsQuerySnapshot.docs.map((doc) {
-      return doc.data();
-    }).toList();
+    final chatList = <UserChatModel>[];
 
-    print('this is the response of fetching chatLists $chatListJson');
-
-    if (chatListJson.isNotEmpty) {
-      return chatListJson.map((chatJson) {
-        return UserChatModel.fromJson(chatJson);
-      }).toList();
+    for (final doc in chatsQuerySnapshot.docs) {
+      final data = doc.data();
+      chatList.add(UserChatModel.fromJson(data));
     }
 
-    return [];
+    return chatList;
   }
 
   Stream<UserChatModel?> streamCurrentChatSession(String chatId) {
@@ -118,6 +115,37 @@ class ChatRepository {
         return null;
       }
       return UserChatModel.fromJson(chatDocSnapshot.data()!);
+    });
+  }
+
+  Future<void> createNewGroup(
+    String groupId,
+    String groupName,
+    UserModel adminProfile,
+    List<UserModel> members,
+  ) async {
+    final chatRef = _firebaseDb
+        .collection(AppKeys.chatCollectionKey)
+        .doc(groupId);
+
+    List<Map<String, dynamic>> membersJson = members
+        .map((member) => member.toJson())
+        .toList();
+
+    List<String> memberUids = members.map((m) => m.uid!).toList();
+    memberUids.add(adminProfile.uid!);
+
+    await chatRef.set({
+      'chatId': groupId,
+      'groupName': groupName,
+      'groupProfileUrl': '',
+      'isGroup': true,
+      'messages': [],
+      'members': memberUids,
+      'admin': adminProfile.toJson(),
+      'profiles': membersJson,
+      'created_at': FieldValue.serverTimestamp(),
+      'updated_at': FieldValue.serverTimestamp(),
     });
   }
 }

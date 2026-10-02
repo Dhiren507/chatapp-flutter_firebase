@@ -11,8 +11,15 @@ final class ChatDetailLoading extends ChatDetailState {}
 final class ChatLoaded extends ChatDetailState {
   final String chatId;
   final UserChatModel? currentChat;
+  final UserModel? currentUserProfile;
+  final UserModel? otherUserProfile;
 
-  ChatLoaded({required this.currentChat, required this.chatId,});
+  ChatLoaded({
+    required this.currentChat,
+    required this.chatId,
+    required this.currentUserProfile,
+    required this.otherUserProfile
+  });
 }
 
 final class ChatError extends ChatDetailState {

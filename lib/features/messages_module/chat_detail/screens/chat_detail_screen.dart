@@ -3,7 +3,7 @@ import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/data/models/user_model.dart';
 import 'package:chatapp_firebase/core/routes/app_routes.dart';
-import 'package:chatapp_firebase/core/utils/date_formatter.dart';
+import 'package:chatapp_firebase/core/utils/date_utils.dart';
 import 'package:chatapp_firebase/core/utils/image_picker_utils.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
 import 'package:chatapp_firebase/core/widgets/common_bottom_sheet.dart';
@@ -34,16 +34,28 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final UserModel otherUserProfile =
-          ModalRoute.of(context)?.settings.arguments as UserModel;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final args = ModalRoute.of(context)?.settings.arguments;
 
-      context.read<ChatDetailBloc>().add(
-        ChatDetailFetchRequested(
-          otherUserId: otherUserProfile.uid!,
-          currentUserid: context.read<AuthRepository>().getCurrentUserId()!,
-        ),
-      );
+      final currentUserProfile = await context
+          .read<AuthRepository>()
+          .getCurrentUserProfile();
+
+      if (args is String) {
+        context.read<ChatDetailBloc>().add(
+          ChatDetailFetchRequested(
+            groupChatId: args,
+            currentUserProfile: currentUserProfile,
+          ),
+        );
+      } else if (args is UserModel) {
+        context.read<ChatDetailBloc>().add(
+          ChatDetailFetchRequested(
+            otherUserProfile: args,
+            currentUserProfile: currentUserProfile,
+          ),
+        );
+      }
     });
   }
 
@@ -57,9 +69,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final UserModel otherUserProfile =
-        ModalRoute.of(context)?.settings.arguments as UserModel;
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.white,
@@ -69,14 +78,24 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         title: BlocBuilder<ChatDetailBloc, ChatDetailState>(
           builder: (context, state) {
             if (state is ChatLoaded) {
+              final isGroup = state.currentChat?.isGroup ?? false;
+
+              final headerTitle = isGroup
+                  ? (state.currentChat?.groupName ?? 'Group Chat')
+                  : (state.otherUserProfile?.name ?? 'Chat');
+
+              final headerImgUrl = isGroup
+                  ? (state.currentChat?.groupProfileUrl ?? '')
+                  : (state.otherUserProfile?.photoUrl ?? '');
+
               return GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(context, AppRoutes.profileScreen);
                 },
                 child: ChatHeader(
-                  imgUrl: otherUserProfile.photoUrl ?? '',
+                  imgUrl: headerImgUrl,
                   status: 'Active Now',
-                  userName: otherUserProfile.name ?? '',
+                  userName: headerTitle,
                 ),
               );
             }
@@ -128,6 +147,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
           if (state is ChatLoaded) {
             final messages = state.currentChat?.messages ?? [];
+            final isGroup = state.currentChat?.isGroup ?? false;
             return SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -165,9 +185,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
                                 bool isMe =
                                     msg.senderId ==
-                                    context
-                                        .read<AuthRepository>()
-                                        .getCurrentUserId()!;
+                                    state.currentUserProfile?.uid;
 
                                 return Column(
                                   children: [
@@ -199,7 +217,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                         ),
                                       ),
                                     ],
-                                    ChatBubble(isMe: isMe, message: msg),
+                                    ChatBubble(
+                                      isMe: isMe,
+                                      message: msg,
+                                      isGroup: isGroup,
+                                      // isSameSender: isSameSender,
+                                    ),
                                   ],
                                 );
                               },
@@ -273,7 +296,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                   color: AppColors.textSecondary,
                                 ),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide.none,
                                 ),
                               ),
@@ -282,15 +305,27 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           GestureDetector(
                             onTap: () {
                               if (_msgController.text.isNotEmpty) {
-                                context.read<ChatDetailBloc>().add(
-                                  SendMessagePressed(
-                                    msgText: _msgController.text.trim(),
-                                    currentUserid: context
-                                        .read<AuthRepository>()
-                                        .getCurrentUserId()!,
-                                    receiverUserid: otherUserProfile.uid!,
-                                  ),
-                                );
+                                if (state.currentChat?.isGroup ?? false) {
+                                  context.read<ChatDetailBloc>().add(
+                                    SendMessagePressed(
+                                      msgText: _msgController.text.trim(),
+                                      chatId: state.chatId,
+                                      currentUserProfile:
+                                          state.currentUserProfile,
+                                      isGroup: true,
+                                    ),
+                                  );
+                                } else {
+                                  context.read<ChatDetailBloc>().add(
+                                    SendMessagePressed(
+                                      msgText: _msgController.text.trim(),
+                                      chatId: state.chatId,
+                                      currentUserProfile:
+                                          state.currentUserProfile,
+                                      otherUserProfile: state.otherUserProfile,
+                                    ),
+                                  );
+                                }
                                 _msgController.clear();
                               }
                             },

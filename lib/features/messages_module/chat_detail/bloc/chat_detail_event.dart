@@ -3,26 +3,43 @@ part of 'chat_detail_bloc.dart';
 sealed class ChatDetailEvent {}
 
 class ChatDetailFetchRequested extends ChatDetailEvent {
-  final String currentUserid;
-  final String otherUserId;
+  final UserModel? otherUserProfile;
+  final UserModel? currentUserProfile;
+  final String? groupChatId;
 
   ChatDetailFetchRequested({
-    required this.otherUserId,
-    required this.currentUserid,
+    this.otherUserProfile,
+    this.currentUserProfile,
+    this.groupChatId,
   });
 }
 
 class SendMessagePressed extends ChatDetailEvent {
-  final String currentUserid;
-  final String receiverUserid;
+  final String? chatId;
+  final bool isGroup;
+  final UserModel? otherUserProfile;
+  final UserModel? currentUserProfile;
   final String msgText;
 
-  SendMessagePressed({required this.msgText, required this.currentUserid, required this.receiverUserid});
+  SendMessagePressed({
+    this.chatId,
+    this.isGroup = false,
+    required this.msgText,
+    this.currentUserProfile,
+    this.otherUserProfile,
+  });
 }
 
 class ChatDocumentUpdated extends ChatDetailEvent {
   final UserChatModel? chatData;
+  final UserModel currentUserProfile;
+  final UserModel? otherUserProfile;
   final String chatId;
-  ChatDocumentUpdated({required this.chatData, required this.chatId});
-}
 
+  ChatDocumentUpdated({
+    required this.chatData,
+    required this.chatId,
+    required this.currentUserProfile,
+    this.otherUserProfile,
+  });
+}

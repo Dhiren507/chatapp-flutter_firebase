@@ -38,16 +38,19 @@ class AppAuthProvider {
         .signInWithCredential(credential);
 
     if (userCredential.additionalUserInfo?.isNewUser == true) {
-      await _firebaseDb.collection(AppKeys.userCollectionKey).doc(userCredential.user!.uid).set({
-        'uid': userCredential.user!.uid,
-        'name': userCredential.additionalUserInfo!.profile?['name'],
-        'email': userCredential.user!.email,
-        'phone': '',
-        'photoUrl': userCredential.additionalUserInfo!.profile?['picture'],
-        'bio_text': '',
-        'created_at': FieldValue.serverTimestamp(),
-        'updated_at': FieldValue.serverTimestamp(),
-      });
+      await _firebaseDb
+          .collection(AppKeys.userCollectionKey)
+          .doc(userCredential.user!.uid)
+          .set({
+            'uid': userCredential.user!.uid,
+            'name': userCredential.additionalUserInfo!.profile?['name'],
+            'email': userCredential.user!.email,
+            'phone': '',
+            'photoUrl': userCredential.additionalUserInfo!.profile?['picture'],
+            'bio_text': '',
+            'created_at': FieldValue.serverTimestamp(),
+            'updated_at': FieldValue.serverTimestamp(),
+          });
     }
 
     return userCredential;
@@ -64,16 +67,19 @@ class AppAuthProvider {
     );
 
     if (credential.user != null) {
-      await _firebaseDb.collection(AppKeys.userCollectionKey).doc(credential.user!.uid).set({
-        'uid': credential.user!.uid,
-        'name': name,
-        'email': email,
-        'phone': '',
-        'photoUrl': '',
-        'bio_text': '',
-        'created_at': FieldValue.serverTimestamp(),
-        'updated_at': FieldValue.serverTimestamp(),
-      });
+      await _firebaseDb
+          .collection(AppKeys.userCollectionKey)
+          .doc(credential.user!.uid)
+          .set({
+            'uid': credential.user!.uid,
+            'name': name,
+            'email': email,
+            'phone': '',
+            'photoUrl': '',
+            'bio_text': '',
+            'created_at': FieldValue.serverTimestamp(),
+            'updated_at': FieldValue.serverTimestamp(),
+          });
     }
 
     return credential;
@@ -85,5 +91,19 @@ class AppAuthProvider {
 
   User? getCurrentUser() {
     return _firebaseAuth.currentUser;
+  }
+
+  Future<Map<String, dynamic>> getCurrentUserProfile() async {
+    final currentUserId = _firebaseAuth.currentUser?.uid;
+
+    final userDocSnapshot = await _firebaseDb
+        .collection(AppKeys.userCollectionKey)
+        .doc(currentUserId)
+        .get();
+
+    final userProfileJson = userDocSnapshot.data()!;
+
+    print('this is the userProfile json : $userProfileJson');
+    return userProfileJson;
   }
 }

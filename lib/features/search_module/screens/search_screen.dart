@@ -2,6 +2,7 @@ import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
+import 'package:chatapp_firebase/core/data/models/user_model.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
 import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
 import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
@@ -23,9 +24,15 @@ class _SearchScreenState extends State<SearchScreen> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final  selectedMembers =
+          ModalRoute.of(context)?.settings.arguments as List<UserModel>;
+
+      print('already selected members in search screen $selectedMembers');
+
       context.read<SearchBloc>().add(
         SearchInitiated(
           currentUserid: context.read<AuthRepository>().getCurrentUserId()!,
+          selectedUsers: selectedMembers,
         ),
       );
     });
@@ -111,11 +118,12 @@ class _SearchScreenState extends State<SearchScreen> {
                   }
 
                   if (state is SearchSuccess) {
+                    print('already selected members in search Success state ${state.selectedUsers}');
                     return ListView.separated(
                       itemBuilder: (context, index) {
                         final contact = state.contacts[index];
 
-                        bool isSelected = state.selectedUsers.contains(contact);
+                        bool isSelected = state.selectedUsers.any((user) => user.uid == contact.uid);
                         return GestureDetector(
                           behavior: .opaque,
                           onTap: () {
@@ -147,6 +155,20 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: BlocBuilder<SearchBloc, SearchState>(
+        builder: (context, state) {
+          if (state is SearchSuccess) {
+            return FloatingActionButton(
+              onPressed: () {
+                Navigator.pop(context, state.selectedUsers);
+              },
+              backgroundColor: AppColors.green,
+              child: Icon(Icons.add, color: AppColors.white),
+            );
+          }
+          return SizedBox.shrink();
+        },
       ),
     );
   }

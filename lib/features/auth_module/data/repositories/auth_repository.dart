@@ -1,3 +1,4 @@
+import 'package:chatapp_firebase/core/data/models/user_model.dart';
 import 'package:chatapp_firebase/features/auth_module/data/data_providers/firebase_auth_provider.dart';
 
 class AuthRepository {
@@ -57,5 +58,11 @@ class AuthRepository {
     final user = _authProvider.getCurrentUser();
 
     return user?.uid;
+  }
+
+  Future<UserModel> getCurrentUserProfile() async {
+    final profileJson = await _authProvider.getCurrentUserProfile();
+
+    return UserModel.fromJson(profileJson);
   }
 }

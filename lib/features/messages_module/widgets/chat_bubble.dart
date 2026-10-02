@@ -1,6 +1,6 @@
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
-import 'package:chatapp_firebase/core/utils/date_formatter.dart';
+import 'package:chatapp_firebase/core/utils/date_utils.dart';
 import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
 import 'package:chatapp_firebase/core/widgets/common_image_container.dart';
 import 'package:chatapp_firebase/features/messages_module/data/models/user_chat_model.dart';
@@ -8,15 +8,20 @@ import 'package:flutter/material.dart';
 
 class ChatBubble extends StatelessWidget {
   final bool isMe;
+  final bool isGroup;
   final MessageModel message;
 
-  const ChatBubble({super.key, required this.isMe, required this.message});
+  const ChatBubble({
+    super.key,
+    required this.isMe,
+    required this.message,
+    this.isGroup = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final double maxBubbleWidth =
         (MediaQuery.of(context).size.width - 96) * 0.8;
-    final bool isGroup = false;
 
     final bool hasImages =
         message.mediaUrls != null &&
@@ -32,7 +37,7 @@ class ChatBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isMe && isGroup) ...[
-            const CommonAvatar(imgPath: '', size: 40),
+            CommonAvatar(imgPath: message.senderProfileUrl ?? '', size: 40),
             const SizedBox(width: 8),
           ],
 
@@ -48,7 +53,7 @@ class ChatBubble extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 4, bottom: 4),
                     child: Text(
-                      isMe ? 'You' : 'User',
+                      message.senderName ?? '',
                       style: AppTextStyles.body(
                         fontSize: 12,
                         color: AppColors.textSecondary,
@@ -177,7 +182,7 @@ class ChatBubble extends StatelessWidget {
 
           if (isMe && isGroup) ...[
             const SizedBox(width: 8),
-            const CommonAvatar(imgPath: '', size: 40),
+            CommonAvatar(imgPath: message.senderProfileUrl ?? '', size: 40),
           ],
         ],
       ),

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:chatapp_firebase/core/data/models/user_model.dart';
 import 'package:chatapp_firebase/features/messages_module/data/models/user_chat_model.dart';
 import 'package:chatapp_firebase/features/messages_module/data/repositories/chat_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,22 +24,43 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
   ) async {
     emit(ChatDetailLoading());
     try {
-      final List<String> ids = [event.currentUserid, event.otherUserId]..sort();
+      String chatId;
 
-      final String chatId = "${ids[0]}_${ids[1]}";
+      if (event.groupChatId == null) {
+        final List<String> ids = [
+          event.currentUserProfile!.uid!,
+          event.otherUserProfile!.uid!,
+        ]..sort();
+
+        chatId = "${ids[0]}_${ids[1]}";
+      } else {
+        chatId = event.groupChatId!;
+      }
 
       await _chatSubscription?.cancel();
-
-      // final UserChatModel? chatData = await _chatRepo.fetchChatSession(chatId);
-      // emit(ChatLoaded(currentChat: chatData, chatId: chatId));
 
       _chatSubscription = _chatRepo.streamCurrentChatSession(chatId).listen((
         newChatData,
       ) {
-        add(ChatDocumentUpdated(chatData: newChatData, chatId: chatId));
+        if (newChatData?.isGroup == true) {
+          add(
+            ChatDocumentUpdated(
+              chatData: newChatData,
+              chatId: chatId,
+              currentUserProfile: event.currentUserProfile!,
+            ),
+          );
+        } else {
+          add(
+            ChatDocumentUpdated(
+              chatData: newChatData,
+              chatId: chatId,
+              currentUserProfile: event.currentUserProfile!,
+              otherUserProfile: event.otherUserProfile!,
+            ),
+          );
+        }
       });
-
-
     } catch (e) {
       emit(ChatError(errorMsg: e.toString()));
     }
@@ -48,7 +70,14 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
     ChatDocumentUpdated event,
     Emitter<ChatDetailState> emit,
   ) {
-    emit(ChatLoaded(currentChat: event.chatData, chatId: event.chatId));
+    emit(
+      ChatLoaded(
+        currentChat: event.chatData,
+        chatId: event.chatId,
+        currentUserProfile: event.currentUserProfile,
+        otherUserProfile: event.otherUserProfile,
+      ),
+    );
   }
 
   Future<void> _onSendMessagePressed(
@@ -59,13 +88,22 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
 
     if (currentState is ChatLoaded) {
       try {
-        await _chatRepo.sendMessage(
-          chatId: currentState.chatId,
-          senderId: event.currentUserid,
-          receiverId: event.receiverUserid,
-          isGroupChat: false,
-          text: event.msgText,
-        );
+        if (event.isGroup == false) {
+          await _chatRepo.sendMessage(
+            chatId: currentState.chatId,
+            sender: event.currentUserProfile!,
+            receiver: event.otherUserProfile!,
+            isGroupChat: false,
+            text: event.msgText,
+          );
+        } else {
+          await _chatRepo.sendMessage(
+            chatId: currentState.chatId,
+            sender: event.currentUserProfile!,
+            isGroupChat: true,
+            text: event.msgText,
+          );
+        }
       } catch (e) {
         emit(ChatError(errorMsg: e.toString()));
       }
@@ -79,5 +117,3 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
     return super.close();
   }
 }
-
-/* Group ke chat ka flow.. */

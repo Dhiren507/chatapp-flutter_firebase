@@ -22,14 +22,18 @@ class UserModel {
   });
 
   UserModel.fromJson(Map<String, dynamic> json) {
+    uid = json['uid'];
     bioText = json['bio_text'];
-    createdAt = (json['created_at'] as Timestamp).toDate();
     email = json['email'];
     name = json['name'];
     phone = json['phone'];
     photoUrl = json['photoUrl'];
-    uid = json['uid'];
-    updatedAt = (json['updated_at'] as Timestamp).toDate();
+    createdAt = json['created_at'] != null
+        ? (json['created_at'] as Timestamp).toDate()
+        : null;
+    updatedAt = json['updated_at'] != null
+        ? (json['updated_at'] as Timestamp).toDate()
+        : null;
   }
 
   Map<String, dynamic> toJson() {

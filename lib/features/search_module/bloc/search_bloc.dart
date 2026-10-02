@@ -30,7 +30,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           ),
         );
 
-      emit(SearchSuccess(contacts: sortedContacts));
+      emit(
+        SearchSuccess(
+          contacts: sortedContacts,
+          selectedUsers: event.selectedUsers,
+        ),
+      );
     } catch (e) {
       emit(SearchError(errorMsg: 'Error while fetching Contacts'));
     }
@@ -38,7 +43,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   void _onContactSelectionToggled(
     ContactSelectionToggled event,
-    Emitter<SearchState> state,
+    Emitter<SearchState> emit,
   ) {
     if (state is SearchSuccess) {
       final currentState = state as SearchSuccess;
@@ -47,11 +52,17 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         currentState.selectedUsers,
       );
 
-      if (updatedSelectionList.contains(event.selectedUser)) {
-        updatedSelectionList.remove(event.selectedUser);
+      final int existingIndex = updatedSelectionList.indexWhere(
+        (user) => user.uid == event.selectedUser.uid,
+      );
+
+      if (existingIndex >= 0) {
+        updatedSelectionList.removeAt(existingIndex);
       } else {
         updatedSelectionList.add(event.selectedUser);
       }
+
+      print('this is the firest contaact selected : $updatedSelectionList');
 
       emit(currentState.copyWith(selectedUsers: updatedSelectionList));
     }

@@ -243,7 +243,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                           context,
                                           AppRoutes.chatDetailScreen,
                                           arguments:
-                                              chatTileData.otherUserProfile,
+                                              chatTileData.isGroup ?? false
+                                              ? chatTileData.chatId
+                                              : chatTileData.otherUserProfile,
                                         );
                                       },
                                       child: ChatListTile(

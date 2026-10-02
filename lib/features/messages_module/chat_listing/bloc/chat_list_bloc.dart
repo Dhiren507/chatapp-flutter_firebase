@@ -1,3 +1,4 @@
+import 'package:chatapp_firebase/core/data/models/user_model.dart';
 import 'package:chatapp_firebase/features/messages_module/data/models/chat_list_model.dart';
 import 'package:chatapp_firebase/features/messages_module/data/models/user_chat_model.dart';
 import 'package:chatapp_firebase/features/messages_module/data/repositories/chat_repository.dart';
@@ -31,18 +32,29 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
       }
 
       final List<ChatListModel> finalChatList = rawChatList.map((chat) {
-        final otherUserProfile = chat.profiles?.firstWhere(
-          (profile) => profile.uid != event.currentUserId,
-        );
+        bool isGroup = chat.isGroup ?? false;
 
-        final MessageModel? lastChatMessage = chat.messages?.last;
+        UserModel? otherUserProfile;
+        if (!isGroup) {
+          otherUserProfile = chat.profiles
+              ?.where((profile) => profile.uid != event.currentUserId)
+              .toList()
+              .firstOrNull;
+        }
+
+        final MessageModel? lastChatMessage =
+        chat.messages?.isNotEmpty == true ? chat.messages!.last : null;
 
         return ChatListModel(
           chatId: chat.chatId,
           otherUserProfile: otherUserProfile,
+          groupName: isGroup ? chat.groupName : null,
+          groupProfile: isGroup ? chat.groupProfileUrl : null,
+          isGroup: isGroup,
           lastMessage: lastChatMessage,
           lastMessageTimestamp: lastChatMessage?.createdAt,
         );
+
       }).toList();
 
       emit(ChatListLoaded(chatList: finalChatList));
