@@ -81,8 +81,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               final isGroup = state.currentChat?.isGroup ?? false;
 
               final headerTitle = isGroup
-                  ? (state.currentChat?.groupName ?? 'Group Chat')
-                  : (state.otherUserProfile?.name ?? 'Chat');
+                  ? (state.currentChat?.groupName ?? '')
+                  : (state.otherUserProfile?.name ?? '');
 
               final headerImgUrl = isGroup
                   ? (state.currentChat?.groupProfileUrl ?? '')
@@ -128,7 +128,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (_scrollController.hasClients) {
                 _scrollController.animateTo(
-                  _scrollController.position.maxScrollExtent,
+                  _scrollController.position.maxScrollExtent + 50,
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeOut,
                 );
@@ -138,7 +138,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         },
         builder: (context, state) {
           if (state is ChatDetailLoading) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(color: AppColors.bgGreenLight),
+            );
           }
 
           if (state is ChatError) {
@@ -147,7 +149,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
           if (state is ChatLoaded) {
             final messages = state.currentChat?.messages ?? [];
+
             final isGroup = state.currentChat?.isGroup ?? false;
+
             return SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -164,22 +168,31 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                 String currentLabel = getChatDayLabel(
                                   currentMsgTime,
                                 );
+
                                 bool showLabel = false;
+                                bool isSameSender = false;
 
                                 if (index == 0) {
                                   showLabel = true;
                                 } else {
-                                  final prevMsg = messages[index - 1];
+                                  final MessageModel prevMsg =
+                                      messages[index - 1];
+
                                   final DateTime prevMsgTime =
                                       prevMsg.createdAt!;
+
                                   final bool isSameDay =
                                       currentMsgTime.year == prevMsgTime.year &&
                                       currentMsgTime.month ==
                                           prevMsgTime.month &&
                                       currentMsgTime.day == prevMsgTime.day;
 
+                                  isSameSender =
+                                      prevMsg.senderId == msg.senderId;
+
                                   if (!isSameDay) {
                                     showLabel = true;
+                                    isSameSender = false;
                                   }
                                 }
 
@@ -221,7 +234,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                       isMe: isMe,
                                       message: msg,
                                       isGroup: isGroup,
-                                      // isSameSender: isSameSender,
+                                      isSameSender: isSameSender,
                                     ),
                                   ],
                                 );
@@ -305,27 +318,15 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           GestureDetector(
                             onTap: () {
                               if (_msgController.text.isNotEmpty) {
-                                if (state.currentChat?.isGroup ?? false) {
-                                  context.read<ChatDetailBloc>().add(
-                                    SendMessagePressed(
-                                      msgText: _msgController.text.trim(),
-                                      chatId: state.chatId,
-                                      currentUserProfile:
-                                          state.currentUserProfile,
-                                      isGroup: true,
-                                    ),
-                                  );
-                                } else {
-                                  context.read<ChatDetailBloc>().add(
-                                    SendMessagePressed(
-                                      msgText: _msgController.text.trim(),
-                                      chatId: state.chatId,
-                                      currentUserProfile:
-                                          state.currentUserProfile,
-                                      otherUserProfile: state.otherUserProfile,
-                                    ),
-                                  );
-                                }
+                                context.read<ChatDetailBloc>().add(
+                                  SendMessagePressed(
+                                    msgText: _msgController.text.trim(),
+                                    chatId: state.chatId,
+                                    currentUserProfile:
+                                        state.currentUserProfile,
+                                    otherUserProfile: state.otherUserProfile,
+                                  ),
+                                );
                                 _msgController.clear();
                               }
                             },

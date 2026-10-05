@@ -65,128 +65,170 @@ class _ChatListScreenState extends State<ChatListScreen> {
           // Status Horizontal List
           Padding(
             padding: const EdgeInsets.only(left: 25, top: 25, bottom: 20),
-            child: SizedBox(
-              height: 92,
-              child: ListView.separated(
-                scrollDirection: .horizontal,
-                clipBehavior: .none,
-                itemBuilder: (context, index) {
-                  if (index == 0) {
-                    return Column(
-                      spacing: 10,
-                      children: [
-                        Stack(
-                          clipBehavior: .none,
-                          children: [
-                            CommonAvatar(
-                              imgPath: AppAssets.appleIcon,
-                              size: 58,
-                              borderColor: AppColors.highlightYellow,
-                            ),
-                            Positioned(
-                              bottom: -1,
-                              right: 0,
-                              child: GestureDetector(
-                                onTap: () async {
-                                  List<XFile>?
-                                  statusImages = await showModalBottomSheet(
-                                    context: context,
-                                    builder: (context) {
-                                      return CommonBottomSheet(
-                                        isStatusScreen: true,
-                                        onMediaPressed: () async {
-                                          List<XFile> selectedStatusImage =
-                                              await ImagePickerUtils.pickImage(
-                                                isMultiSelect: false,
-                                              );
-                                          if (context.mounted) {
-                                            Navigator.pop(
-                                              context,
-                                              selectedStatusImage,
-                                            );
-                                          }
-                                        },
-                                        onCameraPressed: () async {
-                                          XFile? capturedImage =
-                                              await ImagePickerUtils.captureImage();
+            child: BlocBuilder<ChatListBloc, ChatListState>(
+              builder: (context, state) {
+                if (state is ChatListLoaded) {
+                  final statusList = state.statusList;
 
-                                          if (!context.mounted) return;
+                  return SizedBox(
+                    height: 92,
+                    child: ListView.separated(
+                      scrollDirection: .horizontal,
+                      clipBehavior: .none,
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          final currentUserStatus = state.currentUserStatus;
 
-                                          if (capturedImage != null) {
-                                            Navigator.pop(context, <XFile>[
-                                              capturedImage,
-                                            ]);
-                                          }
-                                        },
-                                      );
+                          print(
+                            'this is the current User status ${currentUserStatus}',
+                          );
+
+                          final String avatarImgPath =
+                              (currentUserStatus?.profileUrl != null &&
+                                  currentUserStatus!.profileUrl!.isNotEmpty)
+                              ? currentUserStatus.profileUrl!
+                              : AppAssets.appleIcon;
+
+                          return Column(
+                            spacing: 10,
+                            children: [
+                              Stack(
+                                clipBehavior: .none,
+                                children: [
+                                  GestureDetector(
+                                    behavior: .translucent,
+                                    onTap: () {
+                                      if (currentUserStatus != null) {
+                                        Navigator.pushNamed(
+                                          context,
+                                          AppRoutes.statusViewScreen,
+                                          arguments: currentUserStatus,
+                                        );
+                                      }
                                     },
-                                  );
+                                    child: CommonAvatar(
+                                      imgPath: avatarImgPath,
+                                      size: 58,
+                                      borderColor: AppColors.highlightYellow,
+                                    ),
+                                  ),
 
-                                  if (!context.mounted) return;
+                                  // Add Icon
+                                  Positioned(
+                                    bottom: -1,
+                                    right: 0,
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        List<XFile>?
+                                        statusImages = await showModalBottomSheet(
+                                          context: context,
+                                          builder: (context) {
+                                            return CommonBottomSheet(
+                                              isStatusScreen: true,
+                                              onMediaPressed: () async {
+                                                List<XFile>
+                                                selectedStatusImage =
+                                                    await ImagePickerUtils.pickImage(
+                                                      isMultiSelect: false,
+                                                    );
+                                                if (context.mounted) {
+                                                  Navigator.pop(
+                                                    context,
+                                                    selectedStatusImage,
+                                                  );
+                                                }
+                                              },
+                                              onCameraPressed: () async {
+                                                XFile? capturedImage =
+                                                    await ImagePickerUtils.captureImage();
 
-                                  if (statusImages != null &&
-                                      statusImages.isNotEmpty) {
-                                    XFile? statusImage = statusImages[0];
+                                                if (!context.mounted) return;
 
-                                    print(statusImage.name);
+                                                if (capturedImage != null) {
+                                                  Navigator.pop(
+                                                    context,
+                                                    <XFile>[capturedImage],
+                                                  );
+                                                }
+                                              },
+                                            );
+                                          },
+                                        );
 
-                                    Navigator.pushNamed(
-                                      context,
-                                      AppRoutes.statusPreviewScreen,
-                                      arguments: statusImage,
-                                    );
-                                  }
-                                },
-                                child: CommonSvgContainer(
-                                  containerSize: 16,
-                                  backgroundColor: AppColors.white,
-                                  iconPath: AppAssets.plusIcon,
+                                        if (!context.mounted) return;
+
+                                        if (statusImages != null &&
+                                            statusImages.isNotEmpty) {
+                                          XFile? statusImage = statusImages[0];
+
+                                          print(statusImage.name);
+
+                                          Navigator.pushNamed(
+                                            context,
+                                            AppRoutes.statusPreviewScreen,
+                                            arguments: statusImage,
+                                          );
+                                        }
+                                      },
+                                      child: CommonSvgContainer(
+                                        containerSize: 16,
+                                        backgroundColor: AppColors.white,
+                                        iconPath: AppAssets.plusIcon,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                AppStrings.myStatusText,
+                                style: AppTextStyles.heading(
+                                  color: AppColors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
                                 ),
+                              ),
+                            ],
+                          );
+                        }
+
+                        final status = statusList[index - 1];
+
+                        return Column(
+                          spacing: 10,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.statusViewScreen,
+                                  arguments: status,
+                                );
+                              },
+                              child: CommonAvatar(
+                                imgPath: status.profileUrl ?? '',
+                                size: 58,
+                                borderColor: AppColors.highlightYellow,
+                              ),
+                            ),
+                            Text(
+                              status.username ?? '',
+                              style: AppTextStyles.heading(
+                                color: AppColors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
                           ],
-                        ),
-                        Text(
-                          AppStrings.myStatusText,
-                          style: AppTextStyles.heading(
-                            color: AppColors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-                  return Column(
-                    spacing: 10,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            AppRoutes.statusViewScreen,
-                          );
-                        },
-                        child: CommonAvatar(
-                          imgPath: 'lskjfs',
-                          size: 58,
-                          borderColor: AppColors.highlightYellow,
-                        ),
-                      ),
-                      Text(
-                        'Hellow',
-                        style: AppTextStyles.heading(
-                          color: AppColors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
+                        );
+                      },
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(width: 15),
+                      itemCount: statusList.length + 1,
+                    ),
                   );
-                },
-                separatorBuilder: (context, index) => const SizedBox(width: 15),
-                itemCount: 15,
-              ),
+                }
+                return const SizedBox.shrink();
+              },
             ),
           ),
 

@@ -14,6 +14,7 @@ import 'package:chatapp_firebase/features/messages_module/data/repositories/chat
 import 'package:chatapp_firebase/features/profile_module/user_profile_screen.dart';
 import 'package:chatapp_firebase/features/search_module/bloc/search_bloc.dart';
 import 'package:chatapp_firebase/features/search_module/screens/search_screen.dart';
+import 'package:chatapp_firebase/features/status_module/bloc/status_bloc.dart';
 import 'package:chatapp_firebase/features/status_module/screens/status_preview_screen.dart';
 import 'package:chatapp_firebase/features/tab_bar/cubit/tab_bar_index_cubit.dart';
 import 'package:chatapp_firebase/features/tab_bar/screens/tab_bar_base_screen.dart';
@@ -130,12 +131,18 @@ class RouteGenerator {
 
       case AppRoutes.statusPreviewScreen:
         return MaterialPageRoute(
-          builder: (context) => StatusPreviewScreen(),
+          builder: (context) => BlocProvider(
+            create: (context) => StatusBloc(),
+            child: const StatusPreviewScreen(),
+          ),
           settings: settings,
         );
 
       case AppRoutes.statusViewScreen:
-        return MaterialPageRoute(builder: (context) => StatusViewScreen());
+        return MaterialPageRoute(
+          builder: (context) => StatusViewScreen(),
+          settings: settings,
+        );
 
       default:
         return MaterialPageRoute(

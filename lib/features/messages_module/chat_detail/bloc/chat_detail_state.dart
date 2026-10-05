@@ -18,7 +18,7 @@ final class ChatLoaded extends ChatDetailState {
     required this.currentChat,
     required this.chatId,
     required this.currentUserProfile,
-    required this.otherUserProfile
+    required this.otherUserProfile,
   });
 }
 

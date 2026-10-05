@@ -1,5 +1,6 @@
 import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
+import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/routes/app_routes.dart';
 import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
@@ -37,7 +38,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
         leadingWidth: 65,
         backgroundColor: Colors.transparent,
         title: Text(
-          'Contacts',
+          AppStrings.contactsText,
           style: AppTextStyles.heading(fontSize: 20, color: AppColors.white),
         ),
         centerTitle: true,
@@ -93,7 +94,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
                     child: Align(
                       alignment: AlignmentGeometry.topLeft,
                       child: Text(
-                        'My Contacts',
+                        AppStrings.myContactsText,
                         style: AppTextStyles.heading(fontSize: 18),
                       ),
                     ),
@@ -113,66 +114,72 @@ class _ContactListScreenState extends State<ContactListScreen> {
                         }
 
                         if (state is ContactListLoaded) {
-                          return ListView.separated(
-                            padding: EdgeInsets.symmetric(horizontal: 24),
-                            itemBuilder: (context, index) {
-                              final contact = state.contacts[index];
+                          final contactList = state.contacts;
 
-                              final currentLetter = contact.name![0]
-                                  .toUpperCase();
-                              bool showHeader = false;
+                          return contactList.isNotEmpty
+                              ? ListView.separated(
+                                  padding: EdgeInsets.symmetric(horizontal: 24),
+                                  itemBuilder: (context, index) {
+                                    final contact = contactList[index];
 
-                              if (index == 0) {
-                                showHeader = true;
-                              } else {
-                                final previousContact =
-                                    state.contacts[index - 1];
-                                final previousLetter = previousContact.name![0]
-                                    .toUpperCase();
-                                if (currentLetter != previousLetter) {
-                                  showHeader = true;
-                                }
-                              }
+                                    final currentLetter = contact.name![0]
+                                        .toUpperCase();
+                                    bool showHeader = false;
 
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  if (showHeader) ...[
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        top: 10,
-                                        bottom: 10,
-                                      ),
-                                      child: Text(
-                                        currentLetter,
-                                        style: AppTextStyles.heading(
-                                          fontWeight: .w600,
+                                    if (index == 0) {
+                                      showHeader = true;
+                                    } else {
+                                      final previousContact =
+                                          state.contacts[index - 1];
+                                      final previousLetter = previousContact
+                                          .name![0]
+                                          .toUpperCase();
+                                      if (currentLetter != previousLetter) {
+                                        showHeader = true;
+                                      }
+                                    }
+
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        if (showHeader) ...[
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 10,
+                                              bottom: 10,
+                                            ),
+                                            child: Text(
+                                              currentLetter,
+                                              style: AppTextStyles.heading(
+                                                fontWeight: .w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                        GestureDetector(
+                                          behavior: .opaque,
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                              context,
+                                              AppRoutes.chatDetailScreen,
+                                              arguments: contact,
+                                            );
+                                          },
+                                          child: ContactListTile(
+                                            contactName: contact.name ?? '',
+                                            profileUrl: contact.photoUrl ?? '',
+                                            contactBio: contact.bioText ?? '',
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                  GestureDetector(
-                                    behavior: .opaque,
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        AppRoutes.chatDetailScreen,
-                                        arguments: contact,
-                                      );
-                                    },
-                                    child: ContactListTile(
-                                      contactName: contact.name ?? '',
-                                      profileUrl: contact.photoUrl ?? '',
-                                      contactBio: contact.bioText ?? '',
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(height: 10),
-                            itemCount: state.contacts.length,
-                          );
+                                      ],
+                                    );
+                                  },
+                                  separatorBuilder: (context, index) =>
+                                      const SizedBox(height: 10),
+                                  itemCount: state.contacts.length,
+                                )
+                              : const Center(child: Text('No Contacts'));
                         }
 
                         return const SizedBox.shrink();

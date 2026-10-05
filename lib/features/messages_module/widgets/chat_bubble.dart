@@ -8,12 +8,14 @@ import 'package:flutter/material.dart';
 
 class ChatBubble extends StatelessWidget {
   final bool isMe;
+  final bool isSameSender;
   final bool isGroup;
   final MessageModel message;
 
   const ChatBubble({
     super.key,
     required this.isMe,
+    this.isSameSender = false,
     required this.message,
     this.isGroup = false,
   });
@@ -21,14 +23,17 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double maxBubbleWidth =
-        (MediaQuery.of(context).size.width - 96) * 0.8;
+        (MediaQuery.of(context).size.width - 48) * 0.7;
 
     final bool hasImages =
         message.mediaUrls != null &&
         message.mediaUrls!.isNotEmpty &&
         message.mediaType == 'image';
+
     final bool hasText =
         message.messageText != null && message.messageText!.isNotEmpty;
+
+    final bool showAvatarAndTitle = isGroup && !isSameSender;
 
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
@@ -37,7 +42,12 @@ class ChatBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isMe && isGroup) ...[
-            CommonAvatar(imgPath: message.senderProfileUrl ?? '', size: 40),
+            showAvatarAndTitle
+                ? CommonAvatar(
+                    imgPath: message.senderProfileUrl ?? '',
+                    size: 40,
+                  )
+                : const SizedBox(width: 40),
             const SizedBox(width: 8),
           ],
 
@@ -50,16 +60,17 @@ class ChatBubble extends StatelessWidget {
               children: [
                 if (isGroup) ...[
                   const SizedBox(height: 5),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4, bottom: 4),
-                    child: Text(
-                      message.senderName ?? '',
-                      style: AppTextStyles.body(
-                        fontSize: 12,
-                        color: AppColors.textSecondary,
+                  if (showAvatarAndTitle)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4, bottom: 4),
+                      child: Text(
+                        message.senderName ?? '',
+                        style: AppTextStyles.body(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ),
-                  ),
                 ],
                 if (hasText)
                   Container(
@@ -82,7 +93,7 @@ class ChatBubble extends StatelessWidget {
                       ),
                     ),
                     child: Wrap(
-                      alignment: WrapAlignment.end,
+                      alignment: isMe ? .start : .end,
                       spacing: 12,
                       crossAxisAlignment: WrapCrossAlignment.end,
                       children: [
@@ -182,7 +193,12 @@ class ChatBubble extends StatelessWidget {
 
           if (isMe && isGroup) ...[
             const SizedBox(width: 8),
-            CommonAvatar(imgPath: message.senderProfileUrl ?? '', size: 40),
+            showAvatarAndTitle
+                ? CommonAvatar(
+                    imgPath: message.senderProfileUrl ?? '',
+                    size: 40,
+                  )
+                : const SizedBox(width: 40),
           ],
         ],
       ),

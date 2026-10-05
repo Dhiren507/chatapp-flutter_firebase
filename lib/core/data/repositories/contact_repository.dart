@@ -10,8 +10,6 @@ class ContactRepository {
         .collection(AppKeys.userCollectionKey).where('uid', isNotEqualTo: currentUserId)
         .get();
 
-    print(querySnapshot.docs.first);
-
     final contactListJson = querySnapshot.docs.map((doc) {
       return doc.data();
     }).toList();

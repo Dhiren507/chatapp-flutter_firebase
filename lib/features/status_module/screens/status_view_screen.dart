@@ -1,9 +1,8 @@
-import 'package:chatapp_firebase/core/constants/app_assets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
-import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
-import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
+import 'package:chatapp_firebase/features/messages_module/data/models/user_status.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/routes/app_routes.dart';
@@ -14,6 +13,8 @@ class StatusViewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final status = ModalRoute.of(context)?.settings.arguments as UserStatus;
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.white,
@@ -24,58 +25,42 @@ class StatusViewScreen extends StatelessWidget {
           onTap: () {
             Navigator.pushNamed(context, AppRoutes.profileScreen);
           },
-          child: ChatHeader(userName: '', status: '', imgUrl: ''),
+          child: ChatHeader(
+            userName: status.username ?? '',
+            status: '',
+            imgUrl: status.profileUrl ?? '',
+          ),
         ),
         titleSpacing: 0,
       ),
       body: SafeArea(
         bottom: true,
         child: Column(
+          mainAxisAlignment: .center,
           children: [
-            Expanded(child: Placeholder()),
-
-            Padding(
-              padding: EdgeInsetsGeometry.symmetric(
-                horizontal: 24,
-                vertical: 12,
-              ),
-              child: Row(
-                spacing: 10,
+            Center(
+              child: Stack(
+                clipBehavior: .none,
                 children: [
-                  Expanded(
-                    child: TextField(
-                      keyboardType: .multiline,
-                      style: AppTextStyles.body(
-                        fontWeight: .w500,
-                        fontSize: 14,
-                        color: AppColors.textPrimary,
-                      ),
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: AppColors.bgDisables,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        isDense: true,
-                        hintText: AppStrings.chatMessageHintText,
-                        hintStyle: AppTextStyles.body(
-                          fontWeight: .w400,
-                          fontSize: 14,
-                          color: AppColors.textSecondary,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
+                  CachedNetworkImage(
+                    imageUrl: status.statusUrl ?? '',
+                    placeholder: (context, url) {
+                      return Center(child: CircularProgressIndicator());
+                    },
+                  ),
+
+                  Positioned(
+                    bottom: -25,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      color: AppColors.lightBlack,
+                      alignment: .center,
+                      child: Text(
+                        status.captionText ?? 'Demo Caption',
+                        style: AppTextStyles.heading(color: AppColors.white),
                       ),
                     ),
-                  ),
-                  CommonSvgContainer(
-                    containerSize: 42,
-                    iconPath: AppAssets.messageSendIcon,
-                    iconColor: AppColors.white,
-                    backgroundColor: AppColors.bgGreen,
                   ),
                 ],
               ),

@@ -52,16 +52,21 @@ class UserChatModel {
       members: json['members'] != null
           ? List<String>.from(json['members'])
           : [],
-      profiles: (json['profiles'] as List?)
-          ?.map((profile) =>
-          UserModel.fromJson(Map<String, dynamic>.from(profile)))
-          .toList() ??
+      profiles:
+          (json['profiles'] as List?)
+              ?.map(
+                (profile) =>
+                    UserModel.fromJson(Map<String, dynamic>.from(profile)),
+              )
+              .toList() ??
           [],
       isGroup: json['isGroup'] ?? false,
-      messages: (json['messages'] as List?)
-          ?.map((msg) =>
-          MessageModel.fromJson(Map<String, dynamic>.from(msg)))
-          .toList() ??
+      messages:
+          (json['messages'] as List?)
+              ?.map(
+                (msg) => MessageModel.fromJson(Map<String, dynamic>.from(msg)),
+              )
+              .toList() ??
           [],
       createdAt: json['created_at'] != null
           ? (json['created_at'] as Timestamp).toDate()

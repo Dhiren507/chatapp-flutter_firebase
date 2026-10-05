@@ -12,18 +12,17 @@ class ChatDetailFetchRequested extends ChatDetailEvent {
     this.currentUserProfile,
     this.groupChatId,
   });
+
 }
 
 class SendMessagePressed extends ChatDetailEvent {
   final String? chatId;
-  final bool isGroup;
   final UserModel? otherUserProfile;
   final UserModel? currentUserProfile;
   final String msgText;
 
   SendMessagePressed({
     this.chatId,
-    this.isGroup = false,
     required this.msgText,
     this.currentUserProfile,
     this.otherUserProfile,

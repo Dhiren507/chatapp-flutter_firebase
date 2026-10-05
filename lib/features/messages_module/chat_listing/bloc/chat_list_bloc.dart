@@ -1,14 +1,19 @@
 import 'package:chatapp_firebase/core/data/models/user_model.dart';
 import 'package:chatapp_firebase/features/messages_module/data/models/chat_list_model.dart';
 import 'package:chatapp_firebase/features/messages_module/data/models/user_chat_model.dart';
+import 'package:chatapp_firebase/features/messages_module/data/models/user_status.dart';
 import 'package:chatapp_firebase/features/messages_module/data/repositories/chat_repository.dart';
+import 'package:chatapp_firebase/features/status_module/data/repositories/status_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'chat_list_event.dart';
+
 part 'chat_list_state.dart';
 
 class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
   final ChatRepository _chatRepo;
+
+  final StatusRepository _statusRepo = StatusRepository();
 
   ChatListBloc({required this._chatRepo}) : super(ChatListInitial()) {
     on<ChatListFetchRequested>(_onChatListFetchRequested);
@@ -25,10 +30,26 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
         event.currentUserId,
       );
 
-      print('this is the list of chatListModels $rawChatList');
+      final List<UserStatus> statusList = await _statusRepo.getAllStatus();
 
-      if (rawChatList == []) {
-        emit(ChatListLoaded(chatList: []));
+      final List<UserStatus> otherUsersStatuses = statusList
+          .where((status) => status.userId != event.currentUserId)
+          .toList();
+
+      final UserStatus? currentUserStatus =
+          statusList.any((status) => status.userId == event.currentUserId)
+          ? statusList.firstWhere(
+              (status) => status.userId == event.currentUserId,
+            )
+          : null;
+
+      if (rawChatList.isEmpty &&
+          otherUsersStatuses.isEmpty &&
+          currentUserStatus == null) {
+        emit(
+          ChatListLoaded(chatList: [], statusList: [], currentUserStatus: null),
+        );
+        return;
       }
 
       final List<ChatListModel> finalChatList = rawChatList.map((chat) {
@@ -42,8 +63,9 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
               .firstOrNull;
         }
 
-        final MessageModel? lastChatMessage =
-        chat.messages?.isNotEmpty == true ? chat.messages!.last : null;
+        final MessageModel? lastChatMessage = chat.messages?.isNotEmpty == true
+            ? chat.messages!.last
+            : null;
 
         return ChatListModel(
           chatId: chat.chatId,
@@ -54,10 +76,15 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
           lastMessage: lastChatMessage,
           lastMessageTimestamp: lastChatMessage?.createdAt,
         );
-
       }).toList();
 
-      emit(ChatListLoaded(chatList: finalChatList));
+      emit(
+        ChatListLoaded(
+          chatList: finalChatList,
+          statusList: otherUsersStatuses,
+          currentUserStatus: currentUserStatus,
+        ),
+      );
     } catch (e) {
       emit(ChatListError(errorMsg: e.toString()));
     }

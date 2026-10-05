@@ -55,11 +55,3 @@ class CommonSvgContainer extends StatelessWidget {
     );
   }
 }
-
-/*
-* creating a group
-*
-*
-*
-*
-* */

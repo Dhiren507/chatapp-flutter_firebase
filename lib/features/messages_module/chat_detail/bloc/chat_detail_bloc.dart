@@ -6,6 +6,7 @@ import 'package:chatapp_firebase/features/messages_module/data/repositories/chat
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'chat_detail_event.dart';
+
 part 'chat_detail_state.dart';
 
 class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
@@ -88,19 +89,19 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
 
     if (currentState is ChatLoaded) {
       try {
-        if (event.isGroup == false) {
+        if (currentState.currentChat?.isGroup == true) {
           await _chatRepo.sendMessage(
             chatId: currentState.chatId,
             sender: event.currentUserProfile!,
-            receiver: event.otherUserProfile!,
-            isGroupChat: false,
+            isGroupChat: true,
             text: event.msgText,
           );
         } else {
           await _chatRepo.sendMessage(
             chatId: currentState.chatId,
             sender: event.currentUserProfile!,
-            isGroupChat: true,
+            receiver: event.otherUserProfile!,
+            isGroupChat: false,
             text: event.msgText,
           );
         }

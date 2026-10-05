@@ -45,6 +45,8 @@ dependencies:
   cached_network_image: ^4.0.2
   intl: ^0.20.3
   uuid: ^4.6.0
+  cloudinary_api: ^1.1.1
+  cloudinary_url_gen: ^1.8.0
 
 dev_dependencies:
   flutter_test:

@@ -8,8 +8,14 @@ final class ChatListLoading extends ChatListState {}
 
 final class ChatListLoaded extends ChatListState {
   List<ChatListModel> chatList;
+  List<UserStatus> statusList;
+  UserStatus? currentUserStatus;
 
-  ChatListLoaded({required this.chatList});
+  ChatListLoaded({
+    required this.chatList,
+    required this.statusList,
+    required this.currentUserStatus,
+  });
 }
 
 final class ChatListError extends ChatListState {

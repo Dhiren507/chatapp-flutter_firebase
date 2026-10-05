@@ -45,10 +45,4 @@ class AppTextStyles {
       letterSpacing: letterSpacing,
     );
   }
-
-
-
-
-
-
 }

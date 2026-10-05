@@ -39,6 +39,10 @@ class AppStrings {
   static const String tabBarLabelThree = 'Contacts';
   static const String tabBarLabelFour = 'Settings';
 
+  // Contacts List Scree
+  static const String myContactsText = 'My Contacts';
+  static const String contactsText = 'Contacts';
+
   // Chat List Screen
   static const String chatListScreenTitle = 'Home';
   static const String myStatusText = 'My status';

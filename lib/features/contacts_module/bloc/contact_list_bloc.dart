@@ -3,6 +3,7 @@ import 'package:chatapp_firebase/core/data/repositories/contact_repository.dart'
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'contact_list_event.dart';
+
 part 'contact_list_state.dart';
 
 class ContactListBloc extends Bloc<ContactListEvent, ContactListState> {
@@ -18,7 +19,10 @@ class ContactListBloc extends Bloc<ContactListEvent, ContactListState> {
   ) async {
     emit(ContactListLoading());
     try {
-      final contactList = await _contactRepo.getAllContacts(event.currentUserId);
+      final contactList = await _contactRepo.getAllContacts(
+        event.currentUserId,
+      );
+      print(' this are the fetched raw contact json contacts ${contactList}');
 
       final List<UserModel> sortedContacts = List.from(contactList)
         ..sort(
@@ -27,9 +31,11 @@ class ContactListBloc extends Bloc<ContactListEvent, ContactListState> {
           ),
         );
 
+      print(' this are the sorted contacts ${sortedContacts}');
+
       emit(ContactListLoaded(contacts: sortedContacts));
     } catch (e) {
-      emit(ContactListError(errorMsg: 'Error while fetching Contacts'));
+      emit(ContactListError(errorMsg: e.toString()));
     }
   }
 }

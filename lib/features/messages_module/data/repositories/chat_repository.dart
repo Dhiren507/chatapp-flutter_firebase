@@ -1,5 +1,6 @@
 import 'package:chatapp_firebase/core/constants/app_keys.dart';
 import 'package:chatapp_firebase/core/data/models/user_model.dart';
+import 'package:chatapp_firebase/core/utils/id_utils.dart';
 import 'package:chatapp_firebase/features/messages_module/data/models/user_chat_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -26,7 +27,7 @@ class ChatRepository {
     required String text,
   }) async {
     final newMessage = MessageModel(
-      msgId: DateTime.now().microsecondsSinceEpoch.toString(),
+      msgId: IdUtils.v4id,
       senderId: sender.uid,
       senderName: sender.name,
       senderProfileUrl: sender.photoUrl,
@@ -44,22 +45,12 @@ class ChatRepository {
     final chatSnapshot = await chatRef.get();
 
     if (!chatSnapshot.exists && !isGroupChat) {
-      final currentUserData = await _firebaseDb
-          .collection(AppKeys.userCollectionKey)
-          .doc(sender.uid)
-          .get();
-
-      final otherUserData = await _firebaseDb
-          .collection(AppKeys.userCollectionKey)
-          .doc(receiver?.uid)
-          .get();
-
       await chatRef.set({
         'chatId': chatId,
         'isGroup': isGroupChat,
         'members': [sender.uid, receiver?.uid],
         'messages': [newMessageJson],
-        'profiles': [currentUserData.data(), otherUserData.data()],
+        'profiles': [sender.toJson(), receiver?.toJson()],
         'created_at': FieldValue.serverTimestamp(),
         'updated_at': FieldValue.serverTimestamp(),
       });
@@ -94,7 +85,7 @@ class ChatRepository {
         .where('members', arrayContains: userId)
         .get();
 
-    final chatList = <UserChatModel>[];
+    final List<UserChatModel> chatList = [];
 
     for (final doc in chatsQuerySnapshot.docs) {
       final data = doc.data();
@@ -138,7 +129,8 @@ class ChatRepository {
     await chatRef.set({
       'chatId': groupId,
       'groupName': groupName,
-      'groupProfileUrl': '',
+      'groupProfileUrl':
+          'https://cdn-icons-png.flaticon.com/256/8184/8184182.png',
       'isGroup': true,
       'messages': [],
       'members': memberUids,
