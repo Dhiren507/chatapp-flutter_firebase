@@ -14,8 +14,9 @@ import 'package:chatapp_firebase/features/messages_module/data/repositories/chat
 import 'package:chatapp_firebase/features/profile_module/user_profile_screen.dart';
 import 'package:chatapp_firebase/features/search_module/bloc/search_bloc.dart';
 import 'package:chatapp_firebase/features/search_module/screens/search_screen.dart';
-import 'package:chatapp_firebase/features/status_module/bloc/status_bloc.dart';
-import 'package:chatapp_firebase/features/status_module/screens/status_preview_screen.dart';
+import 'package:chatapp_firebase/features/status_module/add_status/bloc/status_bloc.dart';
+import 'package:chatapp_firebase/features/status_module/add_status/screens/status_preview_screen.dart';
+import 'package:chatapp_firebase/features/status_module/view_status/bloc/view_status_bloc.dart';
 import 'package:chatapp_firebase/features/tab_bar/cubit/tab_bar_index_cubit.dart';
 import 'package:chatapp_firebase/features/tab_bar/screens/tab_bar_base_screen.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../features/auth_module/login/screens/login_screen.dart';
 import '../../features/auth_module/signup/bloc/signup_bloc.dart';
 import '../../features/auth_module/signup/screens/signup_screen.dart';
-import '../../features/status_module/screens/status_view_screen.dart';
+import '../../features/status_module/view_status/screens/status_view_screen.dart';
 import 'app_routes.dart';
 
 class RouteGenerator {
@@ -36,8 +37,7 @@ class RouteGenerator {
       case AppRoutes.onboardingScreen:
         return MaterialPageRoute(
           builder: (context) => BlocProvider<OnboardingBloc>(
-            create: (context) =>
-                OnboardingBloc(authRepository: context.read<AuthRepository>()),
+            create: (context) => OnboardingBloc(authRepository: context.read<AuthRepository>()),
             child: const OnboardingScreen(),
           ),
         );
@@ -45,8 +45,7 @@ class RouteGenerator {
       case AppRoutes.loginScreen:
         return MaterialPageRoute(
           builder: (context) => BlocProvider<LoginBloc>(
-            create: (context) =>
-                LoginBloc(authRepository: context.read<AuthRepository>()),
+            create: (context) => LoginBloc(authRepository: context.read<AuthRepository>()),
             child: const LoginScreen(),
           ),
         );
@@ -54,8 +53,7 @@ class RouteGenerator {
       case AppRoutes.signUpScreen:
         return MaterialPageRoute(
           builder: (context) => BlocProvider<SignupBloc>(
-            create: (context) =>
-                SignupBloc(authRepository: context.read<AuthRepository>()),
+            create: (context) => SignupBloc(authRepository: context.read<AuthRepository>()),
             child: const SignupScreen(),
           ),
         );
@@ -69,17 +67,12 @@ class RouteGenerator {
             ],
             child: MultiBlocProvider(
               providers: [
-                BlocProvider<TabBarIndexCubit>(
-                  create: (context) => TabBarIndexCubit(),
-                ),
+                BlocProvider<TabBarIndexCubit>(create: (context) => TabBarIndexCubit()),
                 BlocProvider<ContactListBloc>(
-                  create: (context) => ContactListBloc(
-                    contactRepo: context.read<ContactRepository>(),
-                  ),
+                  create: (context) => ContactListBloc(contactRepo: context.read<ContactRepository>()),
                 ),
                 BlocProvider<ChatListBloc>(
-                  create: (context) =>
-                      ChatListBloc(chatRepo: context.read<ChatRepository>()),
+                  create: (context) => ChatListBloc(chatRepo: context.read<ChatRepository>()),
                 ),
               ],
               child: const TabBarBaseScreen(),
@@ -95,8 +88,7 @@ class RouteGenerator {
           builder: (context) => RepositoryProvider(
             create: (context) => ChatRepository(),
             child: BlocProvider<ChatDetailBloc>(
-              create: (context) =>
-                  ChatDetailBloc(chatRepo: context.read<ChatRepository>()),
+              create: (context) => ChatDetailBloc(chatRepo: context.read<ChatRepository>()),
               child: const ChatDetailScreen(),
             ),
           ),
@@ -108,8 +100,7 @@ class RouteGenerator {
           builder: (context) => RepositoryProvider(
             create: (context) => ContactRepository(),
             child: BlocProvider<SearchBloc>(
-              create: (context) =>
-                  SearchBloc(contactRepo: context.read<ContactRepository>()),
+              create: (context) => SearchBloc(contactRepo: context.read<ContactRepository>()),
               child: const SearchScreen(),
             ),
           ),
@@ -121,8 +112,7 @@ class RouteGenerator {
           builder: (context) => RepositoryProvider(
             create: (context) => ChatRepository(),
             child: BlocProvider<CreateGroupBloc>(
-              create: (context) =>
-                  CreateGroupBloc(chatRepo: context.read<ChatRepository>()),
+              create: (context) => CreateGroupBloc(chatRepo: context.read<ChatRepository>()),
               child: const CreateGroupScreen(),
             ),
           ),
@@ -131,23 +121,21 @@ class RouteGenerator {
 
       case AppRoutes.statusPreviewScreen:
         return MaterialPageRoute(
-          builder: (context) => BlocProvider(
-            create: (context) => StatusBloc(),
-            child: const StatusPreviewScreen(),
-          ),
+          builder: (context) =>
+              BlocProvider(create: (context) => StatusBloc(), child: const StatusPreviewScreen()),
           settings: settings,
         );
 
       case AppRoutes.statusViewScreen:
         return MaterialPageRoute(
-          builder: (context) => StatusViewScreen(),
+          builder: (context) =>
+              BlocProvider(create: (context) => ViewStatusBloc(), child: const StatusViewScreen()),
           settings: settings,
         );
 
       default:
         return MaterialPageRoute(
-          builder: (_) =>
-              const Scaffold(body: Center(child: Text('Page not found'))),
+          builder: (_) => const Scaffold(body: Center(child: Text('Page not found'))),
         );
     }
   }

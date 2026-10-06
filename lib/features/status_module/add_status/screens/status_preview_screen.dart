@@ -8,7 +8,7 @@ import 'package:chatapp_firebase/core/routes/app_routes.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
 import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
 import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
-import 'package:chatapp_firebase/features/status_module/bloc/status_bloc.dart';
+import 'package:chatapp_firebase/features/status_module/add_status/bloc/status_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,10 +29,7 @@ class _StatusPreviewScreenState extends State<StatusPreviewScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        leading: CommonBackButton(),
-      ),
+      appBar: AppBar(backgroundColor: AppColors.white, leading: CommonBackButton()),
       body: SafeArea(
         bottom: true,
         child: Column(
@@ -40,10 +37,7 @@ class _StatusPreviewScreenState extends State<StatusPreviewScreen> {
             Expanded(child: Image.file(File(image.path))),
 
             Padding(
-              padding: EdgeInsetsGeometry.symmetric(
-                horizontal: 24,
-                vertical: 12,
-              ),
+              padding: EdgeInsetsGeometry.symmetric(horizontal: 24, vertical: 12),
               child: Row(
                 spacing: 10,
                 children: [
@@ -59,10 +53,7 @@ class _StatusPreviewScreenState extends State<StatusPreviewScreen> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: AppColors.bgDisables,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         isDense: true,
                         hintText: AppStrings.chatMessageHintText,
                         hintStyle: AppTextStyles.body(
@@ -80,10 +71,7 @@ class _StatusPreviewScreenState extends State<StatusPreviewScreen> {
                   BlocConsumer<StatusBloc, StatusState>(
                     listener: (context, state) {
                       if (state is StatusPosted) {
-                        Navigator.pushReplacementNamed(
-                          context,
-                          AppRoutes.mainScreen,
-                        );
+                        Navigator.pushReplacementNamed(context, AppRoutes.mainScreen);
                       }
                     },
                     builder: (context, state) {
@@ -91,9 +79,7 @@ class _StatusPreviewScreenState extends State<StatusPreviewScreen> {
                         onTap: () {
                           context.read<StatusBloc>().add(
                             StatusPostPressed(
-                              userId: context
-                                  .read<AuthRepository>()
-                                  .getCurrentUserId()!,
+                              userId: context.read<AuthRepository>().getCurrentUserId()!,
                               statusImagePath: image.path,
                               statusCaption: _captionController.text.trim(),
                             ),

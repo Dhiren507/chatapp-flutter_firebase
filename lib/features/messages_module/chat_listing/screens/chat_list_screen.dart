@@ -28,9 +28,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ChatListBloc>().add(
-        ChatListFetchRequested(
-          currentUserId: context.read<AuthRepository>().getCurrentUserId()!,
-        ),
+        ChatListFetchRequested(currentUserId: context.read<AuthRepository>().getCurrentUserId()!),
       );
     });
   }
@@ -79,9 +77,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         if (index == 0) {
                           final currentUserStatus = state.currentUserStatus;
 
-                          print(
-                            'this is the current User status ${currentUserStatus}',
-                          );
+                          print('this is the current User status ${currentUserStatus}');
 
                           final String avatarImgPath =
                               (currentUserStatus?.profileUrl != null &&
@@ -119,36 +115,25 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                     right: 0,
                                     child: GestureDetector(
                                       onTap: () async {
-                                        List<XFile>?
-                                        statusImages = await showModalBottomSheet(
+                                        List<XFile>? statusImages = await showModalBottomSheet(
                                           context: context,
                                           builder: (context) {
                                             return CommonBottomSheet(
                                               isStatusScreen: true,
                                               onMediaPressed: () async {
-                                                List<XFile>
-                                                selectedStatusImage =
-                                                    await ImagePickerUtils.pickImage(
-                                                      isMultiSelect: false,
-                                                    );
+                                                List<XFile> selectedStatusImage =
+                                                    await ImagePickerUtils.pickImage(isMultiSelect: false);
                                                 if (context.mounted) {
-                                                  Navigator.pop(
-                                                    context,
-                                                    selectedStatusImage,
-                                                  );
+                                                  Navigator.pop(context, selectedStatusImage);
                                                 }
                                               },
                                               onCameraPressed: () async {
-                                                XFile? capturedImage =
-                                                    await ImagePickerUtils.captureImage();
+                                                XFile? capturedImage = await ImagePickerUtils.captureImage();
 
                                                 if (!context.mounted) return;
 
                                                 if (capturedImage != null) {
-                                                  Navigator.pop(
-                                                    context,
-                                                    <XFile>[capturedImage],
-                                                  );
+                                                  Navigator.pop(context, <XFile>[capturedImage]);
                                                 }
                                               },
                                             );
@@ -157,8 +142,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
                                         if (!context.mounted) return;
 
-                                        if (statusImages != null &&
-                                            statusImages.isNotEmpty) {
+                                        if (statusImages != null && statusImages.isNotEmpty) {
                                           XFile? statusImage = statusImages[0];
 
                                           print(statusImage.name);
@@ -193,21 +177,21 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
                         final status = statusList[index - 1];
 
+                        bool isSeenByMe = status.seenBy!.contains(
+                          context.read<AuthRepository>().getCurrentUserId()!,
+                        );
+
                         return Column(
                           spacing: 10,
                           children: [
                             GestureDetector(
                               onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  AppRoutes.statusViewScreen,
-                                  arguments: status,
-                                );
+                                Navigator.pushNamed(context, AppRoutes.statusViewScreen, arguments: status);
                               },
                               child: CommonAvatar(
                                 imgPath: status.profileUrl ?? '',
                                 size: 58,
-                                borderColor: AppColors.highlightYellow,
+                                borderColor: isSeenByMe ? AppColors.mutedGrey : AppColors.highlightYellow,
                               ),
                             ),
                             Text(
@@ -221,8 +205,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                           ],
                         );
                       },
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(width: 15),
+                      separatorBuilder: (context, index) => const SizedBox(width: 15),
                       itemCount: statusList.length + 1,
                     ),
                   );
@@ -237,10 +220,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
               width: double.maxFinite,
               decoration: BoxDecoration(
                 color: AppColors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(40),
-                  topRight: Radius.circular(40),
-                ),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
               ),
               child: Column(
                 children: [
@@ -274,9 +254,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                   itemBuilder: (context, index) {
                                     final chatTileData = state.chatList[index];
 
-                                    print(
-                                      'this is the chat tile data ${chatTileData.chatId}',
-                                    );
+                                    print('this is the chat tile data ${chatTileData.chatId}');
 
                                     return GestureDetector(
                                       behavior: .opaque,
@@ -284,19 +262,15 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                         Navigator.pushNamed(
                                           context,
                                           AppRoutes.chatDetailScreen,
-                                          arguments:
-                                              chatTileData.isGroup ?? false
+                                          arguments: chatTileData.isGroup ?? false
                                               ? chatTileData.chatId
                                               : chatTileData.otherUserProfile,
                                         );
                                       },
-                                      child: ChatListTile(
-                                        chatListData: chatTileData,
-                                      ),
+                                      child: ChatListTile(chatListData: chatTileData),
                                     );
                                   },
-                                  separatorBuilder: (context, index) =>
-                                      const SizedBox(height: 20),
+                                  separatorBuilder: (context, index) => const SizedBox(height: 20),
                                   itemCount: state.chatList.length,
                                 )
                               : const Center(child: Text('No Chats Yet!'));

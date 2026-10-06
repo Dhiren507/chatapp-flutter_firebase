@@ -24,7 +24,7 @@ class CommonAvatar extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: borderColor != null
-            ? Border.all(color: borderColor ?? AppColors.borderGrey)
+            ? Border.all(color: borderColor ?? AppColors.borderGrey, width: 2)
             : Border.all(width: 0),
       ),
       child: ClipRRect(

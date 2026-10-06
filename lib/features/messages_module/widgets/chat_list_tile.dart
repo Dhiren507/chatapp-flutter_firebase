@@ -27,10 +27,7 @@ class ChatListTile extends StatelessWidget {
               child: Container(
                 height: 10,
                 width: 10,
-                decoration: BoxDecoration(
-                  color: AppColors.activeGreen,
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: AppColors.activeGreen, shape: BoxShape.circle),
               ),
             ),
           ],
@@ -48,7 +45,9 @@ class ChatListTile extends StatelessWidget {
                 overflow: .ellipsis,
               ),
               Text(
-                chatListData.lastMessage?.messageText ?? '',
+                chatListData.lastMessage?.mediaType == 'image'
+                    ? 'Sent an Image'
+                    : (chatListData.lastMessage?.messageText ?? ''),
                 style: AppTextStyles.body(fontSize: 12),
                 overflow: .ellipsis,
               ),
@@ -64,14 +63,8 @@ class ChatListTile extends StatelessWidget {
               height: 22,
               width: 22,
               alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: AppColors.bgError,
-                shape: BoxShape.circle,
-              ),
-              child: Text(
-                '3',
-                style: AppTextStyles.body(fontSize: 12, color: AppColors.white),
-              ),
+              decoration: BoxDecoration(color: AppColors.bgError, shape: BoxShape.circle),
+              child: Text('3', style: AppTextStyles.body(fontSize: 12, color: AppColors.white)),
             ),
           ],
         ),

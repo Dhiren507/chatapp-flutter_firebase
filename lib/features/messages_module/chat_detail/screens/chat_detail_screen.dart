@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
@@ -37,23 +39,17 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final args = ModalRoute.of(context)?.settings.arguments;
 
-      final currentUserProfile = await context
-          .read<AuthRepository>()
-          .getCurrentUserProfile();
+      final currentUserProfile = await context.read<AuthRepository>().getCurrentUserProfile();
+
+      if (!mounted) return;
 
       if (args is String) {
         context.read<ChatDetailBloc>().add(
-          ChatDetailFetchRequested(
-            groupChatId: args,
-            currentUserProfile: currentUserProfile,
-          ),
+          ChatDetailFetchRequested(groupChatId: args, currentUserProfile: currentUserProfile),
         );
       } else if (args is UserModel) {
         context.read<ChatDetailBloc>().add(
-          ChatDetailFetchRequested(
-            otherUserProfile: args,
-            currentUserProfile: currentUserProfile,
-          ),
+          ChatDetailFetchRequested(otherUserProfile: args, currentUserProfile: currentUserProfile),
         );
       }
     });
@@ -77,7 +73,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         leading: CommonBackButton(),
         title: BlocBuilder<ChatDetailBloc, ChatDetailState>(
           builder: (context, state) {
-            if (state is ChatLoaded) {
+            if (state.status == .loaded) {
               final isGroup = state.currentChat?.isGroup ?? false;
 
               final headerTitle = isGroup
@@ -92,11 +88,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 onTap: () {
                   Navigator.pushNamed(context, AppRoutes.profileScreen);
                 },
-                child: ChatHeader(
-                  imgUrl: headerImgUrl,
-                  status: 'Active Now',
-                  userName: headerTitle,
-                ),
+                child: ChatHeader(imgUrl: headerImgUrl, status: 'Active Now', userName: headerTitle),
               );
             }
             return const SizedBox.shrink();
@@ -124,7 +116,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       ),
       body: BlocConsumer<ChatDetailBloc, ChatDetailState>(
         listener: (context, state) {
-          if (state is ChatLoaded) {
+          if (state.status == .loaded) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (_scrollController.hasClients) {
                 _scrollController.animateTo(
@@ -137,17 +129,15 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           }
         },
         builder: (context, state) {
-          if (state is ChatDetailLoading) {
-            return Center(
-              child: CircularProgressIndicator(color: AppColors.bgGreenLight),
-            );
+          if (state.status == .loading) {
+            return Center(child: CircularProgressIndicator());
           }
 
-          if (state is ChatError) {
+          if (state.status == .error) {
             return Center(child: Text(state.errorMsg));
           }
 
-          if (state is ChatLoaded) {
+          if (state.status == .loaded) {
             final messages = state.currentChat?.messages ?? [];
 
             final isGroup = state.currentChat?.isGroup ?? false;
@@ -165,9 +155,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                 final MessageModel msg = messages[index];
 
                                 final DateTime currentMsgTime = msg.createdAt!;
-                                String currentLabel = getChatDayLabel(
-                                  currentMsgTime,
-                                );
+                                String currentLabel = getChatDayLabel(currentMsgTime);
 
                                 bool showLabel = false;
                                 bool isSameSender = false;
@@ -175,20 +163,16 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                 if (index == 0) {
                                   showLabel = true;
                                 } else {
-                                  final MessageModel prevMsg =
-                                      messages[index - 1];
+                                  final MessageModel prevMsg = messages[index - 1];
 
-                                  final DateTime prevMsgTime =
-                                      prevMsg.createdAt!;
+                                  final DateTime prevMsgTime = prevMsg.createdAt!;
 
                                   final bool isSameDay =
                                       currentMsgTime.year == prevMsgTime.year &&
-                                      currentMsgTime.month ==
-                                          prevMsgTime.month &&
+                                      currentMsgTime.month == prevMsgTime.month &&
                                       currentMsgTime.day == prevMsgTime.day;
 
-                                  isSameSender =
-                                      prevMsg.senderId == msg.senderId;
+                                  isSameSender = prevMsg.senderId == msg.senderId;
 
                                   if (!isSameDay) {
                                     showLabel = true;
@@ -196,35 +180,24 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                   }
                                 }
 
-                                bool isMe =
-                                    msg.senderId ==
-                                    state.currentUserProfile?.uid;
+                                bool isMe = msg.senderId == state.currentUserProfile?.uid;
 
                                 return Column(
                                   children: [
                                     if (showLabel) ...[
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 10,
-                                        ),
+                                        padding: const EdgeInsets.symmetric(vertical: 10),
                                         child: Container(
                                           decoration: BoxDecoration(
                                             color: AppColors.bgGrey,
-                                            borderRadius: BorderRadius.circular(
-                                              4,
-                                            ),
+                                            borderRadius: BorderRadius.circular(4),
                                           ),
 
                                           child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 2,
-                                              horizontal: 6,
-                                            ),
+                                            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
                                             child: Text(
                                               currentLabel,
-                                              style: AppTextStyles.heading(
-                                                fontSize: 12,
-                                              ),
+                                              style: AppTextStyles.heading(fontSize: 12),
                                             ),
                                           ),
                                         ),
@@ -239,8 +212,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                   ],
                                 );
                               },
-                              separatorBuilder: (context, index) =>
-                                  const SizedBox(height: 5),
+                              separatorBuilder: (context, index) => const SizedBox(height: 5),
                               itemCount: messages.length,
                             )
                           : Center(child: Text('No Messages Yet!')),
@@ -255,32 +227,133 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                             containerSize: 24,
                             iconPath: AppAssets.attachmentIcon,
                             onClick: () async {
-                              List<XFile> selectedAttachment =
-                                  await showModalBottomSheet(
-                                    backgroundColor: AppColors.white,
-                                    isScrollControlled: true,
-                                    context: context,
-                                    builder: (context) {
-                                      return CommonBottomSheet(
-                                        onMediaPressed: () async {
-                                          List<XFile> selectedStatusImage =
-                                              await ImagePickerUtils.pickImage(
-                                                isMultiSelect: true,
-                                              );
-                                          if (context.mounted) {
-                                            Navigator.pop(
-                                              context,
-                                              selectedStatusImage,
-                                            );
-                                          }
-                                        },
+                              List<XFile> selectedAttachment = await showModalBottomSheet(
+                                backgroundColor: AppColors.white,
+                                isScrollControlled: true,
+                                context: context,
+                                builder: (context) {
+                                  return CommonBottomSheet(
+                                    onMediaPressed: () async {
+                                      List<XFile> selectedStatusImage = await ImagePickerUtils.pickImage(
+                                        isMultiSelect: true,
                                       );
+                                      if (context.mounted) {
+                                        Navigator.pop(context, selectedStatusImage);
+                                      }
                                     },
                                   );
+                                },
+                              );
 
                               if (selectedAttachment.isNotEmpty) {
                                 print(
                                   'this is an attachment selected in chat screen${selectedAttachment[0].name}',
+                                );
+
+                                final currentBloc = BlocProvider.of<ChatDetailBloc>(context);
+
+                                // images preview dialog box
+                                showDialog(
+                                  useSafeArea: false,
+                                  context: context,
+                                  builder: (dialogContext) {
+                                    return BlocProvider.value(
+                                      value: currentBloc,
+                                      child: Dialog.fullscreen(
+                                        child: SafeArea(
+                                          child: Column(
+                                            crossAxisAlignment: .start,
+                                            children: [
+                                              IconButton(
+                                                onPressed: () {
+                                                  Navigator.pop(dialogContext);
+                                                },
+                                                icon: Icon(Icons.close, color: AppColors.black),
+                                              ),
+
+                                              Expanded(
+                                                child: PageView.builder(
+                                                  itemBuilder: (context, index) {
+                                                    final selectedImage = selectedAttachment[index];
+
+                                                    return Image.file(File(selectedImage.path));
+                                                  },
+                                                  itemCount: selectedAttachment.length,
+                                                ),
+                                              ),
+
+                                              Padding(
+                                                padding: EdgeInsetsGeometry.all(10),
+                                                child: Row(
+                                                  spacing: 10,
+                                                  children: [
+                                                    Expanded(
+                                                      child: TextField(
+                                                        controller: _msgController,
+                                                        keyboardType: .multiline,
+                                                        style: AppTextStyles.body(
+                                                          fontWeight: .w500,
+                                                          fontSize: 14,
+                                                          color: AppColors.textPrimary,
+                                                        ),
+                                                        decoration: InputDecoration(
+                                                          filled: true,
+                                                          fillColor: AppColors.bgDisables,
+                                                          contentPadding: EdgeInsets.symmetric(
+                                                            horizontal: 12,
+                                                            vertical: 8,
+                                                          ),
+                                                          isDense: true,
+                                                          hintText: AppStrings.chatMessageHintText,
+                                                          hintStyle: AppTextStyles.body(
+                                                            fontWeight: .w400,
+                                                            fontSize: 14,
+                                                            color: AppColors.textSecondary,
+                                                          ),
+                                                          border: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(12),
+                                                            borderSide: BorderSide.none,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    BlocConsumer<ChatDetailBloc, ChatDetailState>(
+                                                      listener: (context, state) {
+                                                        if (state.status == .loaded) {
+                                                          Navigator.pop(dialogContext);
+                                                        }
+                                                      },
+                                                      builder: (context, state) {
+                                                        return GestureDetector(
+                                                          onTap: () {
+                                                            context.read<ChatDetailBloc>().add(
+                                                              SendMessagePressed(
+                                                                msgText: _msgController.text.trim(),
+                                                                selectedAttachment: selectedAttachment,
+                                                              ),
+                                                            );
+                                                            _msgController.clear();
+                                                          },
+                                                          child: state.status == .loading
+                                                              ? CircularProgressIndicator()
+                                                              : CommonSvgContainer(
+                                                                  containerSize: 42,
+                                                                  iconPath: AppAssets.messageSendIcon,
+                                                                  iconColor: AppColors.white,
+                                                                  backgroundColor: AppColors.bgGreen,
+                                                                ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 );
                               }
                             },
@@ -297,10 +370,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: AppColors.bgDisables,
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
+                                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                 isDense: true,
                                 hintText: AppStrings.chatMessageHintText,
                                 hintStyle: AppTextStyles.body(
@@ -319,13 +389,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                             onTap: () {
                               if (_msgController.text.isNotEmpty) {
                                 context.read<ChatDetailBloc>().add(
-                                  SendMessagePressed(
-                                    msgText: _msgController.text.trim(),
-                                    chatId: state.chatId,
-                                    currentUserProfile:
-                                        state.currentUserProfile,
-                                    otherUserProfile: state.otherUserProfile,
-                                  ),
+                                  SendMessagePressed(msgText: _msgController.text.trim()),
                                 );
                                 _msgController.clear();
                               }

@@ -8,10 +8,7 @@ class ChatRepository {
   final FirebaseFirestore _firebaseDb = FirebaseFirestore.instance;
 
   Future<UserModel> fetchUserProfile(String uid) async {
-    final userDocSnapshot = await _firebaseDb
-        .collection(AppKeys.userCollectionKey)
-        .doc(uid)
-        .get();
+    final userDocSnapshot = await _firebaseDb.collection(AppKeys.userCollectionKey).doc(uid).get();
 
     final userProfileJson = userDocSnapshot.data()!;
 
@@ -25,6 +22,8 @@ class ChatRepository {
     UserModel? receiver,
     required bool isGroupChat,
     required String text,
+    required List<String> mediaUrls,
+    required String mediaType,
   }) async {
     final newMessage = MessageModel(
       msgId: IdUtils.v4id,
@@ -32,15 +31,15 @@ class ChatRepository {
       senderName: sender.name,
       senderProfileUrl: sender.photoUrl,
       messageText: text,
+      mediaType: mediaType,
+      mediaUrls: mediaUrls,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
 
     final newMessageJson = newMessage.toJson();
 
-    final chatRef = _firebaseDb
-        .collection(AppKeys.chatCollectionKey)
-        .doc(chatId);
+    final chatRef = _firebaseDb.collection(AppKeys.chatCollectionKey).doc(chatId);
 
     final chatSnapshot = await chatRef.get();
 
@@ -63,10 +62,7 @@ class ChatRepository {
   }
 
   Future<UserChatModel?> fetchChatSession(String chatId) async {
-    final docSnapshot = await _firebaseDb
-        .collection(AppKeys.chatCollectionKey)
-        .doc(chatId)
-        .get();
+    final docSnapshot = await _firebaseDb.collection(AppKeys.chatCollectionKey).doc(chatId).get();
 
     final chatData = docSnapshot.data();
 
@@ -96,10 +92,7 @@ class ChatRepository {
   }
 
   Stream<UserChatModel?> streamCurrentChatSession(String chatId) {
-    final snapshots = _firebaseDb
-        .collection(AppKeys.chatCollectionKey)
-        .doc(chatId)
-        .snapshots();
+    final snapshots = _firebaseDb.collection(AppKeys.chatCollectionKey).doc(chatId).snapshots();
 
     return snapshots.map((chatDocSnapshot) {
       if (!chatDocSnapshot.exists || chatDocSnapshot.data() == null) {
@@ -115,13 +108,9 @@ class ChatRepository {
     UserModel adminProfile,
     List<UserModel> members,
   ) async {
-    final chatRef = _firebaseDb
-        .collection(AppKeys.chatCollectionKey)
-        .doc(groupId);
+    final chatRef = _firebaseDb.collection(AppKeys.chatCollectionKey).doc(groupId);
 
-    List<Map<String, dynamic>> membersJson = members
-        .map((member) => member.toJson())
-        .toList();
+    List<Map<String, dynamic>> membersJson = members.map((member) => member.toJson()).toList();
 
     List<String> memberUids = members.map((m) => m.uid!).toList();
     memberUids.add(adminProfile.uid!);
@@ -129,8 +118,7 @@ class ChatRepository {
     await chatRef.set({
       'chatId': groupId,
       'groupName': groupName,
-      'groupProfileUrl':
-          'https://cdn-icons-png.flaticon.com/256/8184/8184182.png',
+      'groupProfileUrl': 'https://cdn-icons-png.flaticon.com/256/8184/8184182.png',
       'isGroup': true,
       'messages': [],
       'members': memberUids,
