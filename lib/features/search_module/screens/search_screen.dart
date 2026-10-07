@@ -53,8 +53,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    context.read<SearchBloc>().add(SearchReset());
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -102,7 +101,10 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 prefixIconConstraints: const BoxConstraints(minWidth: 44, minHeight: 24),
                 suffixIcon: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _searchController.clear();
+                    context.read<SearchBloc>().add(SearchInputChanged(searchQuery: ''));
+                  },
                   icon: Icon(Icons.close, color: AppColors.textPrimary),
                 ),
                 hintText: AppStrings.searchHintText,
@@ -132,7 +134,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   }
 
                   if (state.status == .error) {
-                    Center(child: Text(state.errorMsg));
+                    return Center(child: Text(state.errorMsg));
                   }
 
                   if (state.status == .loaded) {

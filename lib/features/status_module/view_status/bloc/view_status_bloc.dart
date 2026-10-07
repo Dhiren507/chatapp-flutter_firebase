@@ -6,9 +6,11 @@ part 'view_status_event.dart';
 part 'view_status_state.dart';
 
 class ViewStatusBloc extends Bloc<ViewStatusEvent, ViewStatusState> {
-  final StatusRepository _statusRepo = StatusRepository();
+  final StatusRepository _statusRepo;
 
-  ViewStatusBloc() : super(ViewStatusInitial()) {
+  ViewStatusBloc({required StatusRepository statusRepo})
+      : _statusRepo = statusRepo,
+        super(ViewStatusInitial()) {
     on<MarkStatusAsSeen>(_onMarkStatusAsSeen);
   }
 

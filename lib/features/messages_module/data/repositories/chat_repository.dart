@@ -7,12 +7,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ChatRepository {
   final FirebaseFirestore _firebaseDb = FirebaseFirestore.instance;
 
-  Future<UserModel> fetchUserProfile(String uid) async {
+  Future<UserModel?> fetchUserProfile(String uid) async {
     final userDocSnapshot = await _firebaseDb.collection(AppKeys.userCollectionKey).doc(uid).get();
 
-    final userProfileJson = userDocSnapshot.data()!;
+    final userProfileJson = userDocSnapshot.data();
+    if (userProfileJson == null) return null;
 
-    print('this is the userProfile json : $userProfileJson');
     return UserModel.fromJson(userProfileJson);
   }
 

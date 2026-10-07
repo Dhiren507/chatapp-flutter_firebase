@@ -110,7 +110,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
                         }
 
                         if (state is ContactListError) {
-                          Center(child: Text(state.errorMsg));
+                          return Center(child: Text(state.errorMsg));
                         }
 
                         if (state is ContactListLoaded) {

@@ -41,26 +41,38 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
 
       _chatRepo.markChatAsRead(chatId: chatId, currentUserId: event.currentUserProfile!.uid!);
 
-      _chatSubscription = _chatRepo.streamCurrentChatSession(chatId).listen((newChatData) {
-        if (newChatData?.isGroup == true) {
+      _chatSubscription = _chatRepo.streamCurrentChatSession(chatId).listen(
+        (newChatData) {
+          if (newChatData?.isGroup == true) {
+            add(
+              ChatDocumentUpdated(
+                chatData: newChatData,
+                chatId: chatId,
+                currentUserProfile: event.currentUserProfile!,
+              ),
+            );
+          } else {
+            add(
+              ChatDocumentUpdated(
+                chatData: newChatData,
+                chatId: chatId,
+                currentUserProfile: event.currentUserProfile!,
+                otherUserProfile: event.otherUserProfile!,
+              ),
+            );
+          }
+        },
+        onError: (err) {
           add(
             ChatDocumentUpdated(
-              chatData: newChatData,
+              chatData: null,
               chatId: chatId,
               currentUserProfile: event.currentUserProfile!,
+              otherUserProfile: event.otherUserProfile,
             ),
           );
-        } else {
-          add(
-            ChatDocumentUpdated(
-              chatData: newChatData,
-              chatId: chatId,
-              currentUserProfile: event.currentUserProfile!,
-              otherUserProfile: event.otherUserProfile!,
-            ),
-          );
-        }
-      });
+        },
+      );
     } catch (e) {
       emit(ChatDetailState(status: .error, errorMsg: e.toString()));
     }
@@ -84,10 +96,11 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
         List<String> mediaUrls = [];
         final String cloudPath = 'chat_app/chat_media/${state.chatId}';
 
-        if (event.selectedAttachment != null || event.selectedAttachment == []) {
+        final attachments = event.selectedAttachment;
+        if (attachments != null && attachments.isNotEmpty) {
           emit(state.copyWith(status: .loading));
 
-          for (final attachment in event.selectedAttachment!) {
+          for (final attachment in attachments) {
             final downloadUrl = await CloudinaryService.instance.uploadImageCustomPath(
               localPath: attachment.path,
               uploadFolderPath: cloudPath,

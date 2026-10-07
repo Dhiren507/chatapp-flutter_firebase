@@ -9,6 +9,7 @@ import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_rep
 import 'package:chatapp_firebase/features/messages_module/chat_listing/bloc/chat_list_bloc.dart';
 import 'package:chatapp_firebase/features/messages_module/chat_listing/widgets/status_list_view.dart';
 import 'package:chatapp_firebase/features/messages_module/widgets/chat_list_tile.dart';
+import 'package:chatapp_firebase/features/settings_module/bloc/setting_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,7 +28,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final currentUserId = context.read<AuthRepository>().getCurrentUserId()!;
 
-      context.read<ChatListBloc>().add(ChatListFetchRequested(currentUserId: currentUserId));
+      context.read<ChatListBloc>().add(
+        ChatListFetchRequested(currentUserId: currentUserId),
+      );
+      context.read<SettingBloc>().add(SettingProfileFetchRequested());
     });
   }
 
@@ -49,7 +53,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
           child: GestureDetector(
             onTap: () {
               bool isGroupSearch = true;
-              Navigator.of(context).pushNamed(AppRoutes.searchScreen, arguments: isGroupSearch);
+              Navigator.of(context)
+                  .pushNamed(AppRoutes.searchScreen, arguments: isGroupSearch);
             },
             child: CommonSvgContainer(
               iconPath: AppAssets.searchIcon,
@@ -60,12 +65,27 @@ class _ChatListScreenState extends State<ChatListScreen> {
             ),
           ),
         ),
-        actions: [CommonAvatar(imgPath: AppAssets.appleIcon)],
+        actions: [
+          BlocBuilder<SettingBloc, SettingState>(
+            builder: (context, state) {
+              final photoUrl = state.userProfile?.photoUrl ?? '';
+
+              return GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pushNamed(AppRoutes.profileScreen);
+                },
+                child: CommonAvatar(imgPath: photoUrl, size: 44),
+              );
+            },
+          ),
+        ],
       ),
       body: BlocBuilder<ChatListBloc, ChatListState>(
         builder: (context, state) {
           if (state.status == ChatListStatus.loading) {
-            return const Center(child: CircularProgressIndicator(color: AppColors.green));
+            return const Center(
+              child: CircularProgressIndicator(color: AppColors.green),
+            );
           }
 
           if (state.status == ChatListStatus.error) {
@@ -118,11 +138,14 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                   itemBuilder: (context, index) {
                                     final chatTileData = state.chatList[index];
 
-                                    print(' is this groupChat : ${chatTileData.isGroup}');
-
-                                    final otherUserProfile = chatTileData.getOtherUserProfile(
-                                      state.currentUserId!,
+                                    print(
+                                      ' is this groupChat : ${chatTileData.isGroup}',
                                     );
+
+                                    final otherUserProfile = chatTileData
+                                        .getOtherUserProfile(
+                                          state.currentUserId!,
+                                        );
 
                                     return GestureDetector(
                                       behavior: .opaque,
@@ -130,7 +153,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                         Navigator.pushNamed(
                                           context,
                                           AppRoutes.chatDetailScreen,
-                                          arguments: chatTileData.isGroup ?? false
+                                          arguments:
+                                              chatTileData.isGroup ?? false
                                               ? chatTileData.chatId
                                               : otherUserProfile,
                                         );
@@ -141,7 +165,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                       ),
                                     );
                                   },
-                                  separatorBuilder: (context, index) => const SizedBox(height: 20),
+                                  separatorBuilder: (context, index) =>
+                                      const SizedBox(height: 20),
                                   itemCount: state.chatList.length,
                                 )
                               : const Center(child: Text('No Chats Yet!')),

@@ -1,4 +1,3 @@
-import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
@@ -7,11 +6,23 @@ import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
 import 'package:chatapp_firebase/core/widgets/pressable_option_tile.dart';
 import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
+import 'package:chatapp_firebase/features/settings_module/bloc/setting_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<SettingBloc>().add(SettingProfileFetchRequested());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,47 +74,61 @@ class SettingsScreen extends StatelessWidget {
 
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Row(
-                        children: [
-                          CommonAvatar(
-                            imgPath: AppAssets.appleIcon,
-                            size: 60,
-                            borderColor: Colors.transparent,
-                          ),
+                      child: BlocBuilder<SettingBloc, SettingState>(
+                        builder: (context, state) {
+                          final user = state.userProfile;
+                          final String displayName = user?.name?.isNotEmpty == true
+                              ? user!.name!
+                              : (state.status == SettingStatus.loading ? 'Loading...' : 'User');
+                          final String bioOrEmail = user?.bioText?.isNotEmpty == true
+                              ? user!.bioText!
+                              : (user?.email ?? 'Life is going good af...');
+                          final String photoUrl = user?.photoUrl ?? '';
 
-                          const SizedBox(width: 15),
-
-                          Column(
-                            crossAxisAlignment: .start,
+                          return Row(
                             children: [
-                              Text(
-                                'John Abraham',
-                                style: AppTextStyles.heading(fontSize: 18),
-                                overflow: .ellipsis,
+                              CommonAvatar(
+                                imgPath: photoUrl,
+                                size: 60,
+                                borderColor: Colors.transparent,
                               ),
-                              Text(
-                                'Life is going good af...',
-                                style: AppTextStyles.body(fontSize: 12),
+
+                              const SizedBox(width: 15),
+
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      displayName,
+                                      style: AppTextStyles.heading(fontSize: 18),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Text(
+                                      bioOrEmail,
+                                      style: AppTextStyles.body(fontSize: 12),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              IconButton(
+                                icon: const Icon(Icons.logout),
+                                onPressed: () {
+                                  context.read<AuthRepository>().logOut();
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    AppRoutes.onboardingScreen,
+                                    (route) => false,
+                                  );
+                                },
+                                color: AppColors.bgError,
                               ),
                             ],
-                          ),
-
-                          const Spacer(),
-
-                          // SvgPicture.asset(AppAssets.qrCodeIcon),
-                          IconButton(
-                            icon: Icon(Icons.logout),
-                            onPressed: () {
-                              context.read<AuthRepository>().logOut();
-                              Navigator.pushNamedAndRemoveUntil(
-                                context,
-                                AppRoutes.onboardingScreen,
-                                    (route) => false,
-                              );
-                            },
-                            color: AppColors.bgError,
-                          ),
-                        ],
+                          );
+                        },
                       ),
                     ),
 

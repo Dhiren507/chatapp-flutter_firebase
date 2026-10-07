@@ -131,12 +131,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       Row(
                         spacing: 10,
                         children: [
-                          CommonAvatar(imgPath: state.adminProfile.photoUrl!, size: 52),
+                          CommonAvatar(imgPath: state.adminProfile.photoUrl ?? '', size: 52),
                           Column(
                             crossAxisAlignment: .start,
                             children: [
                               Text(
-                                state.adminProfile.name!,
+                                state.adminProfile.name ?? '',
                                 style: AppTextStyles.heading(),
                                 overflow: .ellipsis,
                               ),
@@ -164,15 +164,15 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             if (index == state.members.length) {
                               return GestureDetector(
                                 onTap: () async {
-                                  final selectedUsers = await Navigator.pushNamed(
+                                  final result = await Navigator.pushNamed(
                                     context,
                                     AppRoutes.searchScreen,
                                     arguments: state.members,
-                                  ) as List<UserModel>;
+                                  );
 
-                                  if (context.mounted) {
+                                  if (result is List<UserModel> && context.mounted) {
                                     context.read<CreateGroupBloc>().add(
-                                      CreateGroupMembersChanged(members: selectedUsers),
+                                      CreateGroupMembersChanged(members: result),
                                     );
                                   }
                                 },
@@ -200,16 +200,16 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             return Stack(
                               clipBehavior: .none,
                               children: [
-                                CommonAvatar(imgPath: member.photoUrl!, size: 70),
+                                CommonAvatar(imgPath: member.photoUrl ?? '', size: 70),
 
                                 Positioned(
                                   top: -1,
                                   right: 10,
                                   child: GestureDetector(
                                     onTap: () {
-                                      invitedMembers.removeAt(index);
+                                      final updatedMembers = List<UserModel>.from(invitedMembers)..removeAt(index);
                                       context.read<CreateGroupBloc>().add(
-                                        CreateGroupMembersChanged(members: invitedMembers),
+                                        CreateGroupMembersChanged(members: updatedMembers),
                                       );
                                     },
                                     child: CommonSvgContainer(
@@ -246,13 +246,16 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             }
           },
           builder: (context, state) {
-            if (state is CreateGroupLoaded) {
+            if (state is CreateGroupLoaded || state is CreateGroupLoading) {
+              final bool isLoading = state is CreateGroupLoading;
+              final bool isButtonEnabled = state is CreateGroupLoaded && state.members.length > 1 && !isLoading;
+
               return Padding(
                 padding: const EdgeInsets.only(left: 24, right: 24, bottom: 10),
                 child: CommonButton(
                   label: AppStrings.createGroupButtonText,
-                  isLoading: state is CreateGroupLoading,
-                  onPressed: state.members.length > 1
+                  isLoading: isLoading,
+                  onPressed: isButtonEnabled
                       ? () {
                           if (_titleController.text.isNotEmpty) {
                             context.read<CreateGroupBloc>().add(

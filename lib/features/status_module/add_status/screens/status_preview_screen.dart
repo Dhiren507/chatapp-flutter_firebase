@@ -24,6 +24,12 @@ class _StatusPreviewScreenState extends State<StatusPreviewScreen> {
   final TextEditingController _captionController = TextEditingController();
 
   @override
+  void dispose() {
+    _captionController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final image = ModalRoute.of(context)?.settings.arguments as XFile;
     return Scaffold(

@@ -27,18 +27,12 @@ class _TabBarBaseScreenState extends State<TabBarBaseScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-
-      _tabController.addListener(() {
-        if (!_tabController.indexIsChanging) {
-          context.read<TabBarIndexCubit>().changeTabBarIndex(
-            _tabController.index,
-          );
-        }
-      });
-    });
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -60,8 +54,11 @@ class _TabBarBaseScreenState extends State<TabBarBaseScreen>
                     unselectedLabelColor: AppColors.textSecondary,
                     dividerColor: Colors.transparent,
                     labelStyle: AppTextStyles.heading(),
-                    indicator: BoxDecoration(color: Colors.transparent),
+                    indicator: const BoxDecoration(color: Colors.transparent),
                     splashFactory: NoSplash.splashFactory,
+                    onTap: (index) {
+                      context.read<TabBarIndexCubit>().changeTabBarIndex(index);
+                    },
                     tabs: [
                       Tab(
                         icon: SvgPicture.asset(

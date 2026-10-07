@@ -21,5 +21,3 @@ final class SearchInputChanged extends SearchEvent {
 
   SearchInputChanged({required this.searchQuery});
 }
-
-final class SearchReset extends SearchEvent {}

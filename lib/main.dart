@@ -1,8 +1,11 @@
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
+import 'package:chatapp_firebase/core/data/repositories/contact_repository.dart';
 import 'package:chatapp_firebase/core/routes/route_generator.dart';
 import 'package:chatapp_firebase/features/auth_module/data/data_providers/firebase_auth_provider.dart';
 import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
 import 'package:chatapp_firebase/features/auth_module/splash/screens/splash_screen.dart';
+import 'package:chatapp_firebase/features/messages_module/data/repositories/chat_repository.dart';
+import 'package:chatapp_firebase/features/status_module/data/repositories/status_repository.dart';
 import 'package:chatapp_firebase/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +24,13 @@ void main() async {
   );
 
   runApp(
-    RepositoryProvider<AuthRepository>.value(
-      value: authRepository,
+    MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<AuthRepository>.value(value: authRepository),
+        RepositoryProvider<ChatRepository>(create: (context) => ChatRepository()),
+        RepositoryProvider<ContactRepository>(create: (context) => ContactRepository()),
+        RepositoryProvider<StatusRepository>(create: (context) => StatusRepository()),
+      ],
       child: const MyApp(),
     ),
   );

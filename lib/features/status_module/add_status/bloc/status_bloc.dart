@@ -6,9 +6,11 @@ part 'status_event.dart';
 part 'status_state.dart';
 
 class StatusBloc extends Bloc<StatusEvent, StatusState> {
-  final StatusRepository _statusRepo = StatusRepository();
+  final StatusRepository _statusRepo;
 
-  StatusBloc() : super(StatusInitial()) {
+  StatusBloc({required StatusRepository statusRepo})
+      : _statusRepo = statusRepo,
+        super(StatusInitial()) {
     on<StatusPostPressed>(_onStatusPostPressed);
   }
 
@@ -27,7 +29,7 @@ class StatusBloc extends Bloc<StatusEvent, StatusState> {
 
       emit(StatusPosted());
     } catch (e) {
-      print(e.toString());
+      emit(StatusError());
     }
   }
 }

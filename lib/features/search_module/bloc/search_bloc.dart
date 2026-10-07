@@ -10,13 +10,17 @@ part 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final ContactRepository _contactRepo;
-  final ChatRepository _chatRepo = ChatRepository();
+  final ChatRepository _chatRepo;
 
-  SearchBloc({required this._contactRepo}) : super(SearchState()) {
+  SearchBloc({
+    required ContactRepository contactRepo,
+    required ChatRepository chatRepo,
+  })  : _contactRepo = contactRepo,
+        _chatRepo = chatRepo,
+        super(SearchState()) {
     on<SearchInitiated>(_onSearchInitiated);
     on<ContactSelectionToggled>(_onContactSelectionToggled);
     on<SearchInputChanged>(_onSearchInputChanged);
-    on<SearchReset>(_onSearchReset);
   }
 
   Future<void> _onSearchInitiated(SearchInitiated event, Emitter<SearchState> emit) async {
@@ -108,9 +112,5 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
       emit(state.copyWith(contacts: filteredContactList));
     }
-  }
-
-  void _onSearchReset(SearchReset event, Emitter<SearchState> emit) {
-    emit(SearchState());
   }
 }

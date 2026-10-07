@@ -14,8 +14,10 @@ import 'package:chatapp_firebase/features/messages_module/data/repositories/chat
 import 'package:chatapp_firebase/features/profile_module/user_profile_screen.dart';
 import 'package:chatapp_firebase/features/search_module/bloc/search_bloc.dart';
 import 'package:chatapp_firebase/features/search_module/screens/search_screen.dart';
+import 'package:chatapp_firebase/features/settings_module/bloc/setting_bloc.dart';
 import 'package:chatapp_firebase/features/status_module/add_status/bloc/status_bloc.dart';
 import 'package:chatapp_firebase/features/status_module/add_status/screens/status_preview_screen.dart';
+import 'package:chatapp_firebase/features/status_module/data/repositories/status_repository.dart';
 import 'package:chatapp_firebase/features/status_module/view_status/bloc/view_status_bloc.dart';
 import 'package:chatapp_firebase/features/tab_bar/cubit/tab_bar_index_cubit.dart';
 import 'package:chatapp_firebase/features/tab_bar/screens/tab_bar_base_screen.dart';
@@ -60,23 +62,25 @@ class RouteGenerator {
 
       case AppRoutes.mainScreen:
         return MaterialPageRoute(
-          builder: (context) => MultiRepositoryProvider(
+          builder: (context) => MultiBlocProvider(
             providers: [
-              RepositoryProvider(create: (context) => ContactRepository()),
-              RepositoryProvider(create: (context) => ChatRepository()),
+              BlocProvider<TabBarIndexCubit>(create: (context) => TabBarIndexCubit()),
+              BlocProvider<ContactListBloc>(
+                create: (context) => ContactListBloc(contactRepo: context.read<ContactRepository>()),
+              ),
+              BlocProvider<ChatListBloc>(
+                create: (context) => ChatListBloc(
+                  chatRepo: context.read<ChatRepository>(),
+                  statusRepo: context.read<StatusRepository>(),
+                ),
+              ),
+              BlocProvider<SettingBloc>(
+                create: (context) => SettingBloc(
+                  authRepository: context.read<AuthRepository>(),
+                ),
+              ),
             ],
-            child: MultiBlocProvider(
-              providers: [
-                BlocProvider<TabBarIndexCubit>(create: (context) => TabBarIndexCubit()),
-                BlocProvider<ContactListBloc>(
-                  create: (context) => ContactListBloc(contactRepo: context.read<ContactRepository>()),
-                ),
-                BlocProvider<ChatListBloc>(
-                  create: (context) => ChatListBloc(chatRepo: context.read<ChatRepository>()),
-                ),
-              ],
-              child: const TabBarBaseScreen(),
-            ),
+            child: const TabBarBaseScreen(),
           ),
         );
 
@@ -85,51 +89,53 @@ class RouteGenerator {
 
       case AppRoutes.chatDetailScreen:
         return MaterialPageRoute(
-          builder: (context) => RepositoryProvider(
-            create: (context) => ChatRepository(),
-            child: BlocProvider<ChatDetailBloc>(
-              create: (context) => ChatDetailBloc(chatRepo: context.read<ChatRepository>()),
-              child: const ChatDetailScreen(),
-            ),
+          builder: (context) => BlocProvider<ChatDetailBloc>(
+            create: (context) => ChatDetailBloc(chatRepo: context.read<ChatRepository>()),
+            child: const ChatDetailScreen(),
           ),
           settings: settings,
         );
 
       case AppRoutes.searchScreen:
         return MaterialPageRoute(
-          builder: (context) => RepositoryProvider(
-            create: (context) => ContactRepository(),
-            child: BlocProvider<SearchBloc>(
-              create: (context) => SearchBloc(contactRepo: context.read<ContactRepository>()),
-              child: const SearchScreen(),
+          builder: (context) => BlocProvider<SearchBloc>(
+            create: (context) => SearchBloc(
+              contactRepo: context.read<ContactRepository>(),
+              chatRepo: context.read<ChatRepository>(),
             ),
+            child: const SearchScreen(),
           ),
           settings: settings,
         );
 
       case AppRoutes.crateGroupScreen:
         return MaterialPageRoute(
-          builder: (context) => RepositoryProvider(
-            create: (context) => ChatRepository(),
-            child: BlocProvider<CreateGroupBloc>(
-              create: (context) => CreateGroupBloc(chatRepo: context.read<ChatRepository>()),
-              child: const CreateGroupScreen(),
-            ),
+          builder: (context) => BlocProvider<CreateGroupBloc>(
+            create: (context) => CreateGroupBloc(chatRepo: context.read<ChatRepository>()),
+            child: const CreateGroupScreen(),
           ),
           settings: settings,
         );
 
       case AppRoutes.statusPreviewScreen:
         return MaterialPageRoute(
-          builder: (context) =>
-              BlocProvider(create: (context) => StatusBloc(), child: const StatusPreviewScreen()),
+          builder: (context) => BlocProvider<StatusBloc>(
+            create: (context) => StatusBloc(
+              statusRepo: context.read<StatusRepository>(),
+            ),
+            child: const StatusPreviewScreen(),
+          ),
           settings: settings,
         );
 
       case AppRoutes.statusViewScreen:
         return MaterialPageRoute(
-          builder: (context) =>
-              BlocProvider(create: (context) => ViewStatusBloc(), child: const StatusViewScreen()),
+          builder: (context) => BlocProvider<ViewStatusBloc>(
+            create: (context) => ViewStatusBloc(
+              statusRepo: context.read<StatusRepository>(),
+            ),
+            child: const StatusViewScreen(),
+          ),
           settings: settings,
         );
 
