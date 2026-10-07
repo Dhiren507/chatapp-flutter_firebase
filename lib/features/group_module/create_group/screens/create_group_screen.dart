@@ -31,15 +31,11 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final currentUserProfile = await context
-          .read<AuthRepository>()
-          .getCurrentUserProfile();
+      final currentUserProfile = await context.read<AuthRepository>().getCurrentUserProfile();
 
       if (!mounted) return;
 
-      context.read<CreateGroupBloc>().add(
-        CreateGroupStarted(adminProfile: currentUserProfile),
-      );
+      context.read<CreateGroupBloc>().add(CreateGroupStarted(adminProfile: currentUserProfile));
     });
   }
 
@@ -73,11 +69,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               controller: _titleController,
               keyboardType: .multiline,
               maxLines: 2,
-              style: AppTextStyles.body(
-                fontWeight: .w500,
-                fontSize: 40,
-                color: AppColors.textPrimary,
-              ),
+              style: AppTextStyles.body(fontWeight: .w500, fontSize: 40, color: AppColors.textPrimary),
               decoration: InputDecoration(
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
@@ -102,14 +94,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     borderRadius: BorderRadius.circular(24),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    child: Text(
-                      'Group Work',
-                      style: AppTextStyles.body(color: AppColors.textPrimary),
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Text('Group Work', style: AppTextStyles.body(color: AppColors.textPrimary)),
                   ),
                 ),
                 Container(
@@ -118,14 +104,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     borderRadius: BorderRadius.circular(24),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    child: Text(
-                      'Team Relationship',
-                      style: AppTextStyles.body(color: AppColors.textPrimary),
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Text('Team Relationship', style: AppTextStyles.body(color: AppColors.textPrimary)),
                   ),
                 ),
               ],
@@ -151,10 +131,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       Row(
                         spacing: 10,
                         children: [
-                          CommonAvatar(
-                            imgPath: state.adminProfile.photoUrl!,
-                            size: 52,
-                          ),
+                          CommonAvatar(imgPath: state.adminProfile.photoUrl!, size: 52),
                           Column(
                             crossAxisAlignment: .start,
                             children: [
@@ -176,34 +153,26 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
                       Text(
                         AppStrings.createGroupInvitedMembersLabel,
-                        style: AppTextStyles.heading(
-                          color: AppColors.textSecondary,
-                        ),
+                        style: AppTextStyles.heading(color: AppColors.textSecondary),
                       ),
 
                       SizedBox(
                         height: 200,
                         child: GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 4,
-                              ),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
                           itemBuilder: (context, index) {
                             if (index == state.members.length) {
                               return GestureDetector(
                                 onTap: () async {
-                                  final selectedUsers =
-                                      await Navigator.pushNamed(
-                                        context,
-                                        AppRoutes.searchScreen,
-                                        arguments: state.members,
-                                      ) as List<UserModel>;
+                                  final selectedUsers = await Navigator.pushNamed(
+                                    context,
+                                    AppRoutes.searchScreen,
+                                    arguments: state.members,
+                                  ) as List<UserModel>;
 
                                   if (context.mounted) {
                                     context.read<CreateGroupBloc>().add(
-                                      CreateGroupMembersChanged(
-                                        members: selectedUsers,
-                                      ),
+                                      CreateGroupMembersChanged(members: selectedUsers),
                                     );
                                   }
                                 },
@@ -218,40 +187,29 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                     child: Container(
                                       height: 50,
                                       width: 50,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Icons.add,
-                                        color: AppColors.textSecondary,
-                                      ),
+                                      decoration: BoxDecoration(shape: BoxShape.circle),
+                                      child: Icon(Icons.add, color: AppColors.textSecondary),
                                     ),
                                   ),
                                 ),
                               );
                             }
 
-                            final List<UserModel> invitedMembers =
-                                state.members;
+                            final List<UserModel> invitedMembers = state.members;
                             final member = invitedMembers[index];
                             return Stack(
                               clipBehavior: .none,
                               children: [
-                                CommonAvatar(
-                                  imgPath: member.photoUrl!,
-                                  size: 70,
-                                ),
+                                CommonAvatar(imgPath: member.photoUrl!, size: 70),
 
                                 Positioned(
                                   top: -1,
-                                  right: -4,
+                                  right: 10,
                                   child: GestureDetector(
                                     onTap: () {
                                       invitedMembers.removeAt(index);
                                       context.read<CreateGroupBloc>().add(
-                                        CreateGroupMembersChanged(
-                                          members: invitedMembers,
-                                        ),
+                                        CreateGroupMembersChanged(members: invitedMembers),
                                       );
                                     },
                                     child: CommonSvgContainer(

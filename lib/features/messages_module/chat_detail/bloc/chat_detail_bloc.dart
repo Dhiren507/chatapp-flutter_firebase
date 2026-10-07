@@ -39,6 +39,8 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
 
       await _chatSubscription?.cancel();
 
+      _chatRepo.markChatAsRead(chatId: chatId, currentUserId: event.currentUserProfile!.uid!);
+
       _chatSubscription = _chatRepo.streamCurrentChatSession(chatId).listen((newChatData) {
         if (newChatData?.isGroup == true) {
           add(

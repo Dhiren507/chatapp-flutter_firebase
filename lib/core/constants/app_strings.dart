@@ -47,6 +47,9 @@ class AppStrings {
   static const String chatListScreenTitle = 'Home';
   static const String myStatusText = 'My status';
 
+  // Error Messages
+  static const String statusLoadFailedError = 'Failed to load status';
+
   // Call List Screen
   static const String callsScreenTitle = 'Calls';
   static const String callsRecentSectionTitle = 'Recent';

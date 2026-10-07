@@ -1,6 +1,6 @@
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
-import 'package:chatapp_firebase/core/utils/date_utils.dart';
+import 'package:chatapp_firebase/core/utils/date_format_utils.dart';
 import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
 import 'package:chatapp_firebase/features/messages_module/data/models/user_chat_model.dart';
 import 'package:chatapp_firebase/features/messages_module/widgets/message_image_container.dart';
@@ -83,10 +83,11 @@ class ChatBubble extends StatelessWidget {
                       children: [
                         Text(
                           message.messageText!,
+                          textWidthBasis: .longestLine,
                           style: AppTextStyles.body(color: isMe ? AppColors.white : AppColors.textPrimary),
                         ),
                         Text(
-                          formatToMsgTimestamp(message.createdAt!),
+                          DateFormatUtils.formatToMsgTimestamp(message.createdAt!),
                           style: AppTextStyles.body(
                             fontSize: 10,
                             color: isMe ? AppColors.mutedGrey : AppColors.textSecondary,

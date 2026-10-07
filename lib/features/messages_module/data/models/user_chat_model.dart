@@ -2,16 +2,17 @@ import 'package:chatapp_firebase/core/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserChatModel {
-  final String? chatId;
-  final List<String>? members;
-  final List<UserModel>? profiles;
-  final UserModel? admin;
-  final String? groupName;
-  final String? groupProfileUrl;
-  final bool? isGroup;
-  final List<MessageModel>? messages;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  String? chatId;
+  List<String>? members;
+  List<UserModel>? profiles;
+  UserModel? admin;
+  String? groupName;
+  String? groupProfileUrl;
+  bool? isGroup;
+  List<MessageModel>? messages;
+  Map<String, int>? unreadCounts;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   UserChatModel({
     this.chatId,
@@ -19,82 +20,100 @@ class UserChatModel {
     this.groupProfileUrl,
     this.admin,
     this.members,
-    this.isGroup,
+    this.isGroup = false,
     this.profiles,
     this.messages,
     this.createdAt,
     this.updatedAt,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'chatId': chatId,
-      'members': members,
-      'admin': admin?.toJson(),
-      'groupName': groupName,
-      'groupProfileUrl': groupProfileUrl,
-      'isGroup': isGroup,
-      'messages': messages?.map((msg) => msg.toJson()).toList(),
-      'profiles': profiles?.map((profile) => profile.toJson()).toList(),
-      'created_at': createdAt,
-      'updated_at': updatedAt,
-    };
+  }) {
+    members ??= [];
+    profiles ??= [];
+    messages ??= [];
+    unreadCounts ??= {};
   }
 
-  factory UserChatModel.fromJson(Map<String, dynamic> json) {
-    return UserChatModel(
-      chatId: json['chatId'] ?? '',
-      groupName: json['groupName'] ?? '',
-      groupProfileUrl: json['groupProfileUrl'] ?? '',
-      admin: json['admin'] != null
-          ? UserModel.fromJson(Map<String, dynamic>.from(json['admin']))
-          : null,
-      members: json['members'] != null
-          ? List<String>.from(json['members'])
-          : [],
-      profiles:
-          (json['profiles'] as List?)
-              ?.map(
-                (profile) =>
-                    UserModel.fromJson(Map<String, dynamic>.from(profile)),
-              )
-              .toList() ??
-          [],
-      isGroup: json['isGroup'] ?? false,
-      messages:
-          (json['messages'] as List?)
-              ?.map(
-                (msg) => MessageModel.fromJson(Map<String, dynamic>.from(msg)),
-              )
-              .toList() ??
-          [],
-      createdAt: json['created_at'] != null
-          ? (json['created_at'] as Timestamp).toDate()
-          : null,
-      updatedAt: json['updated_at'] != null
-          ? (json['updated_at'] as Timestamp).toDate()
-          : null,
-    );
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['chatId'] = chatId;
+    data['members'] = members;
+    if (admin != null) {
+      data['admin'] = admin!.toJson();
+    }
+    data['groupName'] = groupName;
+    data['groupProfileUrl'] = groupProfileUrl;
+    data['isGroup'] = isGroup;
+    if (messages != null) {
+      data['messages'] = messages!.map((v) => v.toJson()).toList();
+    }
+    if (profiles != null) {
+      data['profiles'] = profiles!.map((v) => v.toJson()).toList();
+    }
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    return data;
+  }
+
+  UserChatModel.fromJson(Map<String, dynamic> json) {
+    chatId = json['chatId'] ?? '';
+    groupName = json['groupName'] ?? '';
+    groupProfileUrl = json['groupProfileUrl'] ?? '';
+    admin = json['admin'] != null ? UserModel.fromJson(Map<String, dynamic>.from(json['admin'])) : null;
+    members = json['members'] != null ? List<String>.from(json['members']) : [];
+    if (json['profiles'] != null) {
+      profiles = <UserModel>[];
+      json['profiles'].forEach((v) {
+        profiles!.add(UserModel.fromJson(Map<String, dynamic>.from(v)));
+      });
+    } else {
+      profiles = [];
+    }
+    isGroup = json['isGroup'] ?? false;
+    if (json['messages'] != null) {
+      messages = <MessageModel>[];
+      json['messages'].forEach((v) {
+        messages!.add(MessageModel.fromJson(Map<String, dynamic>.from(v)));
+      });
+    } else {
+      messages = [];
+    }
+    unreadCounts = Map<String, int>.from(json['unreadCounts'] ?? {});
+    createdAt = json['created_at'] != null ? (json['created_at'] as Timestamp).toDate() : null;
+    updatedAt = json['updated_at'] != null ? (json['updated_at'] as Timestamp).toDate() : null;
+  }
+
+
+  int getUnreadCountForUser(String currentUserId) {
+    return unreadCounts?[currentUserId] ?? 0;
+  }
+
+  MessageModel? get lastMessage => messages?.lastOrNull;
+
+  UserModel? getOtherUserProfile(String currentUserId) {
+    if (profiles == null && profiles!.isEmpty) return null;
+
+    final otherUserProfile = profiles!.firstWhere((profile) => profile.uid != currentUserId);
+
+    return otherUserProfile;
   }
 }
 
 class MessageModel {
-  final String? msgId;
-  final String? senderId;
-  final String? senderProfileUrl;
-  final String? senderName;
-  final String? messageText;
-  final List<String>? mediaUrls;
-  final String? mediaType;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  String? msgId;
+  String? senderId;
+  String? senderProfileUrl;
+  String? senderName;
+  String? messageText;
+  List<String>? mediaUrls;
+  String? mediaType;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   MessageModel({
-    required this.msgId,
-    required this.senderId,
-    required this.messageText,
-    required this.senderName,
-    required this.senderProfileUrl,
+    this.msgId,
+    this.senderId,
+    this.messageText,
+    this.senderName,
+    this.senderProfileUrl,
     this.mediaUrls,
     this.mediaType,
     this.createdAt,
@@ -102,36 +121,28 @@ class MessageModel {
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'msgId': msgId,
-      'senderId': senderId,
-      'senderProfileUrl': senderProfileUrl,
-      'senderName': senderName,
-      'messageText': messageText,
-      'mediaUrls': mediaUrls,
-      'mediaType': mediaType,
-      'created_at': createdAt,
-      'updated_at': updatedAt,
-    };
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['msgId'] = msgId;
+    data['senderId'] = senderId;
+    data['senderProfileUrl'] = senderProfileUrl;
+    data['senderName'] = senderName;
+    data['messageText'] = messageText;
+    data['mediaUrls'] = mediaUrls;
+    data['mediaType'] = mediaType;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    return data;
   }
 
-  factory MessageModel.fromJson(Map<String, dynamic> json) {
-    return MessageModel(
-      msgId: json['msgId'] ?? '',
-      senderId: json['senderId'] ?? '',
-      senderName: json['senderName'] ?? '',
-      senderProfileUrl: json['senderProfileUrl'] ?? '',
-      messageText: json['messageText'] ?? '',
-      mediaUrls: json['mediaUrls'] != null
-          ? List<String>.from(json['mediaUrls'])
-          : null,
-      mediaType: json['mediaType'],
-      createdAt: json['created_at'] != null
-          ? (json['created_at'] as Timestamp).toDate()
-          : null,
-      updatedAt: json['updated_at'] != null
-          ? (json['updated_at'] as Timestamp).toDate()
-          : null,
-    );
+  MessageModel.fromJson(Map<String, dynamic> json) {
+    msgId = json['msgId'] ?? '';
+    senderId = json['senderId'] ?? '';
+    senderName = json['senderName'] ?? '';
+    senderProfileUrl = json['senderProfileUrl'] ?? '';
+    messageText = json['messageText'] ?? '';
+    mediaUrls = json['mediaUrls'] != null ? List<String>.from(json['mediaUrls']) : null;
+    mediaType = json['mediaType'];
+    createdAt = json['created_at'] != null ? (json['created_at'] as Timestamp).toDate() : null;
+    updatedAt = json['updated_at'] != null ? (json['updated_at'] as Timestamp).toDate() : null;
   }
 }

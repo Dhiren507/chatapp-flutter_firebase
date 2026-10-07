@@ -42,27 +42,17 @@ class StatusRepository {
     }
   }
 
-  Future<List<UserStatus>> getAllStatus() async {
-    final statusQuerySnapshot = await _firebaseDb.collection(AppKeys.statusCollectinKey).get();
-
-    print('this is the status json ${statusQuerySnapshot.docs}');
-
-    final List<UserStatus> statusList = [];
-
-    for (final doc in statusQuerySnapshot.docs) {
-      print('this is the status data json ${doc.data()}');
-      statusList.add(UserStatus.fromJson(doc.data()));
-    }
-
-    return statusList;
+  Stream<List<UserStatus>> streamAllStatus() {
+    return _firebaseDb.collection(AppKeys.statusCollectinKey).snapshots().map((docsSnapshot) {
+      return [
+        for (var doc in docsSnapshot.docs)
+          if (doc.exists) UserStatus.fromJson(doc.data()),
+      ];
+    });
   }
 
   Future<void> updateSeenBy({required String statusId, required String currentUserId}) async {
-    print('update seenby function called ${statusId}');
-
     final statusDocSnapshot = await _firebaseDb.collection(AppKeys.statusCollectinKey).doc(statusId).get();
-
-    print(statusDocSnapshot.data());
 
     final statusModel = UserStatus.fromJson(statusDocSnapshot.data()!);
 

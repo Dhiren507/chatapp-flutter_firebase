@@ -1,25 +1,39 @@
 part of 'chat_list_bloc.dart';
 
-sealed class ChatListState {}
+enum ChatListStatus { initial, loading, loaded, error }
 
-final class ChatListInitial extends ChatListState {}
-
-final class ChatListLoading extends ChatListState {}
-
-final class ChatListLoaded extends ChatListState {
-  List<ChatListModel> chatList;
-  List<UserStatus> statusList;
-  UserStatus? currentUserStatus;
-
-  ChatListLoaded({
-    required this.chatList,
-    required this.statusList,
-    required this.currentUserStatus,
-  });
-}
-
-final class ChatListError extends ChatListState {
+class ChatListState {
+  final ChatListStatus status;
+  final List<UserChatModel> chatList;
+  final List<UserStatus> statusList;
+  final UserStatus? currentUserStatus;
+  final String? currentUserId;
   final String errorMsg;
 
-  ChatListError({required this.errorMsg});
+  const ChatListState({
+    this.status = ChatListStatus.initial,
+    this.chatList = const [],
+    this.statusList = const [],
+    this.currentUserStatus,
+    this.currentUserId,
+    this.errorMsg = '',
+  });
+
+  ChatListState copyWith({
+    ChatListStatus? status,
+    List<UserChatModel>? chatList,
+    List<UserStatus>? statusList,
+    UserStatus? currentUserStatus,
+    String? currentUserId,
+    String? errorMsg,
+  }) {
+    return ChatListState(
+      status: status ?? this.status,
+      chatList: chatList ?? this.chatList,
+      statusList: statusList ?? this.statusList,
+      currentUserStatus: currentUserStatus ?? this.currentUserStatus,
+      currentUserId: currentUserId ?? this.currentUserId,
+      errorMsg: errorMsg ?? this.errorMsg,
+    );
+  }
 }

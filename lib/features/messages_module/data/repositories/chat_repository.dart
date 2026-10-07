@@ -16,6 +16,12 @@ class ChatRepository {
     return UserModel.fromJson(userProfileJson);
   }
 
+  Future<void> markChatAsRead({required String chatId, required String currentUserId}) async {
+    final chatRef = _firebaseDb.collection(AppKeys.chatCollectionKey).doc(chatId);
+
+    await chatRef.update({'unreadCounts.$currentUserId': 0});
+  }
+
   Future<void> sendMessage({
     required String chatId,
     required UserModel sender,
@@ -44,11 +50,17 @@ class ChatRepository {
     final chatSnapshot = await chatRef.get();
 
     if (!chatSnapshot.exists && !isGroupChat) {
+      final Map<String, int> initialUnreadCounts = {
+        sender.uid!: 0,
+        if (receiver?.uid != null) receiver!.uid!: 1,
+      };
+
       await chatRef.set({
         'chatId': chatId,
         'isGroup': isGroupChat,
         'members': [sender.uid, receiver?.uid],
         'messages': [newMessageJson],
+        'unreadCounts': initialUnreadCounts,
         'profiles': [sender.toJson(), receiver?.toJson()],
         'created_at': FieldValue.serverTimestamp(),
         'updated_at': FieldValue.serverTimestamp(),
@@ -56,6 +68,7 @@ class ChatRepository {
     } else {
       await chatRef.update({
         'messages': FieldValue.arrayUnion([newMessageJson]),
+        if (receiver?.uid != null) 'unreadCounts.${receiver!.uid}': FieldValue.increment(1),
         'updated_at': FieldValue.serverTimestamp(),
       });
     }
@@ -89,6 +102,19 @@ class ChatRepository {
     }
 
     return chatList;
+  }
+
+  Stream<List<UserChatModel>> streamChatList(String userId) {
+    return _firebaseDb
+        .collection(AppKeys.chatCollectionKey)
+        .where('members', arrayContains: userId)
+        .snapshots()
+        .map((querySnapshots) {
+          return [
+            for (var doc in querySnapshots.docs)
+              if (doc.exists) UserChatModel.fromJson(doc.data()),
+          ];
+        });
   }
 
   Stream<UserChatModel?> streamCurrentChatSession(String chatId) {

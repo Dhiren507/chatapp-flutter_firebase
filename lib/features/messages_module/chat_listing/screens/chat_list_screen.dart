@@ -3,16 +3,14 @@ import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/routes/app_routes.dart';
-import 'package:chatapp_firebase/core/utils/image_picker_utils.dart';
 import 'package:chatapp_firebase/core/widgets/common_avatar.dart';
-import 'package:chatapp_firebase/core/widgets/common_bottom_sheet.dart';
 import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
 import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
 import 'package:chatapp_firebase/features/messages_module/chat_listing/bloc/chat_list_bloc.dart';
+import 'package:chatapp_firebase/features/messages_module/chat_listing/widgets/status_list_view.dart';
 import 'package:chatapp_firebase/features/messages_module/widgets/chat_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
@@ -27,9 +25,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ChatListBloc>().add(
-        ChatListFetchRequested(currentUserId: context.read<AuthRepository>().getCurrentUserId()!),
-      );
+      final currentUserId = context.read<AuthRepository>().getCurrentUserId()!;
+
+      context.read<ChatListBloc>().add(ChatListFetchRequested(currentUserId: currentUserId));
     });
   }
 
@@ -48,213 +46,83 @@ class _ChatListScreenState extends State<ChatListScreen> {
         centerTitle: true,
         leading: Padding(
           padding: const EdgeInsets.only(left: 24),
-          child: CommonSvgContainer(
-            iconPath: AppAssets.searchIcon,
-            iconSize: 22,
-            containerSize: 44,
-            iconColor: AppColors.white,
-            borderColor: AppColors.borderGrey,
+          child: GestureDetector(
+            onTap: () {
+              bool isGroupSearch = true;
+              Navigator.of(context).pushNamed(AppRoutes.searchScreen, arguments: isGroupSearch);
+            },
+            child: CommonSvgContainer(
+              iconPath: AppAssets.searchIcon,
+              iconSize: 22,
+              containerSize: 44,
+              iconColor: AppColors.white,
+              borderColor: AppColors.borderGrey,
+            ),
           ),
         ),
         actions: [CommonAvatar(imgPath: AppAssets.appleIcon)],
       ),
-      body: Column(
-        children: [
-          // Status Horizontal List
-          Padding(
-            padding: const EdgeInsets.only(left: 25, top: 25, bottom: 20),
-            child: BlocBuilder<ChatListBloc, ChatListState>(
-              builder: (context, state) {
-                if (state is ChatListLoaded) {
-                  final statusList = state.statusList;
+      body: BlocBuilder<ChatListBloc, ChatListState>(
+        builder: (context, state) {
+          if (state.status == ChatListStatus.loading) {
+            return const Center(child: CircularProgressIndicator(color: AppColors.green));
+          }
 
-                  return SizedBox(
-                    height: 92,
-                    child: ListView.separated(
-                      scrollDirection: .horizontal,
-                      clipBehavior: .none,
-                      itemBuilder: (context, index) {
-                        if (index == 0) {
-                          final currentUserStatus = state.currentUserStatus;
+          if (state.status == ChatListStatus.error) {
+            return Center(child: Text(state.errorMsg));
+          }
 
-                          print('this is the current User status ${currentUserStatus}');
+          if (state.status == .loaded) {
+            final currentUserId = state.currentUserId!;
+            final chatList = state.chatList;
+            final otherUserStatusList = state.statusList;
+            final currentUserStatus = state.currentUserStatus;
 
-                          final String avatarImgPath =
-                              (currentUserStatus?.profileUrl != null &&
-                                  currentUserStatus!.profileUrl!.isNotEmpty)
-                              ? currentUserStatus.profileUrl!
-                              : AppAssets.appleIcon;
+            return Column(
+              children: [
+                // Status Horizontal List
+                StatusListView(
+                  currentUserStatus: currentUserStatus,
+                  otherUserStatus: otherUserStatusList,
+                  currentUserId: currentUserId,
+                ),
 
-                          return Column(
-                            spacing: 10,
-                            children: [
-                              Stack(
-                                clipBehavior: .none,
-                                children: [
-                                  GestureDetector(
-                                    behavior: .translucent,
-                                    onTap: () {
-                                      if (currentUserStatus != null) {
-                                        Navigator.pushNamed(
-                                          context,
-                                          AppRoutes.statusViewScreen,
-                                          arguments: currentUserStatus,
-                                        );
-                                      }
-                                    },
-                                    child: CommonAvatar(
-                                      imgPath: avatarImgPath,
-                                      size: 58,
-                                      borderColor: AppColors.highlightYellow,
-                                    ),
-                                  ),
-
-                                  // Add Icon
-                                  Positioned(
-                                    bottom: -1,
-                                    right: 0,
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        List<XFile>? statusImages = await showModalBottomSheet(
-                                          context: context,
-                                          builder: (context) {
-                                            return CommonBottomSheet(
-                                              isStatusScreen: true,
-                                              onMediaPressed: () async {
-                                                List<XFile> selectedStatusImage =
-                                                    await ImagePickerUtils.pickImage(isMultiSelect: false);
-                                                if (context.mounted) {
-                                                  Navigator.pop(context, selectedStatusImage);
-                                                }
-                                              },
-                                              onCameraPressed: () async {
-                                                XFile? capturedImage = await ImagePickerUtils.captureImage();
-
-                                                if (!context.mounted) return;
-
-                                                if (capturedImage != null) {
-                                                  Navigator.pop(context, <XFile>[capturedImage]);
-                                                }
-                                              },
-                                            );
-                                          },
-                                        );
-
-                                        if (!context.mounted) return;
-
-                                        if (statusImages != null && statusImages.isNotEmpty) {
-                                          XFile? statusImage = statusImages[0];
-
-                                          print(statusImage.name);
-
-                                          Navigator.pushNamed(
-                                            context,
-                                            AppRoutes.statusPreviewScreen,
-                                            arguments: statusImage,
-                                          );
-                                        }
-                                      },
-                                      child: CommonSvgContainer(
-                                        containerSize: 16,
-                                        backgroundColor: AppColors.white,
-                                        iconPath: AppAssets.plusIcon,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                AppStrings.myStatusText,
-                                style: AppTextStyles.heading(
-                                  color: AppColors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          );
-                        }
-
-                        final status = statusList[index - 1];
-
-                        bool isSeenByMe = status.seenBy!.contains(
-                          context.read<AuthRepository>().getCurrentUserId()!,
-                        );
-
-                        return Column(
-                          spacing: 10,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(context, AppRoutes.statusViewScreen, arguments: status);
-                              },
-                              child: CommonAvatar(
-                                imgPath: status.profileUrl ?? '',
-                                size: 58,
-                                borderColor: isSeenByMe ? AppColors.mutedGrey : AppColors.highlightYellow,
-                              ),
-                            ),
-                            Text(
-                              status.username ?? '',
-                              style: AppTextStyles.heading(
-                                color: AppColors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                      separatorBuilder: (context, index) => const SizedBox(width: 15),
-                      itemCount: statusList.length + 1,
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-          ),
-
-          Expanded(
-            child: Container(
-              width: double.maxFinite,
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
-              ),
-              child: Column(
-                children: [
-                  const SizedBox(height: 10),
-                  Container(
-                    height: 3,
-                    width: 30,
+                Expanded(
+                  child: Container(
+                    width: double.maxFinite,
                     decoration: BoxDecoration(
-                      color: AppColors.mutedGrey,
-                      borderRadius: BorderRadius.circular(16),
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(40),
+                        topRight: Radius.circular(40),
+                      ),
                     ),
-                  ),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        Container(
+                          height: 3,
+                          width: 30,
+                          decoration: BoxDecoration(
+                            color: AppColors.mutedGrey,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
 
-                  const SizedBox(height: 30),
+                        const SizedBox(height: 30),
 
-                  Expanded(
-                    child: BlocBuilder<ChatListBloc, ChatListState>(
-                      builder: (context, state) {
-                        if (state is ChatListLoading) {
-                          return Center(child: CircularProgressIndicator());
-                        }
-
-                        if (state is ChatListError) {
-                          Center(child: Text(state.errorMsg));
-                        }
-
-                        if (state is ChatListLoaded) {
-                          return state.chatList.isNotEmpty
+                        Expanded(
+                          child: chatList.isNotEmpty
                               ? ListView.separated(
                                   padding: EdgeInsets.symmetric(horizontal: 24),
                                   itemBuilder: (context, index) {
                                     final chatTileData = state.chatList[index];
 
-                                    print('this is the chat tile data ${chatTileData.chatId}');
+                                    print(' is this groupChat : ${chatTileData.isGroup}');
+
+                                    final otherUserProfile = chatTileData.getOtherUserProfile(
+                                      state.currentUserId!,
+                                    );
 
                                     return GestureDetector(
                                       behavior: .opaque,
@@ -264,26 +132,30 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                           AppRoutes.chatDetailScreen,
                                           arguments: chatTileData.isGroup ?? false
                                               ? chatTileData.chatId
-                                              : chatTileData.otherUserProfile,
+                                              : otherUserProfile,
                                         );
                                       },
-                                      child: ChatListTile(chatListData: chatTileData),
+                                      child: ChatListTile(
+                                        chatListData: chatTileData,
+                                        currentUserId: state.currentUserId!,
+                                      ),
                                     );
                                   },
                                   separatorBuilder: (context, index) => const SizedBox(height: 20),
                                   itemCount: state.chatList.length,
                                 )
-                              : const Center(child: Text('No Chats Yet!'));
-                        }
-                        return SizedBox.shrink();
-                      },
+                              : const Center(child: Text('No Chats Yet!')),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-        ],
+                ),
+              ],
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

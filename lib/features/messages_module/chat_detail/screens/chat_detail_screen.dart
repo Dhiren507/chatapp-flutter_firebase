@@ -5,7 +5,7 @@ import 'package:chatapp_firebase/core/constants/app_strings.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/core/data/models/user_model.dart';
 import 'package:chatapp_firebase/core/routes/app_routes.dart';
-import 'package:chatapp_firebase/core/utils/date_utils.dart';
+import 'package:chatapp_firebase/core/utils/date_format_utils.dart';
 import 'package:chatapp_firebase/core/utils/image_picker_utils.dart';
 import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
 import 'package:chatapp_firebase/core/widgets/common_bottom_sheet.dart';
@@ -155,7 +155,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                 final MessageModel msg = messages[index];
 
                                 final DateTime currentMsgTime = msg.createdAt!;
-                                String currentLabel = getChatDayLabel(currentMsgTime);
+                                String currentLabel = DateFormatUtils.getChatDayLabel(currentMsgTime);
 
                                 bool showLabel = false;
                                 bool isSameSender = false;
