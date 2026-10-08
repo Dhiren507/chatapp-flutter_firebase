@@ -19,7 +19,9 @@ class ChatRepository {
   Future<void> markChatAsRead({required String chatId, required String currentUserId}) async {
     final chatRef = _firebaseDb.collection(AppKeys.chatCollectionKey).doc(chatId);
 
-    await chatRef.update({'unreadCounts.$currentUserId': 0});
+    await chatRef.update({
+      'lastReadAt.$currentUserId': FieldValue.serverTimestamp(),
+    });
   }
 
   Future<void> sendMessage({
@@ -50,17 +52,14 @@ class ChatRepository {
     final chatSnapshot = await chatRef.get();
 
     if (!chatSnapshot.exists && !isGroupChat) {
-      final Map<String, int> initialUnreadCounts = {
-        sender.uid!: 0,
-        if (receiver?.uid != null) receiver!.uid!: 1,
-      };
-
       await chatRef.set({
         'chatId': chatId,
         'isGroup': isGroupChat,
         'members': [sender.uid, receiver?.uid],
         'messages': [newMessageJson],
-        'unreadCounts': initialUnreadCounts,
+        'lastReadAt': {
+          if (sender.uid != null) sender.uid!: FieldValue.serverTimestamp(),
+        },
         'profiles': [sender.toJson(), receiver?.toJson()],
         'created_at': FieldValue.serverTimestamp(),
         'updated_at': FieldValue.serverTimestamp(),
@@ -68,7 +67,7 @@ class ChatRepository {
     } else {
       await chatRef.update({
         'messages': FieldValue.arrayUnion([newMessageJson]),
-        if (receiver?.uid != null) 'unreadCounts.${receiver!.uid}': FieldValue.increment(1),
+        if (sender.uid != null) 'lastReadAt.${sender.uid}': FieldValue.serverTimestamp(),
         'updated_at': FieldValue.serverTimestamp(),
       });
     }
@@ -150,6 +149,9 @@ class ChatRepository {
       'members': memberUids,
       'admin': adminProfile.toJson(),
       'profiles': membersJson,
+      'lastReadAt': {
+        if (adminProfile.uid != null) adminProfile.uid!: FieldValue.serverTimestamp(),
+      },
       'created_at': FieldValue.serverTimestamp(),
       'updated_at': FieldValue.serverTimestamp(),
     });

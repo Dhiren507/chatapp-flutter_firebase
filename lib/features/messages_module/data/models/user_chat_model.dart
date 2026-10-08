@@ -11,6 +11,7 @@ class UserChatModel {
   bool? isGroup;
   List<MessageModel>? messages;
   Map<String, int>? unreadCounts;
+  Map<String, DateTime>? lastReadAt;
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -24,6 +25,7 @@ class UserChatModel {
     this.isGroup,
     this.messages,
     this.unreadCounts,
+    this.lastReadAt,
     this.createdAt,
     this.updatedAt,
   });
@@ -57,6 +59,17 @@ class UserChatModel {
     if (json['unreadCounts'] != null) {
       unreadCounts = Map<String, int>.from(json['unreadCounts']);
     }
+    if (json['lastReadAt'] != null) {
+      lastReadAt = <String, DateTime>{};
+      (json['lastReadAt'] as Map).forEach((key, value) {
+        if (value is Timestamp) {
+          lastReadAt![key.toString()] = value.toDate();
+        } else if (value != null) {
+          final parsed = DateTime.tryParse(value.toString());
+          if (parsed != null) lastReadAt![key.toString()] = parsed;
+        }
+      });
+    }
     createdAt = json['created_at'] != null
         ? (json['created_at'] is Timestamp
             ? (json['created_at'] as Timestamp).toDate()
@@ -86,6 +99,9 @@ class UserChatModel {
       data['messages'] = messages!.map((v) => v.toJson()).toList();
     }
     data['unreadCounts'] = unreadCounts;
+    if (lastReadAt != null) {
+      data['lastReadAt'] = lastReadAt;
+    }
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     return data;
@@ -94,7 +110,23 @@ class UserChatModel {
   // --- Domain Utility Getters & Helpers ---
 
   int getUnreadCountForUser(String currentUserId) {
-    return unreadCounts?[currentUserId] ?? 0;
+    if (messages == null || messages!.isEmpty) return 0;
+
+    final userLastRead = lastReadAt?[currentUserId];
+
+    if (userLastRead != null) {
+      return messages!.where((m) {
+        return m.senderId != currentUserId &&
+            m.createdAt != null &&
+            m.createdAt!.isAfter(userLastRead);
+      }).length;
+    }
+
+    if (unreadCounts != null && unreadCounts!.containsKey(currentUserId)) {
+      return unreadCounts![currentUserId] ?? 0;
+    }
+
+    return messages!.where((m) => m.senderId != currentUserId).length;
   }
 
   MessageModel? get lastMessage => messages?.lastOrNull;

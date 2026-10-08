@@ -79,6 +79,12 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
   }
 
   void _onChatDocumentUpdated(ChatDocumentUpdated event, Emitter<ChatDetailState> emit) {
+    if (event.chatData != null &&
+        event.chatData?.lastMessage != null &&
+        event.chatData?.lastMessage?.senderId != event.currentUserProfile.uid) {
+      _chatRepo.markChatAsRead(chatId: event.chatId, currentUserId: event.currentUserProfile.uid!);
+    }
+
     emit(
       ChatDetailState(
         status: .loaded,
