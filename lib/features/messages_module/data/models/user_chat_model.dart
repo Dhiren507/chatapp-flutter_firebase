@@ -10,8 +10,7 @@ class UserChatModel {
   String? groupProfileUrl;
   bool? isGroup;
   List<MessageModel>? messages;
-  Map<String, int>? unreadCounts;
-  Map<String, DateTime>? lastReadAt;
+  Map<String, int>? lastReadMessageCount;
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -24,8 +23,7 @@ class UserChatModel {
     this.groupProfileUrl,
     this.isGroup,
     this.messages,
-    this.unreadCounts,
-    this.lastReadAt,
+    this.lastReadMessageCount,
     this.createdAt,
     this.updatedAt,
   });
@@ -44,9 +42,7 @@ class UserChatModel {
         profiles!.add(UserModel.fromJson(Map<String, dynamic>.from(v)));
       });
     }
-    admin = json['admin'] != null
-        ? UserModel.fromJson(Map<String, dynamic>.from(json['admin']))
-        : null;
+    admin = json['admin'] != null ? UserModel.fromJson(Map<String, dynamic>.from(json['admin'])) : null;
     groupName = json['groupName'];
     groupProfileUrl = json['groupProfileUrl'];
     isGroup = json['isGroup'];
@@ -56,29 +52,18 @@ class UserChatModel {
         messages!.add(MessageModel.fromJson(Map<String, dynamic>.from(v)));
       });
     }
-    if (json['unreadCounts'] != null) {
-      unreadCounts = Map<String, int>.from(json['unreadCounts']);
-    }
-    if (json['lastReadAt'] != null) {
-      lastReadAt = <String, DateTime>{};
-      (json['lastReadAt'] as Map).forEach((key, value) {
-        if (value is Timestamp) {
-          lastReadAt![key.toString()] = value.toDate();
-        } else if (value != null) {
-          final parsed = DateTime.tryParse(value.toString());
-          if (parsed != null) lastReadAt![key.toString()] = parsed;
-        }
-      });
+    if (json['lastReadMessageCount'] != null) {
+      lastReadMessageCount = Map<String, int>.from(json['lastReadMessageCount']);
     }
     createdAt = json['created_at'] != null
         ? (json['created_at'] is Timestamp
-            ? (json['created_at'] as Timestamp).toDate()
-            : DateTime.tryParse(json['created_at'].toString()))
+              ? (json['created_at'] as Timestamp).toDate()
+              : DateTime.tryParse(json['created_at'].toString()))
         : null;
     updatedAt = json['updated_at'] != null
         ? (json['updated_at'] is Timestamp
-            ? (json['updated_at'] as Timestamp).toDate()
-            : DateTime.tryParse(json['updated_at'].toString()))
+              ? (json['updated_at'] as Timestamp).toDate()
+              : DateTime.tryParse(json['updated_at'].toString()))
         : null;
   }
 
@@ -98,35 +83,22 @@ class UserChatModel {
     if (messages != null) {
       data['messages'] = messages!.map((v) => v.toJson()).toList();
     }
-    data['unreadCounts'] = unreadCounts;
-    if (lastReadAt != null) {
-      data['lastReadAt'] = lastReadAt;
-    }
+    data['lastReadCounts'] = lastReadMessageCount;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     return data;
   }
 
-  // --- Domain Utility Getters & Helpers ---
-
   int getUnreadCountForUser(String currentUserId) {
     if (messages == null || messages!.isEmpty) return 0;
 
-    final userLastRead = lastReadAt?[currentUserId];
+    int messageTotalLength = messages!.length;
 
-    if (userLastRead != null) {
-      return messages!.where((m) {
-        return m.senderId != currentUserId &&
-            m.createdAt != null &&
-            m.createdAt!.isAfter(userLastRead);
-      }).length;
-    }
+    int userReadMessageCount = lastReadMessageCount?[currentUserId] ?? 0;
 
-    if (unreadCounts != null && unreadCounts!.containsKey(currentUserId)) {
-      return unreadCounts![currentUserId] ?? 0;
-    }
+    int difference = messageTotalLength - userReadMessageCount;
 
-    return messages!.where((m) => m.senderId != currentUserId).length;
+    return (difference > 0) ? difference : 0;
   }
 
   MessageModel? get lastMessage => messages?.lastOrNull;
@@ -179,13 +151,13 @@ class MessageModel {
     mediaType = json['mediaType'];
     createdAt = json['created_at'] != null
         ? (json['created_at'] is Timestamp
-            ? (json['created_at'] as Timestamp).toDate()
-            : DateTime.tryParse(json['created_at'].toString()))
+              ? (json['created_at'] as Timestamp).toDate()
+              : DateTime.tryParse(json['created_at'].toString()))
         : null;
     updatedAt = json['updated_at'] != null
         ? (json['updated_at'] is Timestamp
-            ? (json['updated_at'] as Timestamp).toDate()
-            : DateTime.tryParse(json['updated_at'].toString()))
+              ? (json['updated_at'] as Timestamp).toDate()
+              : DateTime.tryParse(json['updated_at'].toString()))
         : null;
   }
 

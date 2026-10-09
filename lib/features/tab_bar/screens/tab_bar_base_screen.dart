@@ -2,8 +2,8 @@ import 'package:chatapp_firebase/core/constants/app_assets.dart';
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
 import 'package:chatapp_firebase/core/constants/app_text_styles.dart';
 import 'package:chatapp_firebase/features/call_module/screens/call_list_screen.dart';
-import 'package:chatapp_firebase/features/messages_module/chat_listing/screens/chat_list_screen.dart';
 import 'package:chatapp_firebase/features/contacts_module/screens/contact_list_screen.dart';
+import 'package:chatapp_firebase/features/messages_module/chat_listing/screens/chat_list_screen.dart';
 import 'package:chatapp_firebase/features/settings_module/screens/settings_screen.dart';
 import 'package:chatapp_firebase/features/tab_bar/cubit/tab_bar_index_cubit.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +19,7 @@ class TabBarBaseScreen extends StatefulWidget {
   State<TabBarBaseScreen> createState() => _TabBarBaseScreenState();
 }
 
-class _TabBarBaseScreenState extends State<TabBarBaseScreen>
-    with SingleTickerProviderStateMixin {
+class _TabBarBaseScreenState extends State<TabBarBaseScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -37,6 +36,12 @@ class _TabBarBaseScreenState extends State<TabBarBaseScreen>
 
   @override
   Widget build(BuildContext context) {
+    final int activeInd = context.watch<TabBarIndexCubit>().state;
+
+    if (_tabController.index != activeInd) {
+      _tabController.animateTo(activeInd);
+    }
+
     return Scaffold(
       bottomNavigationBar: BlocBuilder<TabBarIndexCubit, int>(
         builder: (context, activeIndex) {
@@ -67,9 +72,7 @@ class _TabBarBaseScreenState extends State<TabBarBaseScreen>
                           width: 28,
                           fit: BoxFit.scaleDown,
                           colorFilter: ColorFilter.mode(
-                            activeIndex == 0
-                                ? AppColors.green
-                                : AppColors.textSecondary,
+                            activeIndex == 0 ? AppColors.green : AppColors.textSecondary,
                             BlendMode.srcIn,
                           ),
                         ),
@@ -82,9 +85,7 @@ class _TabBarBaseScreenState extends State<TabBarBaseScreen>
                           width: 28,
                           fit: BoxFit.scaleDown,
                           colorFilter: ColorFilter.mode(
-                            activeIndex == 1
-                                ? AppColors.green
-                                : AppColors.textSecondary,
+                            activeIndex == 1 ? AppColors.green : AppColors.textSecondary,
                             BlendMode.srcIn,
                           ),
                         ),
@@ -97,9 +98,7 @@ class _TabBarBaseScreenState extends State<TabBarBaseScreen>
                           width: 28,
                           fit: BoxFit.scaleDown,
                           colorFilter: ColorFilter.mode(
-                            activeIndex == 2
-                                ? AppColors.green
-                                : AppColors.textSecondary,
+                            activeIndex == 2 ? AppColors.green : AppColors.textSecondary,
                             BlendMode.srcIn,
                           ),
                         ),
@@ -112,9 +111,7 @@ class _TabBarBaseScreenState extends State<TabBarBaseScreen>
                           width: 28,
                           fit: BoxFit.scaleDown,
                           colorFilter: ColorFilter.mode(
-                            activeIndex == 3
-                                ? AppColors.green
-                                : AppColors.textSecondary,
+                            activeIndex == 3 ? AppColors.green : AppColors.textSecondary,
                             BlendMode.srcIn,
                           ),
                         ),
@@ -131,12 +128,7 @@ class _TabBarBaseScreenState extends State<TabBarBaseScreen>
       body: TabBarView(
         controller: _tabController,
         physics: const NeverScrollableScrollPhysics(),
-        children: const [
-          ChatListScreen(),
-          CallListScreen(),
-          ContactListScreen(),
-          SettingsScreen(),
-        ],
+        children: const [ChatListScreen(), CallListScreen(), ContactListScreen(), SettingsScreen()],
       ),
     );
   }

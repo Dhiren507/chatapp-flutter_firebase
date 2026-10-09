@@ -75,54 +75,67 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: _searchController,
-              onChanged: (value) {
-                context.read<SearchBloc>().add(SearchInputChanged(searchQuery: value.trim()));
-              },
-              style: AppTextStyles.body(
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-                color: AppColors.textPrimary,
-              ),
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: AppColors.bgDisables,
-                contentPadding: const EdgeInsets.symmetric(vertical: 14),
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.only(left: 12, right: 8),
-                  child: CommonSvgContainer(
-                    iconPath: AppAssets.searchIcon,
-                    iconSize: 24,
-                    containerSize: 24,
-                    borderColor: Colors.transparent,
-                    iconColor: AppColors.black,
-                  ),
-                ),
-                prefixIconConstraints: const BoxConstraints(minWidth: 44, minHeight: 24),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    _searchController.clear();
-                    context.read<SearchBloc>().add(SearchInputChanged(searchQuery: ''));
+            BlocBuilder<SearchBloc, SearchState>(
+              builder: (context, state) {
+                return TextField(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    context.read<SearchBloc>().add(SearchInputChanged(searchQuery: value.trim()));
                   },
-                  icon: Icon(Icons.close, color: AppColors.textPrimary),
-                ),
-                hintText: AppStrings.searchHintText,
-                hintStyle: AppTextStyles.body(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-              ),
+                  style: AppTextStyles.body(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    color: AppColors.textPrimary,
+                  ),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: AppColors.bgDisables,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.only(left: 12, right: 8),
+                      child: CommonSvgContainer(
+                        iconPath: AppAssets.searchIcon,
+                        iconSize: 24,
+                        containerSize: 24,
+                        borderColor: Colors.transparent,
+                        iconColor: AppColors.black,
+                      ),
+                    ),
+                    prefixIconConstraints: const BoxConstraints(minWidth: 44, minHeight: 24),
+                    suffixIcon: state.searchQuery.isNotEmpty
+                        ? IconButton(
+                            onPressed: () {
+                              _searchController.clear();
+                              context.read<SearchBloc>().add(SearchInputChanged(searchQuery: ''));
+                            },
+                            icon: Icon(Icons.close, color: AppColors.textPrimary),
+                          )
+                        : null,
+                    hintText: AppStrings.searchHintText,
+                    hintStyle: AppTextStyles.body(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                );
+              },
             ),
 
             const SizedBox(height: 24),
 
-            Text(AppStrings.searchPeopleSectionTitle, style: AppTextStyles.heading()),
+            BlocBuilder<SearchBloc, SearchState>(
+              builder: (context, state) {
+                return Text(
+                  state.isGroup ? AppStrings.searchGroupsSectionText : AppStrings.searchPeopleSectionTitle,
+                  style: AppTextStyles.heading(),
+                );
+              },
+            ),
 
             const SizedBox(height: 16),
 
@@ -171,13 +184,29 @@ class _SearchScreenState extends State<SearchScreen> {
                           onTap: () {
                             context.read<SearchBloc>().add(ContactSelectionToggled(selectedUser: contact));
                           },
-                          child: Container(
-                            color: isSelected ? AppColors.black : AppColors.white,
-                            child: ContactListTile(
-                              contactName: contact.name ?? '',
-                              profileUrl: contact.photoUrl ?? '',
-                              contactBio: contact.bioText ?? '',
-                            ),
+                          child: Row(
+                            children: [
+                              if (state.isGroup == false) ...[
+                                Checkbox(
+                                  value: isSelected,
+                                  onChanged: null,
+                                  checkColor: AppColors.white,
+                                  fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+                                    if (states.contains(WidgetState.selected)) {
+                                      return Colors.green;
+                                    }
+                                    return Colors.transparent;
+                                  }),
+                                ),
+                              ],
+                              Expanded(
+                                child: ContactListTile(
+                                  contactName: contact.name ?? '',
+                                  profileUrl: contact.photoUrl ?? '',
+                                  contactBio: contact.bioText ?? '',
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       },

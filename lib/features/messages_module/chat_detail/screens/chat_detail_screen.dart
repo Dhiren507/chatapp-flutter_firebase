@@ -86,7 +86,14 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
               return GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.profileScreen);
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.profileScreen,
+                    arguments: [
+                      ...(isGroup ? [] : [state.otherUserProfile]),
+                      state.currentChat,
+                    ],
+                  );
                 },
                 child: ChatHeader(imgUrl: headerImgUrl, status: 'Active Now', userName: headerTitle),
               );
@@ -318,8 +325,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                                       ),
                                                     ),
                                                     BlocConsumer<ChatDetailBloc, ChatDetailState>(
+                                                      listenWhen: (previous, current) =>
+                                                          previous.status != .loaded &&
+                                                          current.status == .loaded,
                                                       listener: (context, state) {
-                                                        if (state.status == .loaded) {
+                                                        if (Navigator.canPop(dialogContext)) {
                                                           Navigator.pop(dialogContext);
                                                         }
                                                       },

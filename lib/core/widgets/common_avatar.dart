@@ -32,7 +32,7 @@ class CommonAvatar extends StatelessWidget {
         child: CachedNetworkImage(
           imageUrl: imgPath,
           errorWidget: (context, url, error) {
-            return SvgPicture.asset(AppAssets.helpIcon, fit: BoxFit.cover);
+            return SvgPicture.asset(AppAssets.defaultAvatarSvg, fit: .contain);
           },
         ),
       ),

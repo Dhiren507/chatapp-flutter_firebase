@@ -9,9 +9,10 @@ import 'package:chatapp_firebase/core/widgets/common_back_button.dart';
 import 'package:chatapp_firebase/core/widgets/common_button.dart';
 import 'package:chatapp_firebase/core/widgets/common_svg_container.dart';
 import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
-import 'package:chatapp_firebase/features/group_module/create_group/bloc/create_group_bloc.dart';
+import 'package:chatapp_firebase/features/messages_module/create_group/bloc/create_group_bloc.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/data/models/user_model.dart';
@@ -69,6 +70,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               controller: _titleController,
               keyboardType: .multiline,
               maxLines: 2,
+              inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'\n'))],
               style: AppTextStyles.body(fontWeight: .w500, fontSize: 40, color: AppColors.textPrimary),
               decoration: InputDecoration(
                 border: InputBorder.none,
@@ -207,7 +209,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                   right: 10,
                                   child: GestureDetector(
                                     onTap: () {
-                                      final updatedMembers = List<UserModel>.from(invitedMembers)..removeAt(index);
+                                      final updatedMembers = List<UserModel>.from(invitedMembers)
+                                        ..removeAt(index);
                                       context.read<CreateGroupBloc>().add(
                                         CreateGroupMembersChanged(members: updatedMembers),
                                       );
@@ -248,7 +251,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           builder: (context, state) {
             if (state is CreateGroupLoaded || state is CreateGroupLoading) {
               final bool isLoading = state is CreateGroupLoading;
-              final bool isButtonEnabled = state is CreateGroupLoaded && state.members.length > 1 && !isLoading;
+              final bool isButtonEnabled =
+                  state is CreateGroupLoaded && state.members.length > 1 && !isLoading;
 
               return Padding(
                 padding: const EdgeInsets.only(left: 24, right: 24, bottom: 10),

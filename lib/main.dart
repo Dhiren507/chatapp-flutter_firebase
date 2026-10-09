@@ -1,9 +1,10 @@
 import 'package:chatapp_firebase/core/constants/app_colors.dart';
-import 'package:chatapp_firebase/core/data/repositories/contact_repository.dart';
+import 'package:chatapp_firebase/core/constants/app_keys.dart';
 import 'package:chatapp_firebase/core/routes/route_generator.dart';
 import 'package:chatapp_firebase/features/auth_module/data/data_providers/firebase_auth_provider.dart';
 import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
 import 'package:chatapp_firebase/features/auth_module/splash/screens/splash_screen.dart';
+import 'package:chatapp_firebase/features/contacts_module/data/repositories/contact_repository.dart';
 import 'package:chatapp_firebase/features/messages_module/data/repositories/chat_repository.dart';
 import 'package:chatapp_firebase/features/status_module/data/repositories/status_repository.dart';
 import 'package:chatapp_firebase/firebase_options.dart';
@@ -19,9 +20,7 @@ void main() async {
   final authProvider = AppAuthProvider();
   final authRepository = AuthRepository(provider: authProvider);
 
-  await GoogleSignIn.instance.initialize(
-    clientId: "313287695886-58coubkl3he33vaqk59f2umo3ftpjeum.apps.googleusercontent.com",
-  );
+  await GoogleSignIn.instance.initialize(clientId: AppKeys.googleAuthClientId);
 
   runApp(
     MultiRepositoryProvider(
@@ -54,10 +53,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
-          dividerTheme: DividerThemeData(
-            color: AppColors.dividerColor,
-            thickness: 1,
-          ),
+          dividerTheme: DividerThemeData(color: AppColors.dividerColor, thickness: 1),
           appBarTheme: AppBarTheme(surfaceTintColor: Colors.transparent),
           splashColor: Colors.transparent,
           splashFactory: NoSplash.splashFactory,

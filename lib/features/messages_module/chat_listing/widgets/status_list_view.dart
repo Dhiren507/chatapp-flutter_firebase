@@ -13,7 +13,6 @@ import 'package:image_picker/image_picker.dart';
 
 class StatusListView extends StatelessWidget {
   final String currentUserId;
-
   final UserStatus? currentUserStatus;
   final List<UserStatus> otherUserStatus;
 
@@ -26,45 +25,59 @@ class StatusListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<String> uniqueUserIds = otherUserStatus
+        .map((status) => status.userId)
+        .whereType<String>()
+        .toSet()
+        .toList();
+
     return Padding(
       padding: const EdgeInsets.only(left: 25, top: 25, bottom: 20),
       child: SizedBox(
         height: 92,
         child: ListView.separated(
-          scrollDirection: .horizontal,
-          clipBehavior: .none,
+          scrollDirection: Axis.horizontal,
+          clipBehavior: Clip.none,
+          separatorBuilder: (context, index) => const SizedBox(width: 15),
+          itemCount: uniqueUserIds.length + 1,
           itemBuilder: (context, index) {
             if (index == 0) {
               final String avatarImgPath =
                   (currentUserStatus?.profileUrl != null && currentUserStatus!.profileUrl!.isNotEmpty)
                   ? currentUserStatus!.profileUrl!
-                  : AppAssets.appleIcon;
+                  : AppAssets.defaultAvatarSvg;
 
               return Column(
                 spacing: 10,
                 children: [
                   Stack(
-                    clipBehavior: .none,
+                    clipBehavior: Clip.none,
                     children: [
                       GestureDetector(
-                        behavior: .translucent,
+                        behavior: HitTestBehavior.translucent,
                         onTap: () {
                           if (currentUserStatus != null) {
+                            final currentUserSlides = otherUserStatus
+                                .where((s) => s.userId == currentUserId)
+                                .toList();
+
                             Navigator.pushNamed(
                               context,
                               AppRoutes.statusViewScreen,
-                              arguments: currentUserStatus,
+                              arguments: currentUserSlides.isNotEmpty
+                                  ? currentUserSlides
+                                  : [currentUserStatus!],
                             );
                           }
                         },
                         child: CommonAvatar(
                           imgPath: avatarImgPath,
                           size: 58,
-                          borderColor: AppColors.highlightYellow,
+                          borderColor: currentUserStatus != null
+                              ? AppColors.highlightYellow
+                              : Colors.transparent,
                         ),
                       ),
-
-                      // Add Icon
                       Positioned(
                         bottom: -1,
                         right: 0,
@@ -85,9 +98,7 @@ class StatusListView extends StatelessWidget {
                                   },
                                   onCameraPressed: () async {
                                     XFile? capturedImage = await ImagePickerUtils.captureImage();
-
                                     if (!context.mounted) return;
-
                                     if (capturedImage != null) {
                                       Navigator.pop(context, <XFile>[capturedImage]);
                                     }
@@ -100,7 +111,6 @@ class StatusListView extends StatelessWidget {
 
                             if (statusImages != null && statusImages.isNotEmpty) {
                               XFile? statusImage = statusImages[0];
-
                               Navigator.pushNamed(
                                 context,
                                 AppRoutes.statusPreviewScreen,
@@ -129,28 +139,37 @@ class StatusListView extends StatelessWidget {
               );
             }
 
-            final status = otherUserStatus[index - 1];
+            final String targetUserId = uniqueUserIds[index - 1];
 
-            bool isSeenByMe = status.seenBy!.contains(currentUserId);
+            final List<UserStatus> userStatusList = otherUserStatus
+                .where((s) => s.userId == targetUserId)
+                .toList();
+
+            final UserStatus firstStatus = userStatusList.first;
+
+            bool isAllSeenByMe = userStatusList.every(
+              (status) => status.seenBy?.contains(currentUserId) ?? false,
+            );
 
             return Column(
               spacing: 10,
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, AppRoutes.statusViewScreen, arguments: status);
+                    Navigator.pushNamed(context, AppRoutes.statusViewScreen, arguments: userStatusList);
                   },
                   child: CommonAvatar(
-                    imgPath: status.profileUrl ?? '',
+                    imgPath: firstStatus.profileUrl ?? '',
                     size: 58,
-                    borderColor: isSeenByMe ? AppColors.mutedGrey : AppColors.highlightYellow,
+                    borderColor: isAllSeenByMe ? AppColors.mutedGrey : AppColors.highlightYellow,
                   ),
                 ),
                 SizedBox(
                   width: 80,
                   child: Text(
-                    status.username ?? '',
-                    overflow: .ellipsis,
+                    firstStatus.username ?? '',
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
                     style: AppTextStyles.heading(
                       color: AppColors.white,
                       fontSize: 14,
@@ -161,8 +180,6 @@ class StatusListView extends StatelessWidget {
               ],
             );
           },
-          separatorBuilder: (context, index) => const SizedBox(width: 15),
-          itemCount: otherUserStatus.length + 1,
         ),
       ),
     );

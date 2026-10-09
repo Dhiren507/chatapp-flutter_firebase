@@ -12,6 +12,7 @@ final class SearchState {
 
   final List<UserModel> selectedUsers;
   final String errorMsg;
+  final String searchQuery;
   final bool isGroup;
 
   SearchState({
@@ -22,6 +23,7 @@ final class SearchState {
     this.allChatList = const [],
     this.filteredChatList = const [],
     this.errorMsg = '',
+    this.searchQuery = '',
     this.isGroup = false,
   });
 
@@ -33,6 +35,7 @@ final class SearchState {
     List<UserChatModel>? allChatList,
     List<UserChatModel>? filteredChatList,
     String? errorMsg,
+    String? searchQuery,
     bool? isGroup,
   }) {
     return SearchState(
@@ -40,6 +43,7 @@ final class SearchState {
       contacts: contacts ?? this.contacts,
       selectedUsers: selectedUsers ?? this.selectedUsers,
       errorMsg: errorMsg ?? this.errorMsg,
+      searchQuery: searchQuery ?? this.searchQuery,
       allFetchedContacts: allFetchedContacts ?? this.allFetchedContacts,
       allChatList: allChatList ?? this.allChatList,
       filteredChatList: filteredChatList ?? this.filteredChatList,

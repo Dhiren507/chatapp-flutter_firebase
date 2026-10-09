@@ -77,21 +77,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       child: BlocBuilder<SettingBloc, SettingState>(
                         builder: (context, state) {
                           final user = state.userProfile;
-                          final String displayName = user?.name?.isNotEmpty == true
-                              ? user!.name!
-                              : (state.status == SettingStatus.loading ? 'Loading...' : 'User');
-                          final String bioOrEmail = user?.bioText?.isNotEmpty == true
-                              ? user!.bioText!
-                              : (user?.email ?? 'Life is going good af...');
-                          final String photoUrl = user?.photoUrl ?? '';
+                          final String displayName = user!.name!;
+                          final String bioOrEmail = user.bioText?.isNotEmpty == true
+                              ? user.bioText!
+                              : (user.email ?? 'Life is going good af...');
+                          final String photoUrl = user.photoUrl ?? '';
 
                           return Row(
                             children: [
-                              CommonAvatar(
-                                imgPath: photoUrl,
-                                size: 60,
-                                borderColor: Colors.transparent,
-                              ),
+                              CommonAvatar(imgPath: photoUrl, size: 60, borderColor: Colors.transparent),
 
                               const SizedBox(width: 15),
 
@@ -136,10 +130,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 24,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
                         child: ListView.separated(
                           clipBehavior: .none,
                           physics: NeverScrollableScrollPhysics(),
@@ -150,15 +141,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               optionTitle: option['optionText'],
                               optionDescription: option['subtitle'],
                               onPressed: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  option['navigateTo'],
-                                );
+                                Navigator.pushNamed(context, option['navigateTo']);
                               },
                             );
                           },
-                          separatorBuilder: (context, index) =>
-                              const SizedBox(height: 25),
+                          separatorBuilder: (context, index) => const SizedBox(height: 20),
                           itemCount: AppStrings.settingsOptions.length,
                         ),
                       ),

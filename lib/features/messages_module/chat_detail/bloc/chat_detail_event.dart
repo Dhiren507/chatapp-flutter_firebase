@@ -30,8 +30,3 @@ class ChatDocumentUpdated extends ChatDetailEvent {
     this.otherUserProfile,
   });
 }
-
-// user will click on the attachment select multiple files or single one
-// add a new event attachmentSelected which will take the list of x files or local path of each file
-// redirect to a preview full screen dialog box  with page view builder with caption text below
-// just use the current screen bloc send message function in that dialog box thats it

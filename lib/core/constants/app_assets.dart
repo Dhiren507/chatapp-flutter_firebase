@@ -47,4 +47,5 @@ class AppAssets {
   static const String networkIcon = '$_imagesPath/Chart.svg';
   static const String mediaImageIcon = '$_imagesPath/media.svg';
 
+  static const String defaultAvatarSvg = '$_imagesPath/default_avatar.svg';
 }

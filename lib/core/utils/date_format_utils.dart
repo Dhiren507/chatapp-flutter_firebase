@@ -26,7 +26,6 @@ class DateFormatUtils {
     final DateTime now = DateTime.now();
     final Duration difference = now.difference(dateTime);
 
-    // minutes 0 to 59
     if (difference.inMinutes < 60) {
       if (difference.inMinutes <= 0) {
         return 'just now';
@@ -34,12 +33,21 @@ class DateFormatUtils {
       return difference.inMinutes == 1 ? '1 minute ago' : '${difference.inMinutes} minutes ago';
     }
 
-    // hours
     if (difference.inHours < 24) {
-      return difference.inHours == 1 ? '1 hour ago' : '${difference.inHours} hours ago';
+      final today = DateTime(now.year, now.month, now.day);
+      final messageDay = DateTime(dateTime.year, dateTime.month, dateTime.day);
+
+      if (messageDay == today) {
+        return difference.inHours == 1 ? '1 hour ago' : '${difference.inHours} hours ago';
+      }
     }
 
-    // after 24 show date of the message
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    final messageDay = DateTime(dateTime.year, dateTime.month, dateTime.day);
+    if (messageDay == yesterday) {
+      return 'yesterday';
+    }
+
     final String day = dateTime.day.toString().padLeft(2, '0');
     final String month = dateTime.month.toString().padLeft(2, '0');
     final String year = dateTime.year.toString();

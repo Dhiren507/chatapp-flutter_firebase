@@ -67,14 +67,18 @@ class ChatListTile extends StatelessWidget {
           crossAxisAlignment: .end,
           children: [
             Text(DateFormatUtils.calculateTimeAgo(chatListData.updatedAt!), style: AppTextStyles.body()),
-            if (unreadCount > 0)
-              Container(
-                height: 22,
-                width: 22,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(color: AppColors.bgError, shape: BoxShape.circle),
-                child: Text('$unreadCount', style: AppTextStyles.body(fontSize: 12, color: AppColors.white)),
-              ),
+            unreadCount > 0
+                ? Container(
+                    height: 22,
+                    width: 22,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(color: AppColors.bgError, shape: BoxShape.circle),
+                    child: Text(
+                      '$unreadCount',
+                      style: AppTextStyles.body(fontSize: 12, color: AppColors.white),
+                    ),
+                  )
+                : const SizedBox(height: 22,),
           ],
         ),
       ],

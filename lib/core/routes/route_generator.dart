@@ -1,17 +1,17 @@
-import 'package:chatapp_firebase/core/data/repositories/contact_repository.dart';
 import 'package:chatapp_firebase/features/auth_module/data/repositories/auth_repository.dart';
 import 'package:chatapp_firebase/features/auth_module/login/bloc/login_bloc.dart';
 import 'package:chatapp_firebase/features/auth_module/onboarding/bloc/onboarding_bloc.dart';
 import 'package:chatapp_firebase/features/auth_module/onboarding/screens/onboarding_screen.dart';
 import 'package:chatapp_firebase/features/auth_module/splash/screens/splash_screen.dart';
 import 'package:chatapp_firebase/features/contacts_module/bloc/contact_list_bloc.dart';
-import 'package:chatapp_firebase/features/group_module/create_group/bloc/create_group_bloc.dart';
-import 'package:chatapp_firebase/features/group_module/create_group/screens/create_group_screen.dart';
+import 'package:chatapp_firebase/features/contacts_module/data/repositories/contact_repository.dart';
 import 'package:chatapp_firebase/features/messages_module/chat_detail/bloc/chat_detail_bloc.dart';
 import 'package:chatapp_firebase/features/messages_module/chat_detail/screens/chat_detail_screen.dart';
 import 'package:chatapp_firebase/features/messages_module/chat_listing/bloc/chat_list_bloc.dart';
+import 'package:chatapp_firebase/features/messages_module/create_group/bloc/create_group_bloc.dart';
+import 'package:chatapp_firebase/features/messages_module/create_group/screens/create_group_screen.dart';
 import 'package:chatapp_firebase/features/messages_module/data/repositories/chat_repository.dart';
-import 'package:chatapp_firebase/features/profile_module/user_profile_screen.dart';
+import 'package:chatapp_firebase/features/profile_module/screens/user_profile_screen.dart';
 import 'package:chatapp_firebase/features/search_module/bloc/search_bloc.dart';
 import 'package:chatapp_firebase/features/search_module/screens/search_screen.dart';
 import 'package:chatapp_firebase/features/settings_module/bloc/setting_bloc.dart';
@@ -75,9 +75,7 @@ class RouteGenerator {
                 ),
               ),
               BlocProvider<SettingBloc>(
-                create: (context) => SettingBloc(
-                  authRepository: context.read<AuthRepository>(),
-                ),
+                create: (context) => SettingBloc(authRepository: context.read<AuthRepository>()),
               ),
             ],
             child: const TabBarBaseScreen(),
@@ -85,7 +83,7 @@ class RouteGenerator {
         );
 
       case AppRoutes.profileScreen:
-        return MaterialPageRoute(builder: (context) => UserProfileScreen());
+        return MaterialPageRoute(builder: (context) => UserProfileScreen(), settings: settings);
 
       case AppRoutes.chatDetailScreen:
         return MaterialPageRoute(
@@ -120,9 +118,7 @@ class RouteGenerator {
       case AppRoutes.statusPreviewScreen:
         return MaterialPageRoute(
           builder: (context) => BlocProvider<StatusBloc>(
-            create: (context) => StatusBloc(
-              statusRepo: context.read<StatusRepository>(),
-            ),
+            create: (context) => StatusBloc(statusRepo: context.read<StatusRepository>()),
             child: const StatusPreviewScreen(),
           ),
           settings: settings,
@@ -131,9 +127,7 @@ class RouteGenerator {
       case AppRoutes.statusViewScreen:
         return MaterialPageRoute(
           builder: (context) => BlocProvider<ViewStatusBloc>(
-            create: (context) => ViewStatusBloc(
-              statusRepo: context.read<StatusRepository>(),
-            ),
+            create: (context) => ViewStatusBloc(statusRepo: context.read<StatusRepository>()),
             child: const StatusViewScreen(),
           ),
           settings: settings,

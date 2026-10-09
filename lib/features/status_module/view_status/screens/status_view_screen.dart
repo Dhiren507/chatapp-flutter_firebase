@@ -9,79 +9,130 @@ import 'package:chatapp_firebase/features/status_module/view_status/bloc/view_st
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/routes/app_routes.dart';
 import '../../../messages_module/widgets/chat_header.dart';
 
-class StatusViewScreen extends StatelessWidget {
+class StatusViewScreen extends StatefulWidget {
   const StatusViewScreen({super.key});
 
   @override
+  State<StatusViewScreen> createState() => _StatusViewScreenState();
+}
+
+class _StatusViewScreenState extends State<StatusViewScreen> {
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userStatusList = ModalRoute.of(context)?.settings.arguments as List<UserStatus>? ?? [];
+      if (userStatusList.isNotEmpty) {
+        final status = userStatusList[0];
+        final currentUserId = context.read<AuthRepository>().getCurrentUserId();
+
+        if (currentUserId != null && status.userId != currentUserId) {
+          context.read<ViewStatusBloc>().add(
+            MarkStatusAsSeen(statusId: status.id ?? '', currentUserId: currentUserId),
+          );
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final status = ModalRoute.of(context)?.settings.arguments as UserStatus;
+    final userStatusList = ModalRoute.of(context)?.settings.arguments as List<UserStatus>? ?? [];
+
+    if (userStatusList.isEmpty) {
+      return Scaffold(body: Center(child: Text(AppStrings.statusLoadFailedError)));
+    }
+
+    final firstStatus = userStatusList.first;
 
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.white,
       appBar: AppBar(
         backgroundColor: AppColors.white,
-        leading: CommonBackButton(),
-        title: GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, AppRoutes.profileScreen);
-          },
-          child: ChatHeader(
-            userName: status.username ?? '',
-            status: 'Active Now',
-            imgUrl: status.profileUrl ?? '',
-          ),
+        leading: const CommonBackButton(),
+        title: ChatHeader(
+          userName: firstStatus.username ?? '',
+          status: 'Active Now',
+          imgUrl: firstStatus.profileUrl ?? '',
         ),
         titleSpacing: 0,
       ),
       body: SafeArea(
         bottom: true,
-        child: Padding(
-          padding: EdgeInsetsGeometry.symmetric(vertical: 24),
-          child: Column(
-            mainAxisAlignment: .center,
-            children: [
-              Expanded(
-                child: CachedNetworkImage(
-                  imageUrl: status.statusUrl ?? '',
-                  imageBuilder: (context, imageProvider) {
-                    final currentUserId = context.read<AuthRepository>().getCurrentUserId();
+        child: Column(
+          children: [
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: userStatusList.length,
+                onPageChanged: (int index) {
+                  final status = userStatusList[index];
+                  final currentUserId = context.read<AuthRepository>().getCurrentUserId();
 
-                    if (currentUserId != null && status.userId != currentUserId) {
-                      context.read<ViewStatusBloc>().add(
-                        MarkStatusAsSeen(statusId: status.id ?? '', currentUserId: currentUserId),
-                      );
-                    }
-
-                    return Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
-                      ),
+                  if (currentUserId != null && status.userId != currentUserId) {
+                    context.read<ViewStatusBloc>().add(
+                      MarkStatusAsSeen(statusId: status.id ?? '', currentUserId: currentUserId),
                     );
-                  },
-                  placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                  errorWidget: (context, url, error) => Center(child: Text(AppStrings.statusLoadFailedError)),
-                ),
-              ),
-              const SizedBox(height: 10),
-              if (status.captionText != '')
-                Container(
-                  color: AppColors.lightBlack,
-                  width: .maxFinite,
-                  child: Padding(
-                    padding: EdgeInsetsGeometry.symmetric(vertical: 6),
-                    child: Text(
-                      status.captionText ?? '',
-                      style: AppTextStyles.heading(color: AppColors.white, fontSize: 18),
-                      textAlign: .center,
+                  }
+                },
+                itemBuilder: (context, index) {
+                  final status = userStatusList[index];
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: CachedNetworkImage(
+                            imageUrl: status.statusUrl ?? '',
+                            imageBuilder: (context, imageProvider) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
+                                ),
+                              );
+                            },
+                            placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) => Center(
+                              child: Text(
+                                AppStrings.statusLoadFailedError,
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        if (status.captionText != null && status.captionText!.isNotEmpty)
+                          Container(
+                            color: AppColors.lightBlack,
+                            width: double.maxFinite,
+                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                            child: Text(
+                              status.captionText!,
+                              style: AppTextStyles.heading(color: AppColors.white, fontSize: 18),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                      ],
                     ),
-                  ),
-                ),
-            ],
-          ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

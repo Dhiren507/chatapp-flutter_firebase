@@ -17,22 +17,14 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
   StreamSubscription? _chatListSubscription;
   StreamSubscription? _statusSubscription;
 
-  ChatListBloc({
-    required ChatRepository chatRepo,
-    required StatusRepository statusRepo,
-  }) : _chatRepo = chatRepo,
-       _statusRepo = statusRepo,
-       super(const ChatListState()) {
+  ChatListBloc({required this._chatRepo, required this._statusRepo}) : super(const ChatListState()) {
     on<ChatListFetchRequested>(_onChatListFetchRequested);
     on<ChatListUpdated>(_onChatListUpdated);
     on<StatusListUpdated>(_onStatusListUpdated);
     on<ChatListErrorOccurred>(_onChatListErrorOccurred);
   }
 
-  Future<void> _onChatListFetchRequested(
-    ChatListFetchRequested event,
-    Emitter<ChatListState> emit,
-  ) async {
+  Future<void> _onChatListFetchRequested(ChatListFetchRequested event, Emitter<ChatListState> emit) async {
     emit(state.copyWith(status: .loading));
 
     await _chatListSubscription?.cancel();
@@ -41,43 +33,26 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
     _chatListSubscription = _chatRepo
         .streamChatList(event.currentUserId)
         .listen(
-          (chats) => add(
-            ChatListUpdated(chats: chats, currentUserid: event.currentUserId),
-          ),
-          onError: (err) =>
-              add(ChatListErrorOccurred(errorMsg: err.toString())),
+          (chats) => add(ChatListUpdated(chats: chats, currentUserid: event.currentUserId)),
+          onError: (err) => add(ChatListErrorOccurred(errorMsg: err.toString())),
         );
 
     _statusSubscription = _statusRepo.streamAllStatus().listen(
-      (statuses) => add(
-        StatusListUpdated(
-          allStatuses: statuses,
-          currentUserid: event.currentUserId,
-        ),
-      ),
+      (statuses) => add(StatusListUpdated(allStatuses: statuses, currentUserid: event.currentUserId)),
       onError: (err) => add(ChatListErrorOccurred(errorMsg: err.toString())),
     );
   }
 
   void _onChatListUpdated(ChatListUpdated event, Emitter<ChatListState> emit) {
-    emit(
-      state.copyWith(
-        status: .loaded,
-        chatList: event.chats,
-        currentUserId: event.currentUserid,
-      ),
-    );
+    emit(state.copyWith(status: .loaded, chatList: event.chats, currentUserId: event.currentUserid));
   }
 
-  void _onStatusListUpdated(
-    StatusListUpdated event,
-    Emitter<ChatListState> emit,
-  ) {
+  void _onStatusListUpdated(StatusListUpdated event, Emitter<ChatListState> emit) {
     final otherUsersStatuses = event.allStatuses
         .where((status) => status.userId != event.currentUserid)
         .toList();
 
-    final currentUserStatus = event.allStatuses.cast<UserStatus?>().firstWhere(
+    final currentUserStatus = event.allStatuses.cast<UserStatus?>().lastWhere(
       (status) => status?.userId == event.currentUserid,
       orElse: () => null,
     );
@@ -92,10 +67,7 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
     );
   }
 
-  void _onChatListErrorOccurred(
-    ChatListErrorOccurred event,
-    Emitter<ChatListState> emit,
-  ) {
+  void _onChatListErrorOccurred(ChatListErrorOccurred event, Emitter<ChatListState> emit) {
     emit(state.copyWith(status: .error, errorMsg: event.errorMsg));
   }
 

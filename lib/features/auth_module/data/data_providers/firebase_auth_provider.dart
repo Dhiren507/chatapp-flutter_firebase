@@ -8,49 +8,35 @@ class AppAuthProvider {
   final FirebaseFirestore _firebaseDb = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
-  Future<UserCredential> loginWithEmailAndPassword({
-    required String email,
-    required String password,
-  }) async {
-    return await _firebaseAuth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+  Future<UserCredential> loginWithEmailAndPassword({required String email, required String password}) async {
+    return await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
   }
 
   Future<UserCredential?> loginWithGoogleRaw() async {
     final List<String> scopes = ['email', 'profile'];
 
-    final GoogleSignInAccount googleUser = await _googleSignIn.authenticate(
-      scopeHint: scopes,
-    );
+    final GoogleSignInAccount googleUser = await _googleSignIn.authenticate(scopeHint: scopes);
 
-    final googleAuth = await googleUser.authorizationClient.authorizeScopes(
-      scopes,
-    );
+    final googleAuth = await googleUser.authorizationClient.authorizeScopes(scopes);
 
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleUser.authentication.idToken,
     );
 
-    final UserCredential userCredential = await _firebaseAuth
-        .signInWithCredential(credential);
+    final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
 
     if (userCredential.additionalUserInfo?.isNewUser == true) {
-      await _firebaseDb
-          .collection(AppKeys.userCollectionKey)
-          .doc(userCredential.user!.uid)
-          .set({
-            'uid': userCredential.user!.uid,
-            'name': userCredential.additionalUserInfo!.profile?['name'],
-            'email': userCredential.user!.email,
-            'phone': '',
-            'photoUrl': userCredential.additionalUserInfo!.profile?['picture'],
-            'bio_text': '',
-            'created_at': FieldValue.serverTimestamp(),
-            'updated_at': FieldValue.serverTimestamp(),
-          });
+      await _firebaseDb.collection(AppKeys.userCollectionKey).doc(userCredential.user!.uid).set({
+        'uid': userCredential.user!.uid,
+        'name': userCredential.additionalUserInfo!.profile?['name'],
+        'email': userCredential.user!.email,
+        'phone': '',
+        'photoUrl': userCredential.additionalUserInfo!.profile?['picture'],
+        'bio_text': '',
+        'created_at': FieldValue.serverTimestamp(),
+        'updated_at': FieldValue.serverTimestamp(),
+      });
     }
 
     return userCredential;
@@ -61,25 +47,19 @@ class AppAuthProvider {
     required String email,
     required String password,
   }) async {
-    final credential = await _firebaseAuth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    final credential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
 
     if (credential.user != null) {
-      await _firebaseDb
-          .collection(AppKeys.userCollectionKey)
-          .doc(credential.user!.uid)
-          .set({
-            'uid': credential.user!.uid,
-            'name': name,
-            'email': email,
-            'phone': '',
-            'photoUrl': '',
-            'bio_text': '',
-            'created_at': FieldValue.serverTimestamp(),
-            'updated_at': FieldValue.serverTimestamp(),
-          });
+      await _firebaseDb.collection(AppKeys.userCollectionKey).doc(credential.user!.uid).set({
+        'uid': credential.user!.uid,
+        'name': name,
+        'email': email,
+        'phone': '',
+        'photoUrl': '',
+        'bio_text': '',
+        'created_at': FieldValue.serverTimestamp(),
+        'updated_at': FieldValue.serverTimestamp(),
+      });
     }
 
     return credential;
@@ -96,14 +76,16 @@ class AppAuthProvider {
   Future<Map<String, dynamic>> getCurrentUserProfile() async {
     final currentUserId = _firebaseAuth.currentUser?.uid;
 
-    final userDocSnapshot = await _firebaseDb
-        .collection(AppKeys.userCollectionKey)
-        .doc(currentUserId)
-        .get();
+    final userDocSnapshot = await _firebaseDb.collection(AppKeys.userCollectionKey).doc(currentUserId).get();
 
     final userProfileJson = userDocSnapshot.data()!;
 
     print('this is the userProfile json : $userProfileJson');
     return userProfileJson;
+  }
+
+  Future<void> updateOnlineStatus(String userId, bool isOnline) async {
+    print('update online status funciton callecd!!');
+    await _firebaseDb.collection(AppKeys.userCollectionKey).doc(userId).update({'isOnline': isOnline});
   }
 }

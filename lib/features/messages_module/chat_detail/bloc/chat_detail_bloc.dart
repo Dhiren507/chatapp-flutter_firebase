@@ -39,50 +39,54 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent, ChatDetailState> {
 
       await _chatSubscription?.cancel();
 
-      _chatRepo.markChatAsRead(chatId: chatId, currentUserId: event.currentUserProfile!.uid!);
-
-      _chatSubscription = _chatRepo.streamCurrentChatSession(chatId).listen(
-        (newChatData) {
-          if (newChatData?.isGroup == true) {
-            add(
-              ChatDocumentUpdated(
-                chatData: newChatData,
-                chatId: chatId,
-                currentUserProfile: event.currentUserProfile!,
-              ),
-            );
-          } else {
-            add(
-              ChatDocumentUpdated(
-                chatData: newChatData,
-                chatId: chatId,
-                currentUserProfile: event.currentUserProfile!,
-                otherUserProfile: event.otherUserProfile!,
-              ),
-            );
-          }
-        },
-        onError: (err) {
-          add(
-            ChatDocumentUpdated(
-              chatData: null,
-              chatId: chatId,
-              currentUserProfile: event.currentUserProfile!,
-              otherUserProfile: event.otherUserProfile,
-            ),
+      _chatSubscription = _chatRepo
+          .streamCurrentChatSession(chatId)
+          .listen(
+            (newChatData) {
+              if (newChatData?.isGroup == true) {
+                add(
+                  ChatDocumentUpdated(
+                    chatData: newChatData,
+                    chatId: chatId,
+                    currentUserProfile: event.currentUserProfile!,
+                  ),
+                );
+              } else {
+                add(
+                  ChatDocumentUpdated(
+                    chatData: newChatData,
+                    chatId: chatId,
+                    currentUserProfile: event.currentUserProfile!,
+                    otherUserProfile: event.otherUserProfile!,
+                  ),
+                );
+              }
+            },
+            onError: (err) {
+              add(
+                ChatDocumentUpdated(
+                  chatData: null,
+                  chatId: chatId,
+                  currentUserProfile: event.currentUserProfile!,
+                  otherUserProfile: event.otherUserProfile,
+                ),
+              );
+            },
           );
-        },
-      );
     } catch (e) {
       emit(ChatDetailState(status: .error, errorMsg: e.toString()));
     }
   }
 
   void _onChatDocumentUpdated(ChatDocumentUpdated event, Emitter<ChatDetailState> emit) {
-    if (event.chatData != null &&
-        event.chatData?.lastMessage != null &&
-        event.chatData?.lastMessage?.senderId != event.currentUserProfile.uid) {
-      _chatRepo.markChatAsRead(chatId: event.chatId, currentUserId: event.currentUserProfile.uid!);
+    if (event.chatData != null) {
+      int messageLength = event.chatData?.messages?.length ?? 0;
+
+      _chatRepo.markChatAsRead(
+        chatId: event.chatId,
+        currentUserId: event.currentUserProfile.uid!,
+        totalMessageCount: messageLength,
+      );
     }
 
     emit(

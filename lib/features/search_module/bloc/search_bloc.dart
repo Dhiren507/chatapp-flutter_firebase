@@ -1,5 +1,5 @@
 import 'package:chatapp_firebase/core/data/models/user_model.dart';
-import 'package:chatapp_firebase/core/data/repositories/contact_repository.dart';
+import 'package:chatapp_firebase/features/contacts_module/data/repositories/contact_repository.dart';
 import 'package:chatapp_firebase/features/messages_module/data/models/user_chat_model.dart';
 import 'package:chatapp_firebase/features/messages_module/data/repositories/chat_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,12 +12,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final ContactRepository _contactRepo;
   final ChatRepository _chatRepo;
 
-  SearchBloc({
-    required ContactRepository contactRepo,
-    required ChatRepository chatRepo,
-  })  : _contactRepo = contactRepo,
-        _chatRepo = chatRepo,
-        super(SearchState()) {
+  SearchBloc({required this._contactRepo, required this._chatRepo}) : super(SearchState()) {
     on<SearchInitiated>(_onSearchInitiated);
     on<ContactSelectionToggled>(_onContactSelectionToggled);
     on<SearchInputChanged>(_onSearchInputChanged);
@@ -83,7 +78,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         final loadedChatList = List<UserChatModel>.from(state.allChatList);
 
         if (event.searchQuery.isEmpty) {
-          emit(state.copyWith(filteredChatList: loadedChatList));
+          emit(state.copyWith(filteredChatList: loadedChatList, searchQuery: ''));
           return;
         }
 
@@ -93,14 +88,14 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           return groupName.contains(query);
         }).toList();
 
-        emit(state.copyWith(filteredChatList: filteredGroups));
+        emit(state.copyWith(filteredChatList: filteredGroups, searchQuery: event.searchQuery));
         return;
       }
 
       final allContactList = List<UserModel>.from(state.allFetchedContacts);
 
       if (event.searchQuery.trim().isEmpty) {
-        emit(state.copyWith(contacts: allContactList));
+        emit(state.copyWith(contacts: allContactList, searchQuery: ''));
         return;
       }
 
@@ -110,7 +105,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         return name.contains(query);
       }).toList();
 
-      emit(state.copyWith(contacts: filteredContactList));
+      emit(state.copyWith(contacts: filteredContactList, searchQuery: event.searchQuery));
     }
   }
 }

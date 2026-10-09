@@ -16,12 +16,14 @@ class ChatRepository {
     return UserModel.fromJson(userProfileJson);
   }
 
-  Future<void> markChatAsRead({required String chatId, required String currentUserId}) async {
+  Future<void> markChatAsRead({
+    required String chatId,
+    required String currentUserId,
+    required int totalMessageCount,
+  }) async {
     final chatRef = _firebaseDb.collection(AppKeys.chatCollectionKey).doc(chatId);
 
-    await chatRef.update({
-      'lastReadAt.$currentUserId': FieldValue.serverTimestamp(),
-    });
+    await chatRef.update({'lastReadMessageCount.$currentUserId': totalMessageCount});
   }
 
   Future<void> sendMessage({
@@ -57,19 +59,28 @@ class ChatRepository {
         'isGroup': isGroupChat,
         'members': [sender.uid, receiver?.uid],
         'messages': [newMessageJson],
-        'lastReadAt': {
-          if (sender.uid != null) sender.uid!: FieldValue.serverTimestamp(),
+        'lastReadMessageCount': {
+          if (sender.uid != null) sender.uid!: 1,
+          if (receiver?.uid != null) receiver?.uid!: 0,
         },
         'profiles': [sender.toJson(), receiver?.toJson()],
         'created_at': FieldValue.serverTimestamp(),
         'updated_at': FieldValue.serverTimestamp(),
       });
     } else {
-      await chatRef.update({
+      final List<dynamic> existingMessages = chatSnapshot.data()?['messages'] ?? [];
+      final int newTotalMessagesCount = existingMessages.length + 1;
+
+      Map<String, dynamic> updatedFields = {
         'messages': FieldValue.arrayUnion([newMessageJson]),
-        if (sender.uid != null) 'lastReadAt.${sender.uid}': FieldValue.serverTimestamp(),
         'updated_at': FieldValue.serverTimestamp(),
-      });
+      };
+
+      if (sender.uid != null) {
+        updatedFields['lastReadMessageCount.${sender.uid}'] = newTotalMessagesCount;
+      }
+
+      await chatRef.update(updatedFields);
     }
   }
 
@@ -149,9 +160,7 @@ class ChatRepository {
       'members': memberUids,
       'admin': adminProfile.toJson(),
       'profiles': membersJson,
-      'lastReadAt': {
-        if (adminProfile.uid != null) adminProfile.uid!: FieldValue.serverTimestamp(),
-      },
+      'lastReadAt': {if (adminProfile.uid != null) adminProfile.uid!: FieldValue.serverTimestamp()},
       'created_at': FieldValue.serverTimestamp(),
       'updated_at': FieldValue.serverTimestamp(),
     });

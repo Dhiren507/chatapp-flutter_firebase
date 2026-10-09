@@ -33,18 +33,12 @@ class OnboardingScreen extends StatelessWidget {
               height: 20,
               width: 16,
               fit: BoxFit.scaleDown,
-              colorFilter: ColorFilter.mode(
-                AppColors.white,
-                BlendMode.srcIn,
-              ),
+              colorFilter: ColorFilter.mode(AppColors.white, BlendMode.srcIn),
             ),
             const SizedBox(width: 5),
             Text(
               AppStrings.chatboxText,
-              style: AppTextStyles.body(
-                fontWeight: FontWeight.w500,
-                color: AppColors.white,
-              ),
+              style: AppTextStyles.body(fontWeight: FontWeight.w500, color: AppColors.white),
             ),
           ],
         ),
@@ -99,7 +93,7 @@ class OnboardingScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 15),
+              const SizedBox(height: 20),
 
               Text(
                 AppStrings.authHomeScreenSubHeading,
@@ -110,7 +104,7 @@ class OnboardingScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 50),
+              SizedBox(height: 35),
 
               Row(
                 mainAxisAlignment: .center,
@@ -139,10 +133,7 @@ class OnboardingScreen extends StatelessWidget {
                       width: 48,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.borderGrey,
-                          width: 1,
-                        ),
+                        border: Border.all(color: AppColors.borderGrey, width: 1),
                       ),
                       child: SvgPicture.asset(
                         AppAssets.googleIcon,
@@ -158,10 +149,7 @@ class OnboardingScreen extends StatelessWidget {
                       width: 48,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.borderGrey,
-                          width: 1,
-                        ),
+                        border: Border.all(color: AppColors.borderGrey, width: 1),
                       ),
                       child: SvgPicture.asset(
                         AppAssets.appleIcon,
@@ -177,7 +165,7 @@ class OnboardingScreen extends StatelessWidget {
 
               const OrDivider(),
 
-              const SizedBox(height: 35),
+              SizedBox(height: MediaQuery.of(context).size.height * .05),
 
               BlocConsumer<OnboardingBloc, OnboardingState>(
                 builder: (context, state) {
@@ -189,23 +177,16 @@ class OnboardingScreen extends StatelessWidget {
                     onPressed: isLoading
                         ? null
                         : () {
-                            Navigator.pushNamed(
-                              context,
-                              AppRoutes.signUpScreen,
-                            );
+                            Navigator.pushNamed(context, AppRoutes.signUpScreen);
                           },
                   );
                 },
                 listener: (context, state) {
                   if (state is OnboardingSuccess) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      AppRoutes.mainScreen,
-                      (route) => false,
-                    );
+                    Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.mainScreen, (route) => false);
                   }
                   if (state is OnboardingError) {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text(state.errorMsg)));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMsg)));
                   }
                 },
               ),
@@ -213,23 +194,15 @@ class OnboardingScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: .center,
                 children: [
-                  Text(
-                    AppStrings.existingAccountTxt,
-                    style: AppTextStyles.body(fontWeight: FontWeight(450)),
-                  ),
+                  Text(AppStrings.existingAccountTxt, style: AppTextStyles.body(fontWeight: FontWeight(450))),
                   TextButton(
                     onPressed: () {
                       Navigator.pushNamed(context, AppRoutes.loginScreen);
                     },
-                    child: Text(
-                      AppStrings.logInText,
-                      style: AppTextStyles.body(color: AppColors.white),
-                    ),
+                    child: Text(AppStrings.logInText, style: AppTextStyles.body(color: AppColors.white)),
                   ),
                 ],
               ),
-
-              const SizedBox(height: 20),
             ],
           ),
         ),

@@ -38,10 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        leading: CommonBackButton(),
-      ),
+      appBar: AppBar(backgroundColor: AppColors.white, leading: CommonBackButton()),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -51,19 +48,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
               Text(
                 AppStrings.loginToChatBoxText,
-                style: AppTextStyles.heading(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTextStyles.heading(fontSize: 18, fontWeight: FontWeight.w600),
               ),
 
               const SizedBox(height: 15),
 
-              Text(
-                AppStrings.loginSubheadingText,
-                style: AppTextStyles.body(),
-                textAlign: .center,
-              ),
+              Text(AppStrings.loginSubheadingText, style: AppTextStyles.body(), textAlign: .center),
 
               const SizedBox(height: 35),
 
@@ -95,10 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 48,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.borderGrey,
-                          width: 1,
-                        ),
+                        border: Border.all(color: AppColors.borderGrey, width: 1),
                       ),
                       child: SvgPicture.asset(
                         AppAssets.googleIcon,
@@ -114,10 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 48,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.borderGrey,
-                          width: 1,
-                        ),
+                        border: Border.all(color: AppColors.borderGrey, width: 1),
                       ),
                       child: SvgPicture.asset(
                         AppAssets.appleIcon,
@@ -146,10 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       validator: Validators.validateEmail,
                       onChanged: (value) {
                         context.read<LoginBloc>().add(
-                          LoginInputFieldChanged(
-                            email: value,
-                            password: _passwordController.text,
-                          ),
+                          LoginInputFieldChanged(email: value, password: _passwordController.text),
                         );
                       },
                     ),
@@ -162,10 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       validator: Validators.validatePassword,
                       onChanged: (value) {
                         context.read<LoginBloc>().add(
-                          LoginInputFieldChanged(
-                            email: _emailController.text,
-                            password: value,
-                          ),
+                          LoginInputFieldChanged(email: _emailController.text, password: value),
                         );
                       },
                     ),
@@ -173,26 +151,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
 
-              SizedBox(height: MediaQuery.of(context).size.height * 0.19),
+              SizedBox(height: MediaQuery.of(context).size.height * .15),
 
               BlocConsumer<LoginBloc, LoginState>(
                 listener: (context, state) {
                   if (state.status == .error) {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text(state.errorMsg)));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMsg)));
                   }
 
                   if (state.status == LoginStatus.success) {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      AppRoutes.mainScreen,
-                      (route) => false,
-                    );
+                    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.mainScreen, (route) => false);
                   }
                 },
                 builder: (context, state) {
-                  bool isButtonEnabled =
-                      state.buttonStatus == ButtonStatus.enabled;
+                  bool isButtonEnabled = state.buttonStatus == ButtonStatus.enabled;
                   bool isLoading = state.status == LoginStatus.loading;
 
                   return CommonButton(
@@ -200,8 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     isLoading: isLoading,
                     onPressed: isButtonEnabled
                         ? () {
-                            bool? isFormValid = _formKey.currentState
-                                ?.validate();
+                            bool? isFormValid = _formKey.currentState?.validate();
                             if (isFormValid!) {
                               context.read<LoginBloc>().add(
                                 LoginRequested(
@@ -213,19 +184,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           }
                         : null,
                     backgroundColor: AppColors.green,
-                    textColor: isButtonEnabled
-                        ? AppColors.white
-                        : AppColors.textSecondary,
+                    textColor: isButtonEnabled ? AppColors.white : AppColors.textSecondary,
                   );
                 },
               ),
 
               TextButton(
                 onPressed: () {},
-                child: Text(
-                  AppStrings.forgotPasswordText,
-                  style: AppTextStyles.body(color: AppColors.green),
-                ),
+                child: Text(AppStrings.forgotPasswordText, style: AppTextStyles.body(color: AppColors.green)),
               ),
             ],
           ),

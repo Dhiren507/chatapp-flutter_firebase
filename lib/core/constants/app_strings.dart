@@ -58,12 +58,12 @@ class AppStrings {
   static const String searchScreenTitle = 'Search';
   static const String searchHintText = 'Search....';
   static const String searchPeopleSectionTitle = 'People';
+  static const String searchGroupsSectionText = 'Groups';
 
   //  Create Group Screen
   static const String createGroupScreenTitle = 'Create Group';
   static const String createGroupDescriptionLabel = 'Group Description';
-  static const String createGroupTitleHintText =
-      'Enter your group title in here.....';
+  static const String createGroupTitleHintText = 'Enter your group title in here.....';
   static const String createGroupAdminLabel = 'Group Admin';
   static const String createGroupAdminRoleText = 'Group Admin';
   static const String createGroupInvitedMembersLabel = 'Invited Members';

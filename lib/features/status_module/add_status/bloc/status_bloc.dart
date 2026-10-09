@@ -8,16 +8,11 @@ part 'status_state.dart';
 class StatusBloc extends Bloc<StatusEvent, StatusState> {
   final StatusRepository _statusRepo;
 
-  StatusBloc({required StatusRepository statusRepo})
-      : _statusRepo = statusRepo,
-        super(StatusInitial()) {
+  StatusBloc({required this._statusRepo}) : super(StatusInitial()) {
     on<StatusPostPressed>(_onStatusPostPressed);
   }
 
-  Future<void> _onStatusPostPressed(
-    StatusPostPressed event,
-    Emitter<StatusState> emit,
-  ) async {
+  Future<void> _onStatusPostPressed(StatusPostPressed event, Emitter<StatusState> emit) async {
     emit(StatusLoading());
 
     try {

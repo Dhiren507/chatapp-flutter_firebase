@@ -53,10 +53,16 @@ class StatusRepository {
     }
   }
 
+
   Stream<List<UserStatus>> streamAllStatus() {
-    return _firebaseDb.collection(AppKeys.statusCollectinKey).snapshots().map((
-      docsSnapshot,
-    ) {
+    final DateTime twentyFourHoursAgo = DateTime.now().subtract(const Duration(hours: 24));
+
+    return _firebaseDb
+        .collection(AppKeys.statusCollectinKey)
+        .where('createdAt', isGreaterThanOrEqualTo: twentyFourHoursAgo)
+        .orderBy('createdAt', descending: false)
+        .snapshots()
+        .map((docsSnapshot) {
       return [
         for (var doc in docsSnapshot.docs)
           if (doc.exists) UserStatus.fromJson(doc.data()),
