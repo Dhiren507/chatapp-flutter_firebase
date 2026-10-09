@@ -2,7 +2,6 @@ import 'package:chatapp_firebase/features/status_module/data/repositories/status
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'status_event.dart';
-
 part 'status_state.dart';
 
 class StatusBloc extends Bloc<StatusEvent, StatusState> {

@@ -78,7 +78,7 @@ class ChatListTile extends StatelessWidget {
                       style: AppTextStyles.body(fontSize: 12, color: AppColors.white),
                     ),
                   )
-                : const SizedBox(height: 22,),
+                : const SizedBox(height: 22),
           ],
         ),
       ],

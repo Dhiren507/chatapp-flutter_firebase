@@ -77,7 +77,7 @@ class MessageImageContainer extends StatelessWidget {
                   if (mediaUrls.length > 4 && index == 3) {
                     return Stack(
                       children: [
-                        CommonImageContainer(size: 120, imgUrl: imageUrl, fit: .cover,),
+                        CommonImageContainer(size: 120, imgUrl: imageUrl, fit: .cover),
                         Container(
                           alignment: Alignment.center,
                           decoration: BoxDecoration(

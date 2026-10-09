@@ -13,10 +13,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     on<SignupRequested>(_onSignupRequested);
   }
 
-  void _onSignupInputFieldChanged(
-    SignupInputFieldChanged event,
-    Emitter<SignupState> emit,
-  ) {
+  void _onSignupInputFieldChanged(SignupInputFieldChanged event, Emitter<SignupState> emit) {
     if (event.name.isNotEmpty &&
         event.email.isNotEmpty &&
         event.password.isNotEmpty &&
@@ -27,10 +24,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     }
   }
 
-  Future<void> _onSignupRequested(
-    SignupRequested event,
-    Emitter<SignupState> emit,
-  ) async {
+  Future<void> _onSignupRequested(SignupRequested event, Emitter<SignupState> emit) async {
     emit(state.copyWith(status: .loading));
     try {
       await _authRepository.signUpAndCreateUser(

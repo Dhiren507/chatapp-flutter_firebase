@@ -14,10 +14,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginWithGoogleRequested>(_onLoginWithGoogleRequested);
   }
 
-  void _onLoginInputFieldChanged(
-    LoginInputFieldChanged event,
-    Emitter<LoginState> emit,
-  ) {
+  void _onLoginInputFieldChanged(LoginInputFieldChanged event, Emitter<LoginState> emit) {
     if (event.email.isNotEmpty && event.password.isNotEmpty) {
       emit(state.copyWith(buttonStatus: .enabled));
     } else {
@@ -25,16 +22,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
   }
 
-  Future<void> _onLoginRequested(
-    LoginRequested event,
-    Emitter<LoginState> emit,
-  ) async {
+  Future<void> _onLoginRequested(LoginRequested event, Emitter<LoginState> emit) async {
     emit(state.copyWith(status: .loading));
     try {
-      await _authRepository.loginWithEmailAndPassword(
-        email: event.email,
-        password: event.password,
-      );
+      await _authRepository.loginWithEmailAndPassword(email: event.email, password: event.password);
       emit(state.copyWith(status: .success));
     } catch (e) {
       String errorMsg = (e as dynamic).message ?? e.toString();
@@ -45,10 +36,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     }
   }
 
-  Future<void> _onLoginWithGoogleRequested(
-    LoginWithGoogleRequested event,
-    Emitter<LoginState> emit,
-  ) async {
+  Future<void> _onLoginWithGoogleRequested(LoginWithGoogleRequested event, Emitter<LoginState> emit) async {
     emit(state.copyWith(status: .loading));
     try {
       await _authRepository.loginWithGoogle();
@@ -65,9 +53,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   @override
   void onChange(Change<LoginState> change) {
     // TODO: implement onChange
-    debugPrint(
-      'loing state change: change ${change.currentState.status} to ${change.nextState.status}',
-    );
+    debugPrint('loing state change: change ${change.currentState.status} to ${change.nextState.status}');
     super.onChange(change);
   }
 }

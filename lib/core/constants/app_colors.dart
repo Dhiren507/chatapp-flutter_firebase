@@ -32,5 +32,4 @@ class AppColors {
   static const Color dottedBorderGrey = Color(0xFFCFD3D2);
 
   static const Color senderChatBubbleBg = Color(0xFFF2F7FB);
-
 }

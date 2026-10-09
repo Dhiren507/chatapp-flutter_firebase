@@ -7,7 +7,8 @@ class ContactRepository {
 
   Future<List<UserModel>> getAllContacts(String currentUserId) async {
     final querySnapshot = await _firebaseDb
-        .collection(AppKeys.userCollectionKey).where('uid', isNotEqualTo: currentUserId)
+        .collection(AppKeys.userCollectionKey)
+        .where('uid', isNotEqualTo: currentUserId)
         .get();
 
     final contactListJson = querySnapshot.docs.map((doc) {

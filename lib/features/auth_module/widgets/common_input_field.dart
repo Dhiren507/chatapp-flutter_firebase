@@ -61,11 +61,7 @@ class CommonInputField extends StatelessWidget {
                 onChanged?.call(value);
               },
               validator: validator,
-              style: AppTextStyles.body(
-                fontWeight: FontWeight.w400,
-                fontSize: 18,
-                color: AppColors.black,
-              ),
+              style: AppTextStyles.body(fontWeight: FontWeight.w400, fontSize: 18, color: AppColors.black),
               inputFormatters: inputFormatters,
               keyboardType: keyboardType ?? TextInputType.text,
               decoration: InputDecoration(
@@ -77,16 +73,10 @@ class CommonInputField extends StatelessWidget {
                 errorStyle: const TextStyle(fontSize: 0, height: 0),
 
                 enabledBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.dividerColor,
-                    width: 1,
-                  ),
+                  borderSide: BorderSide(color: AppColors.dividerColor, width: 1),
                 ),
                 focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: AppColors.dividerColor,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide(color: AppColors.dividerColor, width: 2),
                 ),
                 errorBorder: const UnderlineInputBorder(
                   borderSide: BorderSide(color: AppColors.errorText, width: 1),
@@ -103,8 +93,7 @@ class CommonInputField extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: Text(
                   formState.errorText ?? '',
-                  style: AppTextStyles.body(color: AppColors.errorText)
-                      .copyWith(fontSize: 12),
+                  style: AppTextStyles.body(color: AppColors.errorText).copyWith(fontSize: 12),
                 ),
               ),
             ],

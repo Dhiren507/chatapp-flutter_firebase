@@ -15,7 +15,7 @@ class CommonImageContainer extends StatelessWidget {
     this.size = 92,
     this.borderRadius = 8,
     this.borderColor = AppColors.lightGray,
-    this.fit = .contain
+    this.fit = .contain,
   });
 
   @override
@@ -29,7 +29,7 @@ class CommonImageContainer extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
-        child: CachedNetworkImage(imageUrl: imgUrl, fit: fit,),
+        child: CachedNetworkImage(imageUrl: imgUrl, fit: fit),
       ),
     );
   }

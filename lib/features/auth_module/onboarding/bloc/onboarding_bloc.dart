@@ -11,10 +11,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     on<GoogleAuthRequested>(_onLoginWithGoogleRequested);
   }
 
-  Future<void> _onLoginWithGoogleRequested(
-    GoogleAuthRequested event,
-    Emitter<OnboardingState> emit,
-  ) async {
+  Future<void> _onLoginWithGoogleRequested(GoogleAuthRequested event, Emitter<OnboardingState> emit) async {
     emit(OnboardingLoading());
     try {
       await _authRepository.loginWithGoogle();

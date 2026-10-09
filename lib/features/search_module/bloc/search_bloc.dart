@@ -5,7 +5,6 @@ import 'package:chatapp_firebase/features/messages_module/data/repositories/chat
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'search_event.dart';
-
 part 'search_state.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {

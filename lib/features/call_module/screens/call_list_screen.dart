@@ -51,10 +51,7 @@ class CallListScreen extends StatelessWidget {
               width: double.maxFinite,
               decoration: BoxDecoration(
                 color: AppColors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(40),
-                  topRight: Radius.circular(40),
-                ),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
               ),
               child: Column(
                 children: [
@@ -89,8 +86,7 @@ class CallListScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         return CallListTile();
                       },
-                      separatorBuilder: (context, index) =>
-                          const Divider(indent: 65),
+                      separatorBuilder: (context, index) => const Divider(indent: 65),
                       itemCount: 15,
                     ),
                   ),

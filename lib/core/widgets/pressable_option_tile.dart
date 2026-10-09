@@ -26,16 +26,8 @@ class PressableOptionTile extends StatelessWidget {
           Container(
             height: 44,
             width: 44,
-            decoration: BoxDecoration(
-              color: AppColors.bgGrey,
-              shape: BoxShape.circle,
-            ),
-            child: SvgPicture.asset(
-              iconPath,
-              height: 16,
-              width: 16,
-              fit: BoxFit.scaleDown,
-            ),
+            decoration: BoxDecoration(color: AppColors.bgGrey, shape: BoxShape.circle),
+            child: SvgPicture.asset(iconPath, height: 16, width: 16, fit: BoxFit.scaleDown),
           ),
           const SizedBox(width: 10),
           Column(

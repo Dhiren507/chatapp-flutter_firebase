@@ -9,17 +9,9 @@ final class SignupState {
   final ButtonStatus buttonStatus;
   final String errorMsg;
 
-  const SignupState({
-    this.status = .initial,
-    this.buttonStatus = .disabled,
-    this.errorMsg = '',
-  });
+  const SignupState({this.status = .initial, this.buttonStatus = .disabled, this.errorMsg = ''});
 
-  SignupState copyWith({
-    SignupStatus? status,
-    ButtonStatus? buttonStatus,
-    String? errorMsg,
-  }) {
+  SignupState copyWith({SignupStatus? status, ButtonStatus? buttonStatus, String? errorMsg}) {
     return SignupState(
       status: status ?? this.status,
       buttonStatus: buttonStatus ?? this.buttonStatus,
@@ -27,4 +19,3 @@ final class SignupState {
     );
   }
 }
-

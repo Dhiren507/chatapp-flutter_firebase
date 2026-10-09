@@ -7,9 +7,5 @@ final class StatusPostPressed extends StatusEvent {
   String statusImagePath;
   String statusCaption;
 
-  StatusPostPressed({
-    required this.userId,
-    required this.statusImagePath,
-    required this.statusCaption,
-  });
+  StatusPostPressed({required this.userId, required this.statusImagePath, required this.statusCaption});
 }

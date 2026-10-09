@@ -12,24 +12,15 @@ class CloudinaryService {
   static const String _cloudName = "v3azkduu";
   static const String _uploadPreset = "chat_app_preset";
 
-  final Cloudinary _cloudinary = Cloudinary.fromCloudName(
-    cloudName: _cloudName,
-  );
+  final Cloudinary _cloudinary = Cloudinary.fromCloudName(cloudName: _cloudName);
 
-  Future<String?> uploadImageCustomPath({
-    required String localPath,
-    required String uploadFolderPath,
-  }) async {
+  Future<String?> uploadImageCustomPath({required String localPath, required String uploadFolderPath}) async {
     print('cloudinary function called');
 
     try {
       final response = await _cloudinary.uploader().upload(
         File(localPath),
-        params: UploadParams(
-          unsigned: true,
-          uploadPreset: _uploadPreset,
-          folder: uploadFolderPath,
-        ),
+        params: UploadParams(unsigned: true, uploadPreset: _uploadPreset, folder: uploadFolderPath),
       );
 
       print(response?.error?.message);

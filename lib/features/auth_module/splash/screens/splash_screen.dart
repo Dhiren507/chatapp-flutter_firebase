@@ -24,24 +24,14 @@ class _SplashScreenState extends State<SplashScreen> {
       Future.delayed(const Duration(seconds: 2), () {
         if (!mounted) return;
 
-        final String? userId = context
-            .read<AuthRepository>()
-            .getCurrentUserId();
+        final String? userId = context.read<AuthRepository>().getCurrentUserId();
 
         print('this is the userId in splashScreen: $userId');
 
         if (userId != null) {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            AppRoutes.mainScreen,
-            (route) => false,
-          );
+          Navigator.pushNamedAndRemoveUntil(context, AppRoutes.mainScreen, (route) => false);
         } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            AppRoutes.onboardingScreen,
-            (route) => false,
-          );
+          Navigator.pushNamedAndRemoveUntil(context, AppRoutes.onboardingScreen, (route) => false);
         }
       });
     });
@@ -54,12 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: .center,
           children: [
-            SvgPicture.asset(
-              AppAssets.cLogo,
-              height: 70,
-              width: 60,
-              fit: BoxFit.scaleDown,
-            ),
+            SvgPicture.asset(AppAssets.cLogo, height: 70, width: 60, fit: BoxFit.scaleDown),
             const SizedBox(height: 12),
             Text(
               AppStrings.chatboxText,

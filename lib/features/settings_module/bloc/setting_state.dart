@@ -7,17 +7,9 @@ final class SettingState {
   final UserModel? userProfile;
   final String errorMsg;
 
-  const SettingState({
-    this.status = SettingStatus.initial,
-    this.userProfile,
-    this.errorMsg = '',
-  });
+  const SettingState({this.status = SettingStatus.initial, this.userProfile, this.errorMsg = ''});
 
-  SettingState copyWith({
-    SettingStatus? status,
-    UserModel? userProfile,
-    String? errorMsg,
-  }) {
+  SettingState copyWith({SettingStatus? status, UserModel? userProfile, String? errorMsg}) {
     return SettingState(
       status: status ?? this.status,
       userProfile: userProfile ?? this.userProfile,

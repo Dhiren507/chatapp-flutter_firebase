@@ -52,19 +52,12 @@ class _SignupScreenState extends State<SignupScreen> {
 
               Text(
                 AppStrings.signUpWithEmailText,
-                style: AppTextStyles.heading(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTextStyles.heading(fontSize: 18, fontWeight: FontWeight.w600),
               ),
 
               const SizedBox(height: 15),
 
-              Text(
-                AppStrings.signupSubheadingText,
-                style: AppTextStyles.body(),
-                textAlign: .center,
-              ),
+              Text(AppStrings.signupSubheadingText, style: AppTextStyles.body(), textAlign: .center),
 
               const SizedBox(height: 35),
 
@@ -77,11 +70,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       labelText: AppStrings.yourNameText,
                       controller: _nameController,
                       validator: Validators.nameValidation,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'[a-zA-Z\s]'),
-                        ),
-                      ],
+                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]'))],
                       onChanged: (value) {
                         context.read<SignupBloc>().add(
                           SignupInputFieldChanged(
@@ -135,10 +124,8 @@ class _SignupScreenState extends State<SignupScreen> {
                     CommonInputField(
                       labelText: AppStrings.confirmPasswordText,
                       controller: _confirmPassController,
-                      validator: (value) => Validators.validateConfirmPassword(
-                        value,
-                        _passwordController.text.trim(),
-                      ),
+                      validator: (value) =>
+                          Validators.validateConfirmPassword(value, _passwordController.text.trim()),
                       onChanged: (value) {
                         context.read<SignupBloc>().add(
                           SignupInputFieldChanged(
@@ -159,20 +146,17 @@ class _SignupScreenState extends State<SignupScreen> {
               BlocConsumer<SignupBloc, SignupState>(
                 listener: (context, state) {
                   if (state.status == SignupStatus.success) {
-                    Navigator.pushNamed(
-                      context,
-                      AppRoutes.loginScreen,
-                    );
+                    Navigator.pushNamed(context, AppRoutes.loginScreen);
                   }
 
                   if (state.status == SignupStatus.error) {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text(state.errorMsg),backgroundColor: AppColors.bgError,));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.errorMsg), backgroundColor: AppColors.bgError),
+                    );
                   }
                 },
                 builder: (context, state) {
-                  bool isButtonEnabled =
-                      state.buttonStatus == ButtonStatus.enabled;
+                  bool isButtonEnabled = state.buttonStatus == ButtonStatus.enabled;
                   bool isLoading = state.status == SignupStatus.loading;
 
                   return CommonButton(
@@ -180,8 +164,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     isLoading: isLoading,
                     onPressed: isButtonEnabled
                         ? () {
-                            bool? isFormValid = _formKey.currentState
-                                ?.validate();
+                            bool? isFormValid = _formKey.currentState?.validate();
                             if (isFormValid!) {
                               context.read<SignupBloc>().add(
                                 SignupRequested(
@@ -194,9 +177,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           }
                         : null,
                     backgroundColor: AppColors.green,
-                    textColor: isButtonEnabled
-                        ? AppColors.white
-                        : AppColors.textSecondary,
+                    textColor: isButtonEnabled ? AppColors.white : AppColors.textSecondary,
                   );
                 },
               ),

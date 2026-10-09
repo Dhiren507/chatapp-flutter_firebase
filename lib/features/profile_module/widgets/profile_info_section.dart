@@ -5,11 +5,7 @@ class ProfileInfoSection extends StatelessWidget {
   final String sectionTitle;
   final String sectionValue;
 
-  const ProfileInfoSection({
-    super.key,
-    required this.sectionTitle,
-    required this.sectionValue,
-  });
+  const ProfileInfoSection({super.key, required this.sectionTitle, required this.sectionValue});
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +14,7 @@ class ProfileInfoSection extends StatelessWidget {
       spacing: 5,
       children: [
         Text(sectionTitle, style: AppTextStyles.body()),
-        Text(
-          sectionValue,
-          style: AppTextStyles.heading(fontSize: 18, fontFamily: ''),
-        ),
+        Text(sectionValue, style: AppTextStyles.heading(fontSize: 18, fontFamily: '')),
       ],
     );
   }

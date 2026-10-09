@@ -41,10 +41,7 @@ class CommonBottomSheet extends StatelessWidget {
                 Expanded(
                   child: Align(
                     alignment: .topCenter,
-                    child: Text(
-                      AppStrings.shareContentTitle,
-                      style: AppTextStyles.heading(),
-                    ),
+                    child: Text(AppStrings.shareContentTitle, style: AppTextStyles.heading()),
                   ),
                 ),
               ],

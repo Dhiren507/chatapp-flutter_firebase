@@ -44,9 +44,7 @@ class CommonSvgContainer extends StatelessWidget {
                   child: SvgPicture.asset(
                     iconPath!,
                     fit: BoxFit.contain,
-                    colorFilter: iconColor != null
-                        ? ColorFilter.mode(iconColor!, BlendMode.srcIn)
-                        : null,
+                    colorFilter: iconColor != null ? ColorFilter.mode(iconColor!, BlendMode.srcIn) : null,
                   ),
                 )
               : const SizedBox.shrink(),

@@ -13,11 +13,7 @@ class CallListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        CommonAvatar(
-          imgPath: AppAssets.appleIcon,
-          size: 55,
-          borderColor: Colors.transparent,
-        ),
+        CommonAvatar(imgPath: AppAssets.appleIcon, size: 55, borderColor: Colors.transparent),
 
         const SizedBox(width: 15),
 
@@ -25,24 +21,12 @@ class CallListTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: .start,
             children: [
-              Text(
-                'John Abraham',
-                style: AppTextStyles.heading(fontSize: 18),
-                overflow: .ellipsis,
-              ),
+              Text('John Abraham', style: AppTextStyles.heading(fontSize: 18), overflow: .ellipsis),
               Row(
                 spacing: 3,
                 children: [
-                  SvgPicture.asset(
-                    AppAssets.incomingCallIcon,
-                    height: 16,
-                    width: 16,
-                    fit: BoxFit.scaleDown,
-                  ),
-                  Text(
-                    'Today, 09:30 AM',
-                    style: AppTextStyles.body(fontSize: 12),
-                  ),
+                  SvgPicture.asset(AppAssets.incomingCallIcon, height: 16, width: 16, fit: BoxFit.scaleDown),
+                  Text('Today, 09:30 AM', style: AppTextStyles.body(fontSize: 12)),
                 ],
               ),
             ],

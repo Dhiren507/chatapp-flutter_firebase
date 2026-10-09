@@ -34,9 +34,7 @@ class CommonButton extends StatelessWidget {
           disabledBackgroundColor: AppColors.bgDisables,
           disabledForegroundColor: AppColors.textSecondary,
           elevation: elevation ?? 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
         ),
         child: isLoading == true
             ? Padding(
@@ -47,10 +45,7 @@ class CommonButton extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
                   label,
-                  style: AppTextStyles.heading(
-                    fontWeight: FontWeight.w600,
-                    color: textColor,
-                  ),
+                  style: AppTextStyles.heading(fontWeight: FontWeight.w600, color: textColor),
                 ),
               ),
       ),

@@ -28,12 +28,8 @@ class UserModel {
     name = json['name'];
     phone = json['phone'];
     photoUrl = json['photoUrl'];
-    createdAt = json['created_at'] != null
-        ? (json['created_at'] as Timestamp).toDate()
-        : null;
-    updatedAt = json['updated_at'] != null
-        ? (json['updated_at'] as Timestamp).toDate()
-        : null;
+    createdAt = json['created_at'] != null ? (json['created_at'] as Timestamp).toDate() : null;
+    updatedAt = json['updated_at'] != null ? (json['updated_at'] as Timestamp).toDate() : null;
   }
 
   Map<String, dynamic> toJson() {

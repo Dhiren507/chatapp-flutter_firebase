@@ -14,10 +14,7 @@ class CreateGroupBloc extends Bloc<CreateGroupEvent, CreateGroupState> {
     on<CreateGroupSubmitted>(_onCreateGroupSubmitted);
   }
 
-  void _onCreateGroupStarted(
-    CreateGroupStarted event,
-    Emitter<CreateGroupState> emit,
-  ) {
+  void _onCreateGroupStarted(CreateGroupStarted event, Emitter<CreateGroupState> emit) {
     emit(CreateGroupLoading());
     try {
       emit(CreateGroupLoaded(adminProfile: event.adminProfile));
@@ -26,34 +23,18 @@ class CreateGroupBloc extends Bloc<CreateGroupEvent, CreateGroupState> {
     }
   }
 
-  void _onCreateGroupMembersChanged(
-    CreateGroupMembersChanged event,
-    Emitter<CreateGroupState> emit,
-  ) {
+  void _onCreateGroupMembersChanged(CreateGroupMembersChanged event, Emitter<CreateGroupState> emit) {
     if (state is CreateGroupLoaded) {
       final currentState = state as CreateGroupLoaded;
 
-      emit(
-        CreateGroupLoaded(
-          adminProfile: currentState.adminProfile,
-          members: event.members,
-        ),
-      );
+      emit(CreateGroupLoaded(adminProfile: currentState.adminProfile, members: event.members));
     }
   }
 
-  Future<void> _onCreateGroupSubmitted(
-    CreateGroupSubmitted event,
-    Emitter<CreateGroupState> emit,
-  ) async {
+  Future<void> _onCreateGroupSubmitted(CreateGroupSubmitted event, Emitter<CreateGroupState> emit) async {
     emit(CreateGroupLoading());
     try {
-      await _chatRepo.createNewGroup(
-        event.groupId,
-        event.groupTitle,
-        event.groupAdminProfile,
-        event.members,
-      );
+      await _chatRepo.createNewGroup(event.groupId, event.groupTitle, event.groupAdminProfile, event.members);
 
       emit(CreateGroupInitial());
     } catch (e) {

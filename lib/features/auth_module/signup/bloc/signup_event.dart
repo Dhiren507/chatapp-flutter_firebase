@@ -21,9 +21,5 @@ class SignupRequested extends SignupEvent {
   final String email;
   final String password;
 
-  SignupRequested({
-    required this.name,
-    required this.email,
-    required this.password,
-  });
+  SignupRequested({required this.name, required this.email, required this.password});
 }

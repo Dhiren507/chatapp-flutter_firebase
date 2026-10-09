@@ -13,9 +13,7 @@ class ImagePickerUtils {
           selectedImages.addAll(imagesSelected);
         }
       } else {
-        XFile? imageSelected = await _picker.pickImage(
-          source: ImageSource.gallery,
-        );
+        XFile? imageSelected = await _picker.pickImage(source: ImageSource.gallery);
 
         if (imageSelected != null) {
           selectedImages.add(imageSelected);
@@ -31,9 +29,7 @@ class ImagePickerUtils {
   static Future<XFile?> captureImage() async {
     XFile? selectedImage;
     try {
-      XFile? imageCaptured = await _picker.pickImage(
-        source: ImageSource.camera,
-      );
+      XFile? imageCaptured = await _picker.pickImage(source: ImageSource.camera);
 
       if (imageCaptured != null) {
         selectedImage = imageCaptured;

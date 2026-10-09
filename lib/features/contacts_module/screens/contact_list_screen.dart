@@ -23,9 +23,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
     // TODO: implement initState
     super.initState();
     context.read<ContactListBloc>().add(
-      ContactListFetchRequested(
-        currentUserId: context.read<AuthRepository>().getCurrentUserId()!,
-      ),
+      ContactListFetchRequested(currentUserId: context.read<AuthRepository>().getCurrentUserId()!),
     );
   }
 
@@ -70,10 +68,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
             child: Container(
               decoration: BoxDecoration(
                 color: AppColors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(40),
-                  topRight: Radius.circular(40),
-                ),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
               ),
               child: Column(
                 children: [
@@ -93,10 +88,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
                     padding: const EdgeInsets.only(left: 24),
                     child: Align(
                       alignment: AlignmentGeometry.topLeft,
-                      child: Text(
-                        AppStrings.myContactsText,
-                        style: AppTextStyles.heading(fontSize: 18),
-                      ),
+                      child: Text(AppStrings.myContactsText, style: AppTextStyles.heading(fontSize: 18)),
                     ),
                   ),
 
@@ -122,38 +114,28 @@ class _ContactListScreenState extends State<ContactListScreen> {
                                   itemBuilder: (context, index) {
                                     final contact = contactList[index];
 
-                                    final currentLetter = contact.name![0]
-                                        .toUpperCase();
+                                    final currentLetter = contact.name![0].toUpperCase();
                                     bool showHeader = false;
 
                                     if (index == 0) {
                                       showHeader = true;
                                     } else {
-                                      final previousContact =
-                                          state.contacts[index - 1];
-                                      final previousLetter = previousContact
-                                          .name![0]
-                                          .toUpperCase();
+                                      final previousContact = state.contacts[index - 1];
+                                      final previousLetter = previousContact.name![0].toUpperCase();
                                       if (currentLetter != previousLetter) {
                                         showHeader = true;
                                       }
                                     }
 
                                     return Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         if (showHeader) ...[
                                           Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 10,
-                                              bottom: 10,
-                                            ),
+                                            padding: const EdgeInsets.only(top: 10, bottom: 10),
                                             child: Text(
                                               currentLetter,
-                                              style: AppTextStyles.heading(
-                                                fontWeight: .w600,
-                                              ),
+                                              style: AppTextStyles.heading(fontWeight: .w600),
                                             ),
                                           ),
                                         ],
@@ -175,8 +157,7 @@ class _ContactListScreenState extends State<ContactListScreen> {
                                       ],
                                     );
                                   },
-                                  separatorBuilder: (context, index) =>
-                                      const SizedBox(height: 10),
+                                  separatorBuilder: (context, index) => const SizedBox(height: 10),
                                   itemCount: state.contacts.length,
                                 )
                               : const Center(child: Text('No Contacts'));
