@@ -16,12 +16,12 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     try {
       await _authRepository.loginWithGoogle();
       emit(OnboardingSuccess());
-    } catch (e) {
+    } catch (e, stack) {
+      print('Google Auth Error: $e');
+      print('Google Auth Stack: $stack');
       String errorMsg = (e as dynamic).message ?? e.toString();
 
       emit(OnboardingError(errorMsg: errorMsg));
-    } finally {
-      emit(OnboardingInitial());
     }
   }
 }

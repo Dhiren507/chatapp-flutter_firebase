@@ -20,7 +20,10 @@ void main() async {
   final authProvider = AppAuthProvider();
   final authRepository = AuthRepository(provider: authProvider);
 
-  await GoogleSignIn.instance.initialize(clientId: AppKeys.googleAuthClientId);
+  await GoogleSignIn.instance.initialize(
+    clientId: AppKeys.googleAuthClientId,
+    serverClientId: AppKeys.googleAuthClientId,
+  );
 
   runApp(
     MultiRepositoryProvider(

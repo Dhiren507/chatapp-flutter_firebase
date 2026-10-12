@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "313287695886-t59b48u9glo915p1d1u9tppbdoc6t872.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chatapp_firebase",
+            "certificate_hash": "0d0a7eb295118745e1ba0767e15e1a929053560f"
+          }
+        },
+        {
           "client_id": "313287695886-58coubkl3he33vaqk59f2umo3ftpjeum.apps.googleusercontent.com",
           "client_type": 3
         }

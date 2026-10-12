@@ -23,30 +23,30 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Future<void> _onLoginRequested(LoginRequested event, Emitter<LoginState> emit) async {
-    emit(state.copyWith(status: .loading));
+    emit(state.copyWith(status: LoginStatus.loading));
     try {
       await _authRepository.loginWithEmailAndPassword(email: event.email, password: event.password);
-      emit(state.copyWith(status: .success));
-    } catch (e) {
+      emit(state.copyWith(status: LoginStatus.success));
+    } catch (e, stackTrace) {
+      debugPrint('Login Error: $e');
+      debugPrint('Login Stack: $stackTrace');
       String errorMsg = (e as dynamic).message ?? e.toString();
 
-      emit(state.copyWith(status: .error, errorMsg: errorMsg));
-    } finally {
-      emit(state.copyWith(status: .initial, errorMsg: ''));
+      emit(state.copyWith(status: LoginStatus.error, errorMsg: errorMsg));
     }
   }
 
   Future<void> _onLoginWithGoogleRequested(LoginWithGoogleRequested event, Emitter<LoginState> emit) async {
-    emit(state.copyWith(status: .loading));
+    emit(state.copyWith(status: LoginStatus.loading));
     try {
       await _authRepository.loginWithGoogle();
-      emit(state.copyWith(status: .success));
-    } catch (e) {
+      emit(state.copyWith(status: LoginStatus.success));
+    } catch (e, stackTrace) {
+      debugPrint('Google Auth Error: $e');
+      debugPrint('Google Auth Stack: $stackTrace');
       String errorMsg = (e as dynamic).message ?? e.toString();
 
-      emit(state.copyWith(status: .error, errorMsg: errorMsg));
-    } finally {
-      emit(state.copyWith(status: .initial, errorMsg: ''));
+      emit(state.copyWith(status: LoginStatus.error, errorMsg: errorMsg));
     }
   }
 
