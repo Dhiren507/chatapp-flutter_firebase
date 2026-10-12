@@ -29,7 +29,23 @@ class CommonImageContainer extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
-        child: CachedNetworkImage(imageUrl: imgUrl, fit: fit),
+        child: CachedNetworkImage(
+          imageUrl: imgUrl,
+          fit: fit,
+          placeholder: (context, url) => const Center(
+            child: SizedBox(
+              height: 24,
+              width: 24,
+              child: CircularProgressIndicator(
+                color: AppColors.green,
+                strokeWidth: 2.5,
+              ),
+            ),
+          ),
+          errorWidget: (context, url, error) => const Center(
+            child: Icon(Icons.broken_image, color: AppColors.borderGrey),
+          ),
+        ),
       ),
     );
   }

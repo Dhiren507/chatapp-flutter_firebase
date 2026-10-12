@@ -14,13 +14,17 @@ import 'package:image_picker/image_picker.dart';
 class StatusListView extends StatelessWidget {
   final String currentUserId;
   final UserStatus? currentUserStatus;
+  final List<UserStatus> currentUserStatuses;
   final List<UserStatus> otherUserStatus;
+  final String? currentUserProfileUrl;
 
   const StatusListView({
     super.key,
     required this.currentUserStatus,
+    this.currentUserStatuses = const [],
     required this.otherUserStatus,
     required this.currentUserId,
+    this.currentUserProfileUrl,
   });
 
   @override
@@ -45,6 +49,8 @@ class StatusListView extends StatelessWidget {
               final String avatarImgPath =
                   (currentUserStatus?.profileUrl != null && currentUserStatus!.profileUrl!.isNotEmpty)
                   ? currentUserStatus!.profileUrl!
+                  : (currentUserProfileUrl != null && currentUserProfileUrl!.isNotEmpty)
+                  ? currentUserProfileUrl!
                   : AppAssets.defaultAvatarSvg;
 
               return Column(
@@ -56,24 +62,24 @@ class StatusListView extends StatelessWidget {
                       GestureDetector(
                         behavior: HitTestBehavior.translucent,
                         onTap: () {
-                          if (currentUserStatus != null) {
-                            final currentUserSlides = otherUserStatus
-                                .where((s) => s.userId == currentUserId)
-                                .toList();
-
+                          if (currentUserStatuses.isNotEmpty) {
                             Navigator.pushNamed(
                               context,
                               AppRoutes.statusViewScreen,
-                              arguments: currentUserSlides.isNotEmpty
-                                  ? currentUserSlides
-                                  : [currentUserStatus!],
+                              arguments: currentUserStatuses,
+                            );
+                          } else if (currentUserStatus != null) {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.statusViewScreen,
+                              arguments: [currentUserStatus!],
                             );
                           }
                         },
                         child: CommonAvatar(
                           imgPath: avatarImgPath,
                           size: 58,
-                          borderColor: currentUserStatus != null
+                          borderColor: (currentUserStatuses.isNotEmpty || currentUserStatus != null)
                               ? AppColors.highlightYellow
                               : Colors.transparent,
                         ),

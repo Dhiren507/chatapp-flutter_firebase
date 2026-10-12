@@ -111,8 +111,10 @@ class _ChatListScreenState extends State<ChatListScreen> with WidgetsBindingObse
                 // Status Horizontal List
                 StatusListView(
                   currentUserStatus: currentUserStatus,
+                  currentUserStatuses: state.currentUserStatuses,
                   otherUserStatus: otherUserStatusList,
                   currentUserId: currentUserId,
+                  currentUserProfileUrl: context.watch<SettingBloc>().state.userProfile?.photoUrl,
                 ),
 
                 Expanded(

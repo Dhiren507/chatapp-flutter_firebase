@@ -82,17 +82,26 @@ class _StatusPreviewScreenState extends State<StatusPreviewScreen> {
                     },
                     builder: (context, state) {
                       return GestureDetector(
-                        onTap: () {
-                          context.read<StatusBloc>().add(
-                            StatusPostPressed(
-                              userId: context.read<AuthRepository>().getCurrentUserId()!,
-                              statusImagePath: image.path,
-                              statusCaption: _captionController.text.trim(),
-                            ),
-                          );
-                        },
+                        onTap: state is StatusLoading
+                            ? null
+                            : () {
+                                context.read<StatusBloc>().add(
+                                  StatusPostPressed(
+                                    userId: context.read<AuthRepository>().getCurrentUserId()!,
+                                    statusImagePath: image.path,
+                                    statusCaption: _captionController.text.trim(),
+                                  ),
+                                );
+                              },
                         child: state is StatusLoading
-                            ? CircularProgressIndicator()
+                            ? const SizedBox(
+                                height: 42,
+                                width: 42,
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: CircularProgressIndicator(color: AppColors.green),
+                                ),
+                              )
                             : CommonSvgContainer(
                                 containerSize: 42,
                                 iconPath: AppAssets.messageSendIcon,

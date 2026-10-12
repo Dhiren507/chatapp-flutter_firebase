@@ -51,15 +51,19 @@ class ChatListBloc extends Bloc<ChatListEvent, ChatListState> {
         .where((status) => status.userId != event.currentUserid)
         .toList();
 
-    final currentUserStatus = event.allStatuses.cast<UserStatus?>().lastWhere(
-      (status) => status?.userId == event.currentUserid,
-      orElse: () => null,
-    );
+    final currentUserStatuses = event.allStatuses
+        .where((status) => status.userId == event.currentUserid)
+        .toList();
+
+    final currentUserStatus = currentUserStatuses.isNotEmpty
+        ? currentUserStatuses.last
+        : null;
 
     emit(
       state.copyWith(
         status: ChatListStatus.loaded,
         statusList: otherUsersStatuses,
+        currentUserStatuses: currentUserStatuses,
         currentUserStatus: currentUserStatus,
         currentUserId: event.currentUserid,
       ),

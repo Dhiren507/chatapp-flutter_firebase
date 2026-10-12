@@ -3,6 +3,7 @@ import 'package:chatapp_firebase/core/services/cloudinary_service.dart';
 import 'package:chatapp_firebase/core/utils/id_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:chatapp_firebase/core/data/models/user_model.dart';
 import '../models/user_status.dart';
 
 class StatusRepository {
@@ -66,5 +67,21 @@ class StatusRepository {
     await _firebaseDb.collection(AppKeys.statusCollectinKey).doc(statusId).update({
       'seenBy': FieldValue.arrayUnion([currentUserId]),
     });
+  }
+
+  Future<void> deleteStatus({required String statusId}) async {
+    await _firebaseDb.collection(AppKeys.statusCollectinKey).doc(statusId).delete();
+  }
+
+  Future<List<UserModel>> getViewers(List<String> viewerIds) async {
+    if (viewerIds.isEmpty) return [];
+    final List<UserModel> viewers = [];
+    for (final id in viewerIds) {
+      final doc = await _firebaseDb.collection(AppKeys.userCollectionKey).doc(id).get();
+      if (doc.exists && doc.data() != null) {
+        viewers.add(UserModel.fromJson(doc.data()!));
+      }
+    }
+    return viewers;
   }
 }
